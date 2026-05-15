@@ -398,7 +398,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--navy);over
 
 <!-- ══ TOPBAR ══ -->
 <div class="topbar">
-  <a class="logo" href="kidsenglish-landing.html"><span class="logo-sun">☀️</span> SunnyWords</a>
+  <a class="logo" href="landing.html"><span class="logo-sun">☀️</span> SunnyWords</a>
   <div class="top-center">
     <div class="module-chip">🗓️ Hành Trình 60 Ngày</div>
   </div>
@@ -712,50 +712,50 @@ const COMPLETED_DAYS = [1,2,3,4,5,6,7,8]; // days already done
 /* Activity templates by type */
 const ACTIVITY_TEMPLATES = {
   vocab:[
-    {name:'Học từ mới', desc:'Flashcard 8 từ vựng với hình ảnh & âm thanh', icon:'📖', bg:'#E8F4FF', xp:'+15 XP', mins:'7 phút', link:'kidsenglish-vocab.html'},
-    {name:'Luyện spelling', desc:'Ghép chữ cái tạo thành từ đúng', icon:'✏️', bg:'#F0E8FF', xp:'+10 XP', mins:'5 phút', link:'kidsenglish-vocab.html'},
-    {name:'Quiz từ vựng', desc:'Kiểm tra nhanh 8 từ đã học', icon:'🧠', bg:'#FFF0E8', xp:'+15 XP', mins:'5 phút', link:'kidsenglish-vocab.html'},
-    {name:'Chat với Sunny', desc:'Dùng từ mới trong hội thoại với AI', icon:'🤖', bg:'#F0FFE8', xp:'+10 XP', mins:'3 phút', link:'kidsenglish-chat.html'},
+    {name:'Học từ mới', desc:'Flashcard 8 từ vựng với hình ảnh & âm thanh', icon:'📖', bg:'#E8F4FF', xp:'+15 XP', mins:'7 phút', link:'vocab.html'},
+    {name:'Luyện spelling', desc:'Ghép chữ cái tạo thành từ đúng', icon:'✏️', bg:'#F0E8FF', xp:'+10 XP', mins:'5 phút', link:'vocab.html'},
+    {name:'Quiz từ vựng', desc:'Kiểm tra nhanh 8 từ đã học', icon:'🧠', bg:'#FFF0E8', xp:'+15 XP', mins:'5 phút', link:'vocab.html'},
+    {name:'Chat với Sunny', desc:'Dùng từ mới trong hội thoại với AI', icon:'🤖', bg:'#F0FFE8', xp:'+10 XP', mins:'3 phút', link:'chat.html'},
   ],
   listen:[
-    {name:'Nghe & Chọn hình', desc:'Nghe từ — chọn đúng 1 trong 4 hình', icon:'🖼️', bg:'#FFE8E8', xp:'+15 XP', mins:'6 phút', link:'kidsenglish-listening.html'},
-    {name:'Xếp câu theo thứ tự', desc:'Nghe câu — sắp xếp các từ đúng thứ tự', icon:'🔤', bg:'#E8F8FF', xp:'+15 XP', mins:'7 phút', link:'kidsenglish-listening.html'},
-    {name:'Điền chỗ trống', desc:'Nghe câu — điền từ còn thiếu', icon:'📝', bg:'#FFF3CC', xp:'+10 XP', mins:'5 phút', link:'kidsenglish-listening.html'},
-    {name:'Nối cặp âm thanh', desc:'Nối âm thanh với hình ảnh tương ứng', icon:'🔗', bg:'#F0E8FF', xp:'+10 XP', mins:'4 phút', link:'kidsenglish-listening.html'},
+    {name:'Nghe & Chọn hình', desc:'Nghe từ — chọn đúng 1 trong 4 hình', icon:'🖼️', bg:'#FFE8E8', xp:'+15 XP', mins:'6 phút', link:'listening.html'},
+    {name:'Xếp câu theo thứ tự', desc:'Nghe câu — sắp xếp các từ đúng thứ tự', icon:'🔤', bg:'#E8F8FF', xp:'+15 XP', mins:'7 phút', link:'listening.html'},
+    {name:'Điền chỗ trống', desc:'Nghe câu — điền từ còn thiếu', icon:'📝', bg:'#FFF3CC', xp:'+10 XP', mins:'5 phút', link:'listening.html'},
+    {name:'Nối cặp âm thanh', desc:'Nối âm thanh với hình ảnh tương ứng', icon:'🔗', bg:'#F0E8FF', xp:'+10 XP', mins:'4 phút', link:'listening.html'},
   ],
   speak:[
-    {name:'Phát âm từ đơn', desc:'Nói 8 từ, AI chấm điểm phát âm ngay', icon:'🎤', bg:'#FFE8F5', xp:'+20 XP', mins:'8 phút', link:'kidsenglish-speaking.html'},
-    {name:'Đọc câu hoàn chỉnh', desc:'Đọc câu tiếng Anh — nhận phản hồi tức thì', icon:'📢', bg:'#E8FFF0', xp:'+20 XP', mins:'7 phút', link:'kidsenglish-speaking.html'},
-    {name:'Thử thách tốc độ', desc:'Đọc 5 từ liên tiếp trong 5 giây', icon:'⚡', bg:'#FFF8E8', xp:'+15 XP', mins:'3 phút', link:'kidsenglish-speaking.html'},
+    {name:'Phát âm từ đơn', desc:'Nói 8 từ, AI chấm điểm phát âm ngay', icon:'🎤', bg:'#FFE8F5', xp:'+20 XP', mins:'8 phút', link:'speaking.html'},
+    {name:'Đọc câu hoàn chỉnh', desc:'Đọc câu tiếng Anh — nhận phản hồi tức thì', icon:'📢', bg:'#E8FFF0', xp:'+20 XP', mins:'7 phút', link:'speaking.html'},
+    {name:'Thử thách tốc độ', desc:'Đọc 5 từ liên tiếp trong 5 giây', icon:'⚡', bg:'#FFF8E8', xp:'+15 XP', mins:'3 phút', link:'speaking.html'},
   ],
   game:[
-    {name:'Word Hunt', desc:'Tìm 5 từ ẩn trong lưới chữ 8×8', icon:'🔍', bg:'#FFE8E8', xp:'+30 XP', mins:'7 phút', link:'kidsenglish-games.html'},
-    {name:'Memory Match', desc:'Lật thẻ tìm cặp từ và hình ảnh', icon:'🃏', bg:'#E8F8FF', xp:'+25 XP', mins:'8 phút', link:'kidsenglish-games.html'},
-    {name:'Balloon Pop', desc:'Bắn bóng có từ tiếng Anh đúng', icon:'🎈', bg:'#F0E8FF', xp:'+20 XP', mins:'5 phút', link:'kidsenglish-games.html'},
-    {name:'Word Scramble', desc:'Xếp lại chữ cái thành từ đúng', icon:'🔤', bg:'#FFF3CC', xp:'+20 XP', mins:'6 phút', link:'kidsenglish-games.html'},
+    {name:'Word Hunt', desc:'Tìm 5 từ ẩn trong lưới chữ 8×8', icon:'🔍', bg:'#FFE8E8', xp:'+30 XP', mins:'7 phút', link:'games.html'},
+    {name:'Memory Match', desc:'Lật thẻ tìm cặp từ và hình ảnh', icon:'🃏', bg:'#E8F8FF', xp:'+25 XP', mins:'8 phút', link:'games.html'},
+    {name:'Balloon Pop', desc:'Bắn bóng có từ tiếng Anh đúng', icon:'🎈', bg:'#F0E8FF', xp:'+20 XP', mins:'5 phút', link:'games.html'},
+    {name:'Word Scramble', desc:'Xếp lại chữ cái thành từ đúng', icon:'🔤', bg:'#FFF3CC', xp:'+20 XP', mins:'6 phút', link:'games.html'},
   ],
   chat:[
-    {name:'Chat với Sunny', desc:'Trò chuyện tiếng Anh với AI — tự nhiên và vui!', icon:'🤖', bg:'#F0F4FF', xp:'+15 XP', mins:'8 phút', link:'kidsenglish-chat.html'},
-    {name:'Kể chuyện cùng AI', desc:'Cùng Sunny tạo ra một câu chuyện ngắn', icon:'📖', bg:'#FFF0F8', xp:'+20 XP', mins:'7 phút', link:'kidsenglish-chat.html'},
+    {name:'Chat với Sunny', desc:'Trò chuyện tiếng Anh với AI — tự nhiên và vui!', icon:'🤖', bg:'#F0F4FF', xp:'+15 XP', mins:'8 phút', link:'chat.html'},
+    {name:'Kể chuyện cùng AI', desc:'Cùng Sunny tạo ra một câu chuyện ngắn', icon:'📖', bg:'#FFF0F8', xp:'+20 XP', mins:'7 phút', link:'chat.html'},
   ],
   review:[
-    {name:'Ôn tập từ vựng', desc:'Flashcard nhanh tất cả từ trong tuần', icon:'📚', bg:'#F0FFE8', xp:'+20 XP', mins:'8 phút', link:'kidsenglish-vocab.html'},
-    {name:'Quiz tổng hợp', desc:'10 câu hỏi về tuần vừa học', icon:'🎯', bg:'#E8F8FF', xp:'+25 XP', mins:'7 phút', link:'kidsenglish-listening.html'},
-    {name:'Phát âm ôn tập', desc:'Nói lại tất cả từ — đạt điểm cao nhất', icon:'🎤', bg:'#FFE8F5', xp:'+20 XP', mins:'5 phút', link:'kidsenglish-speaking.html'},
+    {name:'Ôn tập từ vựng', desc:'Flashcard nhanh tất cả từ trong tuần', icon:'📚', bg:'#F0FFE8', xp:'+20 XP', mins:'8 phút', link:'vocab.html'},
+    {name:'Quiz tổng hợp', desc:'10 câu hỏi về tuần vừa học', icon:'🎯', bg:'#E8F8FF', xp:'+25 XP', mins:'7 phút', link:'listening.html'},
+    {name:'Phát âm ôn tập', desc:'Nói lại tất cả từ — đạt điểm cao nhất', icon:'🎤', bg:'#FFE8F5', xp:'+20 XP', mins:'5 phút', link:'speaking.html'},
   ],
   test:[
-    {name:'Kiểm tra từ vựng', desc:'20 câu hỏi từ vựng toàn tuần', icon:'📝', bg:'#FFF3CC', xp:'+40 XP', mins:'10 phút', link:'kidsenglish-vocab.html'},
-    {name:'Kiểm tra nghe', desc:'10 câu nghe hiểu từ chủ đề đã học', icon:'👂', bg:'#E8F4FF', xp:'+30 XP', mins:'8 phút', link:'kidsenglish-listening.html'},
-    {name:'Kiểm tra phát âm', desc:'Phát âm 10 từ & 3 câu — AI chấm điểm', icon:'🎤', bg:'#FFE8F5', xp:'+30 XP', mins:'7 phút', link:'kidsenglish-speaking.html'},
+    {name:'Kiểm tra từ vựng', desc:'20 câu hỏi từ vựng toàn tuần', icon:'📝', bg:'#FFF3CC', xp:'+40 XP', mins:'10 phút', link:'vocab.html'},
+    {name:'Kiểm tra nghe', desc:'10 câu nghe hiểu từ chủ đề đã học', icon:'👂', bg:'#E8F4FF', xp:'+30 XP', mins:'8 phút', link:'listening.html'},
+    {name:'Kiểm tra phát âm', desc:'Phát âm 10 từ & 3 câu — AI chấm điểm', icon:'🎤', bg:'#FFE8F5', xp:'+30 XP', mins:'7 phút', link:'speaking.html'},
   ],
   intro:[
-    {name:'Xem giới thiệu', desc:'Sunny chào đón và giải thích chương trình hè', icon:'🦉', bg:'#FFF8E8', xp:'+10 XP', mins:'3 phút', link:'kidsenglish-landing.html'},
-    {name:'Học từ vựng đầu tiên', desc:'5 từ đơn giản để bắt đầu hành trình!', icon:'📖', bg:'#E8F4FF', xp:'+15 XP', mins:'8 phút', link:'kidsenglish-vocab.html'},
-    {name:'Chơi game đầu tiên', desc:'Thử Mini-game đơn giản nhất', icon:'🎮', bg:'#F0FFE8', xp:'+10 XP', mins:'5 phút', link:'kidsenglish-games.html'},
-    {name:'Chat với Sunny', desc:'Nói chuyện lần đầu với trợ lý AI!', icon:'🤖', bg:'#F0E8FF', xp:'+10 XP', mins:'4 phút', link:'kidsenglish-chat.html'},
+    {name:'Xem giới thiệu', desc:'Sunny chào đón và giải thích chương trình hè', icon:'🦉', bg:'#FFF8E8', xp:'+10 XP', mins:'3 phút', link:'landing.html'},
+    {name:'Học từ vựng đầu tiên', desc:'5 từ đơn giản để bắt đầu hành trình!', icon:'📖', bg:'#E8F4FF', xp:'+15 XP', mins:'8 phút', link:'vocab.html'},
+    {name:'Chơi game đầu tiên', desc:'Thử Mini-game đơn giản nhất', icon:'🎮', bg:'#F0FFE8', xp:'+10 XP', mins:'5 phút', link:'games.html'},
+    {name:'Chat với Sunny', desc:'Nói chuyện lần đầu với trợ lý AI!', icon:'🤖', bg:'#F0E8FF', xp:'+10 XP', mins:'4 phút', link:'chat.html'},
   ],
   finish:[
-    {name:'Bài phát biểu tốt nghiệp', desc:'Đọc bài phát biểu tốt nghiệp tiếng Anh với AI!', icon:'🎓', bg:'#FFF8E8', xp:'+100 XP', mins:'10 phút', link:'kidsenglish-speaking.html'},
+    {name:'Bài phát biểu tốt nghiệp', desc:'Đọc bài phát biểu tốt nghiệp tiếng Anh với AI!', icon:'🎓', bg:'#FFF8E8', xp:'+100 XP', mins:'10 phút', link:'speaking.html'},
     {name:'Nhận chứng chỉ', desc:'Tải và in chứng nhận hoàn thành mùa hè!', icon:'🏆', bg:'#FFF3CC', xp:'+50 XP', mins:'2 phút', link:'#parent'},
     {name:'Photo với Sunny', desc:'Chụp ảnh kỷ niệm cùng Sunny!', icon:'📸', bg:'#F0E8FF', xp:'+20 XP', mins:'2 phút', link:'#'},
   ],
@@ -940,7 +940,7 @@ function openDayModal(day, week, isDone, isToday){
     btn.textContent='▶ Vào bài học';
     btn.className='dm-start-btn';
   }
-  btn.dataset.link=acts[0]?.link||'kidsenglish-vocab.html';
+  btn.dataset.link=acts[0]?.link||'vocab.html';
 }
 
 function closeModal(){
