@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SunnyWords — Hành Trình 60 Ngày Hè ☀️</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --coral:#FF6B6B;--sun:#FFD93D;--blue:#4ECDC4;--purple:#C77DFF;
+  --sky:#6BCB77;--orange:#FF9F43;--pink:#FF6EB4;--navy:#2D2D44;--navy2:#3d3d5c;
+  --bg:#E8F4FF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--navy);overflow-x:hidden;}
+
+/* ══ ANIMATED SKY BG ══ */
+.sky-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,#87CEEB 0%,#B8E4FF 40%,#D4F1C0 70%,#A8D8A8 100%);
+  overflow:hidden;
+}
+.cloud{position:absolute;border-radius:50px;background:rgba(255,255,255,.8);animation:drift linear infinite;}
+@keyframes drift{from{transform:translateX(-200px)}to{transform:translateX(110vw)}}
+.sun-deco{
+  position:absolute;top:20px;right:60px;width:80px;height:80px;
+  background:radial-gradient(circle,#FFD93D,#FF9F43);border-radius:50%;
+  box-shadow:0 0 40px rgba(255,217,61,.6);
+  animation:sun-pulse 4s ease-in-out infinite;
+}
+@keyframes sun-pulse{0%,100%{box-shadow:0 0 40px rgba(255,217,61,.6)}50%{box-shadow:0 0 80px rgba(255,217,61,.9)}}
+
+/* ══ TOPBAR ══ */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.85rem 1.8rem;
+  background:linear-gradient(135deg,rgba(45,45,68,.97),rgba(61,61,92,.97));
+  backdrop-filter:blur(12px);
+  border-bottom:3px solid var(--sun);
+  box-shadow:0 4px 24px rgba(45,45,68,.4);
+}
+.logo{font-family:'Fredoka One',cursive;font-size:1.5rem;color:var(--sun);display:flex;align-items:center;gap:.4rem;text-decoration:none;}
+.logo-sun{animation:spin 8s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.top-center{display:flex;align-items:center;gap:.6rem;}
+.module-chip{
+  font-family:'Fredoka One',cursive;font-size:1rem;padding:.4rem 1.1rem;border-radius:50px;
+  background:linear-gradient(135deg,var(--orange),var(--sun));color:var(--navy);
+  box-shadow:0 3px 10px rgba(255,217,61,.4);
+}
+.top-right{display:flex;align-items:center;gap:.7rem;}
+.progress-pill{
+  display:flex;align-items:center;gap:.5rem;
+  background:rgba(107,203,119,.2);border:2px solid rgba(107,203,119,.5);
+  color:var(--sky);padding:.35rem 1rem;border-radius:50px;
+  font-family:'Fredoka One',cursive;font-size:.9rem;
+}
+.view-btns{display:flex;gap:.3rem;background:rgba(255,255,255,.1);border-radius:50px;padding:.25rem;}
+.vb{
+  font-size:.8rem;font-weight:800;padding:.3rem .8rem;border-radius:50px;
+  border:none;cursor:pointer;transition:all .18s;color:rgba(255,255,255,.5);background:transparent;
+}
+.vb.active{background:white;color:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.15);}
+
+/* ══ PAGE TABS ══ */
+.page-tabs{
+  display:flex;background:white;border-bottom:3px solid #EEE;
+  position:sticky;top:64px;z-index:40;box-shadow:0 2px 10px rgba(0,0,0,.07);
+}
+.ptab{
+  flex:1;padding:.75rem .5rem;text-align:center;
+  font-family:'Fredoka One',cursive;font-size:.9rem;cursor:pointer;
+  color:#bbb;border-bottom:3px solid transparent;transition:all .2s;
+}
+.ptab:hover{color:var(--navy);background:#FAFAF8;}
+.ptab.active{color:var(--orange);border-bottom-color:var(--orange);}
+
+/* ══ MAIN CONTENT ══ */
+.content{position:relative;z-index:5;max-width:1100px;margin:0 auto;}
+
+/* ══════════════════════════════════════
+   VIEW: JOURNEY MAP
+══════════════════════════════════════ */
+#view-map{padding:1.5rem;}
+
+/* Overall progress hero */
+.journey-hero{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  border-radius:28px;padding:2rem;margin-bottom:2rem;
+  position:relative;overflow:hidden;
+}
+.jh-deco1{position:absolute;top:-30px;right:-30px;width:160px;height:160px;border-radius:50%;background:rgba(255,217,61,.08);}
+.jh-deco2{position:absolute;bottom:-20px;left:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,107,107,.07);}
+.jh-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
+.jh-title{font-family:'Fredoka One',cursive;font-size:1.8rem;color:white;}
+.jh-subtitle{font-size:.9rem;color:rgba(255,255,255,.6);font-weight:600;}
+.jh-day-badge{
+  background:linear-gradient(135deg,var(--coral),var(--orange));
+  border-radius:16px;padding:.8rem 1.5rem;text-align:center;
+}
+.jdb-num{font-family:'Fredoka One',cursive;font-size:2.2rem;color:white;line-height:1;}
+.jdb-label{font-size:.8rem;color:rgba(255,255,255,.8);font-weight:700;}
+
+.overall-bar{margin-bottom:1.2rem;}
+.ob-labels{display:flex;justify-content:space-between;margin-bottom:.5rem;}
+.ob-label{font-size:.82rem;color:rgba(255,255,255,.6);font-weight:700;}
+.ob-track{height:18px;background:rgba(255,255,255,.1);border-radius:50px;overflow:hidden;border:2px solid rgba(255,255,255,.08);}
+.ob-fill{
+  height:100%;border-radius:50px;
+  background:linear-gradient(90deg,var(--sky),var(--blue),var(--sun));
+  transition:width 1s cubic-bezier(.34,1.56,.64,1);position:relative;
+}
+.ob-fill::after{content:'';position:absolute;top:3px;left:8px;right:8px;height:5px;background:rgba(255,255,255,.4);border-radius:50px;}
+
+.jh-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:.8rem;}
+.jhs-item{background:rgba(255,255,255,.07);border-radius:14px;padding:.8rem .5rem;text-align:center;border:1px solid rgba(255,255,255,.06);}
+.jhs-n{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--sun);}
+.jhs-l{font-size:.7rem;color:rgba(255,255,255,.5);font-weight:700;}
+
+/* WEEK ISLANDS */
+.weeks-container{display:flex;flex-direction:column;gap:1.5rem;}
+
+.week-island{
+  border-radius:28px;overflow:hidden;
+  box-shadow:0 10px 35px rgba(0,0,0,.12);
+  transition:transform .2s;
+}
+.week-island:hover{transform:translateY(-3px);}
+
+.wi-header{
+  padding:1.1rem 1.5rem;display:flex;align-items:center;gap:1rem;
+  position:relative;overflow:hidden;
+}
+.wi-header::after{
+  content:'';position:absolute;top:-20px;right:-20px;
+  width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1);
+}
+.wi-week-num{
+  font-family:'Fredoka One',cursive;font-size:1rem;
+  background:rgba(255,255,255,.25);color:white;
+  padding:.3rem .9rem;border-radius:50px;white-space:nowrap;flex-shrink:0;
+}
+.wi-topic{font-family:'Fredoka One',cursive;font-size:1.3rem;color:white;flex:1;}
+.wi-emoji{font-size:2rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,.2));flex-shrink:0;}
+.wi-progress-mini{
+  display:flex;align-items:center;gap:.5rem;flex-shrink:0;
+}
+.wpm-bar{width:80px;height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;}
+.wpm-fill{height:100%;border-radius:4px;background:white;transition:width .6s ease;}
+.wpm-pct{font-family:'Fredoka One',cursive;font-size:.85rem;color:white;}
+
+/* DAYS ROW */
+.wi-body{
+  background:white;padding:1.2rem 1.5rem;
+}
+.days-scroll{display:flex;gap:.7rem;overflow-x:auto;padding-bottom:.5rem;}
+.days-scroll::-webkit-scrollbar{height:4px;}
+.days-scroll::-webkit-scrollbar-thumb{background:#DDD;border-radius:2px;}
+
+.day-node{
+  flex-shrink:0;width:88px;border-radius:18px;padding:.8rem .6rem;
+  text-align:center;cursor:pointer;transition:all .22s;
+  border:3px solid #EEE;position:relative;
+}
+.day-node:hover:not(.locked){transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,.12);}
+.day-node.completed{border-color:var(--sky);background:linear-gradient(135deg,#F0FFE8,#E8FFF0);}
+.day-node.today{border-color:var(--coral);background:linear-gradient(135deg,#FFF0E8,#FFE8E0);animation:today-glow 2s ease-in-out infinite;}
+@keyframes today-glow{0%,100%{box-shadow:0 0 0 3px rgba(255,107,107,.25)}50%{box-shadow:0 0 0 8px rgba(255,107,107,.35)}}
+.day-node.locked{background:#F8F8F8;opacity:.55;cursor:not-allowed;}
+.day-node.special{border-color:var(--purple);background:linear-gradient(135deg,#F8F0FF,#F0E8FF);}
+
+.dn-num{font-family:'Fredoka One',cursive;font-size:.8rem;color:#aaa;margin-bottom:.3rem;}
+.day-node.completed .dn-num,.day-node.today .dn-num{color:inherit;}
+.dn-icon{font-size:1.8rem;display:block;margin-bottom:.3rem;line-height:1;}
+.dn-label{font-size:.72rem;font-weight:700;color:#888;line-height:1.3;}
+.day-node.completed .dn-label{color:#2a7a33;}
+.day-node.today .dn-label{color:var(--coral);}
+.day-node.locked .dn-label{color:#ccc;}
+
+/* Status badges */
+.dn-status{
+  position:absolute;top:-.3rem;right:-.3rem;
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:.75rem;
+}
+.ds-done{background:var(--sky);color:white;}
+.ds-today{background:var(--coral);color:white;animation:pulse-dot 1.2s ease-in-out infinite;}
+@keyframes pulse-dot{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+.ds-special{background:var(--purple);color:white;}
+
+/* Stars earned */
+.dn-stars{font-size:.7rem;margin-top:.2rem;}
+
+/* ══════════════════════════════════════
+   VIEW: CALENDAR (streak calendar)
+══════════════════════════════════════ */
+#view-cal{padding:1.5rem;display:none;}
+.cal-grid-wrap{background:white;border-radius:24px;padding:1.5rem;box-shadow:0 8px 30px rgba(0,0,0,.08);margin-bottom:1.5rem;}
+.cal-month-title{font-family:'Fredoka One',cursive;font-size:1.3rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:.5rem;}
+.cal-day-hdr{text-align:center;font-size:.75rem;font-weight:800;color:#aaa;padding:.4rem 0;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-cell{
+  aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;font-size:.85rem;font-weight:700;
+  cursor:pointer;transition:all .18s;position:relative;
+}
+.cc-done{background:linear-gradient(135deg,var(--sky),var(--blue));color:white;box-shadow:0 3px 8px rgba(78,205,196,.3);}
+.cc-done:hover{transform:scale(1.1);}
+.cc-today{background:linear-gradient(135deg,var(--coral),var(--orange));color:white;box-shadow:0 3px 12px rgba(255,107,107,.4);animation:today-glow 2s ease-in-out infinite;}
+.cc-future{background:#F5F5F5;color:#ccc;}
+.cc-empty{background:transparent;}
+.cc-perfect{background:linear-gradient(135deg,var(--sun),var(--orange));color:var(--navy);}
+.cal-cell .star-mark{position:absolute;top:1px;right:2px;font-size:.55rem;}
+
+/* Streak display */
+.streak-hero{
+  background:linear-gradient(135deg,var(--coral),var(--orange));
+  border-radius:20px;padding:1.5rem;text-align:center;margin-bottom:1.5rem;
+}
+.sh-fire{font-size:3.5rem;animation:flame 1s ease-in-out infinite;display:block;}
+@keyframes flame{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.12) rotate(3deg)}}
+.sh-num{font-family:'Fredoka One',cursive;font-size:3rem;color:white;line-height:1;}
+.sh-label{font-size:1rem;color:rgba(255,255,255,.85);font-weight:700;}
+.sh-best{font-size:.85rem;color:rgba(255,255,255,.65);font-weight:600;margin-top:.3rem;}
+
+/* ══════════════════════════════════════
+   VIEW: PARENT DASHBOARD
+══════════════════════════════════════ */
+#view-parent{padding:1.5rem;display:none;}
+.parent-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.5rem;}
+.parent-card{background:white;border-radius:20px;padding:1.3rem;box-shadow:0 6px 24px rgba(0,0,0,.07);}
+.pc-title{font-family:'Fredoka One',cursive;font-size:1.1rem;margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem;}
+
+/* Weekly chart */
+.week-chart{display:flex;align-items:flex-end;gap:.4rem;height:100px;margin-top:.5rem;}
+.wc-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem;}
+.wc-bar{width:100%;border-radius:6px 6px 0 0;transition:height .6s ease;min-height:4px;}
+.wc-label{font-size:.7rem;font-weight:700;color:#aaa;}
+.wc-val{font-size:.7rem;font-weight:800;color:var(--coral);}
+
+/* Skills radar (simple bar version) */
+.skill-row{display:flex;align-items:center;gap:.7rem;margin-bottom:.6rem;}
+.skill-name{font-size:.82rem;font-weight:700;width:60px;flex-shrink:0;}
+.skill-track{flex:1;height:10px;background:#F0F0F0;border-radius:5px;overflow:hidden;}
+.skill-fill{height:100%;border-radius:5px;transition:width .8s ease;}
+.skill-pct{font-family:'Fredoka One',cursive;font-size:.8rem;width:32px;text-align:right;flex-shrink:0;}
+
+/* Report card */
+.report-row{display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid #F5F5F5;}
+.report-row:last-child{border-bottom:none;}
+.rr-label{font-size:.85rem;font-weight:700;color:#555;}
+.rr-val{font-family:'Fredoka One',cursive;font-size:1rem;}
+
+/* Certificate */
+.cert-card{
+  background:linear-gradient(135deg,#FFFBF0,#FFF5E8);
+  border:3px solid var(--sun);border-radius:24px;padding:2rem;text-align:center;
+  position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(255,217,61,.25);
+}
+.cert-card::before,.cert-card::after{
+  content:'';position:absolute;border-radius:50%;
+  background:rgba(255,217,61,.1);
+}
+.cert-card::before{width:200px;height:200px;top:-60px;right:-60px;}
+.cert-card::after{width:150px;height:150px;bottom:-40px;left:-40px;}
+.cert-seal{font-size:4rem;animation:bob 2s ease-in-out infinite;display:block;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.cert-title{font-family:'Fredoka One',cursive;font-size:1.5rem;color:var(--navy);margin:.5rem 0;}
+.cert-name{font-family:'Fredoka One',cursive;font-size:2rem;color:var(--coral);margin:.3rem 0;}
+.cert-desc{font-size:.9rem;color:#888;font-weight:600;line-height:1.6;}
+.cert-stars{font-size:2rem;margin:.8rem 0;}
+.cert-btn{
+  display:inline-block;margin-top:1rem;
+  font-family:'Fredoka One',cursive;font-size:1rem;
+  padding:.7rem 2rem;border-radius:50px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--coral),var(--orange));
+  color:white;box-shadow:0 4px 0 #cc4400;transition:all .2s;
+}
+.cert-btn:hover{transform:translateY(-2px);box-shadow:0 6px 0 #cc4400;}
+
+/* ══════════════════════════════════════
+   DAY DETAIL MODAL
+══════════════════════════════════════ */
+.day-modal{
+  position:fixed;inset:0;background:rgba(45,45,68,.88);z-index:200;
+  display:none;align-items:center;justify-content:center;
+  padding:1rem;
+}
+.day-modal.open{display:flex;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.dm-box{
+  background:white;border-radius:28px;width:min(560px,100%);max-height:90vh;
+  overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.35);
+  animation:slideUp .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes slideUp{from{transform:translateY(30px) scale(.95)}to{transform:translateY(0) scale(1)}}
+
+.dm-header{
+  padding:1.5rem;border-radius:28px 28px 0 0;
+  position:relative;overflow:hidden;
+}
+.dm-header::before{
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.15);
+}
+.dm-day-tag{font-family:'Fredoka One',cursive;font-size:.9rem;color:rgba(255,255,255,.8);margin-bottom:.4rem;}
+.dm-title{font-family:'Fredoka One',cursive;font-size:1.8rem;color:white;margin-bottom:.3rem;}
+.dm-sub{font-size:.9rem;color:rgba(255,255,255,.75);font-weight:600;}
+.dm-emoji{position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:4rem;filter:drop-shadow(0 4px 8px rgba(0,0,0,.2));}
+.dm-close{
+  position:absolute;top:1rem;right:1rem;
+  width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(255,255,255,.25);color:white;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:2;
+}
+.dm-close:hover{background:rgba(255,255,255,.4);}
+.dm-body{padding:1.5rem;}
+
+/* Activities list */
+.activities{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.5rem;}
+.activity-item{
+  display:flex;align-items:center;gap:.8rem;padding:1rem;
+  border-radius:16px;border:2px solid #EEE;transition:all .2s;cursor:pointer;
+}
+.activity-item:hover{transform:translateX(4px);border-color:var(--blue);}
+.activity-item.done{background:#F0FFE8;border-color:var(--sky);}
+.activity-item.active-act{background:#FFF0E8;border-color:var(--orange);border-width:2px;}
+.ai-icon{font-size:2rem;width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ai-info{flex:1;}
+.ai-name{font-weight:800;font-size:.95rem;}
+.ai-desc{font-size:.8rem;color:#888;font-weight:600;margin-top:.15rem;}
+.ai-meta{display:flex;align-items:center;gap:.4rem;margin-top:.3rem;}
+.ai-time{font-size:.75rem;font-weight:700;color:#aaa;}
+.ai-xp{font-size:.72rem;font-weight:800;background:var(--sun);color:var(--navy);padding:.1rem .4rem;border-radius:50px;}
+.ai-status{font-size:1.1rem;flex-shrink:0;}
+
+/* Vocabulary preview */
+.vocab-preview{
+  background:#F8F4FF;border-radius:16px;padding:1rem;margin-bottom:1.2rem;
+}
+.vp-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--purple);margin-bottom:.7rem;}
+.vp-words{display:flex;flex-wrap:wrap;gap:.5rem;}
+.vp-word{
+  display:flex;align-items:center;gap:.3rem;
+  background:white;border-radius:50px;padding:.35rem .8rem;
+  border:2px solid rgba(199,125,255,.3);font-size:.85rem;font-weight:700;
+}
+.vp-em{font-size:1.1rem;}
+
+/* Start button */
+.dm-start-btn{
+  width:100%;font-family:'Fredoka One',cursive;font-size:1.2rem;
+  padding:1rem;border-radius:16px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--coral),var(--orange));
+  color:white;box-shadow:0 5px 0 #cc4400;transition:all .2s;
+}
+.dm-start-btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 #cc4400;}
+.dm-start-btn:active{transform:translateY(2px);box-shadow:0 3px 0 #cc4400;}
+.dm-start-btn.done-btn{background:linear-gradient(135deg,var(--sky),var(--blue));box-shadow:0 5px 0 #2a7a55;}
+.dm-start-btn.done-btn:hover{box-shadow:0 7px 0 #2a7a55;}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;top:80px;right:1.2rem;z-index:9999;
+  padding:.8rem 1.5rem;border-radius:50px;
+  font-family:'Fredoka One',cursive;font-size:.92rem;
+  box-shadow:0 8px 28px rgba(0,0,0,.2);pointer-events:none;
+  animation:toastIn .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+.t-good{background:var(--sky);color:white;}
+.t-xp{background:var(--sun);color:var(--navy);}
+.t-badge{background:linear-gradient(135deg,var(--purple),var(--coral));color:white;}
+.t-info{background:var(--navy);color:white;}
+
+/* ── BURST ── */
+.burst-p{position:fixed;pointer-events:none;z-index:9999;transition:all .9s ease;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .jh-stats{grid-template-columns:repeat(3,1fr);}
+  .parent-grid{grid-template-columns:1fr;}
+  .wi-header{flex-wrap:wrap;}
+  .dm-emoji{display:none;}
+  .page-tabs{overflow-x:auto;}
+  .ptab{font-size:.8rem;white-space:nowrap;}
+}
+</style>
+</head>
+<body>
+
+<!-- SKY BACKGROUND -->
+<div class="sky-bg" id="skyBg">
+  <div class="sun-deco"></div>
+</div>
+
+<!-- ══ TOPBAR ══ -->
+<div class="topbar">
+  <a class="logo" href="kidsenglish-landing.html"><span class="logo-sun">☀️</span> SunnyWords</a>
+  <div class="top-center">
+    <div class="module-chip">🗓️ Hành Trình 60 Ngày</div>
+  </div>
+  <div class="top-right">
+    <div class="progress-pill">✅ <span id="doneCount">8</span>/60 ngày</div>
+    <div class="view-btns">
+      <button class="vb active" id="vbMap" onclick="switchView('map')">🗺️ Bản đồ</button>
+      <button class="vb" id="vbCal" onclick="switchView('cal')">📅 Lịch</button>
+      <button class="vb" id="vbParent" onclick="switchView('parent')">👨‍👩‍👧 Phụ huynh</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE TABS (week filter) ══ -->
+<div class="page-tabs" id="weekTabs"></div>
+
+<!-- ══ CONTENT ══ -->
+<div class="content">
+
+  <!-- MAP VIEW -->
+  <div id="view-map">
+
+    <div class="journey-hero">
+      <div class="jh-deco1"></div><div class="jh-deco2"></div>
+      <div class="jh-top">
+        <div>
+          <div class="jh-title">☀️ Hành Trình Mùa Hè</div>
+          <div class="jh-subtitle">Tiếng Anh vui nhộn — 60 ngày khám phá 8 chủ đề lớn!</div>
+        </div>
+        <div class="jh-day-badge">
+          <div class="jdb-num" id="todayDay">9</div>
+          <div class="jdb-label">Ngày hôm nay</div>
+        </div>
+      </div>
+      <div class="overall-bar">
+        <div class="ob-labels">
+          <span class="ob-label">Tiến độ tổng: <span id="overallPct">13</span>%</span>
+          <span class="ob-label"><span id="daysLeft">52</span> ngày còn lại</span>
+        </div>
+        <div class="ob-track"><div class="ob-fill" id="overallFill" style="width:13%"></div></div>
+      </div>
+      <div class="jh-stats">
+        <div class="jhs-item"><div class="jhs-n" id="st-done">8</div><div class="jhs-l">Ngày hoàn thành</div></div>
+        <div class="jhs-item"><div class="jhs-n">235</div><div class="jhs-l">XP tích lũy</div></div>
+        <div class="jhs-item"><div class="jhs-n">47</div><div class="jhs-l">Từ đã học</div></div>
+        <div class="jhs-item"><div class="jhs-n">🔥3</div><div class="jhs-l">Streak ngày</div></div>
+        <div class="jhs-item"><div class="jhs-n">5</div><div class="jhs-l">Huy hiệu</div></div>
+      </div>
+    </div>
+
+    <div class="weeks-container" id="weeksContainer"></div>
+
+  </div>
+
+  <!-- CALENDAR VIEW -->
+  <div id="view-cal">
+    <div class="streak-hero">
+      <span class="sh-fire">🔥</span>
+      <div class="sh-num">3</div>
+      <div class="sh-label">ngày học liên tiếp!</div>
+      <div class="sh-best">Kỷ lục: 7 ngày · Mục tiêu: 60 ngày 🏆</div>
+    </div>
+    <div class="cal-grid-wrap">
+      <div class="cal-month-title">☀️ Tháng 6 — 2025</div>
+      <div class="cal-days-header">
+        <div class="cal-day-hdr">CN</div><div class="cal-day-hdr">T2</div>
+        <div class="cal-day-hdr">T3</div><div class="cal-day-hdr">T4</div>
+        <div class="cal-day-hdr">T5</div><div class="cal-day-hdr">T6</div>
+        <div class="cal-day-hdr">T7</div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <div class="cal-grid-wrap">
+      <div class="cal-month-title">☀️ Tháng 7 — 2025</div>
+      <div class="cal-days-header">
+        <div class="cal-day-hdr">CN</div><div class="cal-day-hdr">T2</div>
+        <div class="cal-day-hdr">T3</div><div class="cal-day-hdr">T4</div>
+        <div class="cal-day-hdr">T5</div><div class="cal-day-hdr">T6</div>
+        <div class="cal-day-hdr">T7</div>
+      </div>
+      <div class="cal-grid" id="calGrid2"></div>
+    </div>
+  </div>
+
+  <!-- PARENT VIEW -->
+  <div id="view-parent">
+
+    <div style="margin-bottom:1.5rem;">
+      <div style="font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:.3rem;">👨‍👩‍👧 Dashboard Phụ Huynh</div>
+      <div style="color:#888;font-size:.95rem;font-weight:600;">Báo cáo tiến độ học tiếng Anh của bé — cập nhật hàng ngày</div>
+    </div>
+
+    <div class="parent-grid">
+      <!-- Weekly activity chart -->
+      <div class="parent-card">
+        <div class="pc-title">📊 Hoạt động 7 ngày qua</div>
+        <div class="week-chart" id="weekChart"></div>
+      </div>
+
+      <!-- Skills breakdown -->
+      <div class="parent-card">
+        <div class="pc-title">🎯 Kỹ năng</div>
+        <div id="skillBars"></div>
+      </div>
+
+      <!-- Report card -->
+      <div class="parent-card">
+        <div class="pc-title">📋 Báo cáo tuần này</div>
+        <div class="report-row"><span class="rr-label">⏱ Thời gian học TB</span><span class="rr-val" style="color:var(--blue)">22 phút/ngày</span></div>
+        <div class="report-row"><span class="rr-label">📚 Từ mới đã học</span><span class="rr-val" style="color:var(--purple)">47 từ</span></div>
+        <div class="report-row"><span class="rr-label">🎮 Games đã chơi</span><span class="rr-val" style="color:var(--orange)">12 lần</span></div>
+        <div class="report-row"><span class="rr-label">🎤 Lần luyện nói</span><span class="rr-val" style="color:var(--coral)">18 lần</span></div>
+        <div class="report-row"><span class="rr-label">⭐ Điểm phát âm TB</span><span class="rr-val" style="color:var(--sky)">76/100</span></div>
+        <div class="report-row"><span class="rr-label">🔥 Streak hiện tại</span><span class="rr-val" style="color:var(--orange)">3 ngày</span></div>
+      </div>
+
+      <!-- Topic progress -->
+      <div class="parent-card">
+        <div class="pc-title">🌈 Chủ đề đã học</div>
+        <div id="topicProgress"></div>
+      </div>
+    </div>
+
+    <!-- Certificate -->
+    <div class="cert-card" id="certCard">
+      <span class="cert-seal">🏅</span>
+      <div class="cert-title">Chứng Nhận Hoàn Thành</div>
+      <div class="cert-name" id="certName">Little Star ⭐</div>
+      <div class="cert-desc">Đã hoàn thành tuần đầu tiên của chương trình<br><strong>SunnyWords Summer English 2025</strong><br>và thể hiện tinh thần học hỏi xuất sắc!</div>
+      <div class="cert-stars">⭐⭐⭐</div>
+      <div style="font-size:.82rem;color:#aaa;font-weight:600;margin-bottom:.5rem;">Cấp ngày: 8/6/2025 · SunnyWords Academy</div>
+      <button class="cert-btn" onclick="printCert()">🖨️ In chứng nhận</button>
+    </div>
+
+  </div>
+
+</div><!-- /content -->
+
+<!-- ══ DAY DETAIL MODAL ══ -->
+<div class="day-modal" id="dayModal" onclick="handleModalClick(event)">
+  <div class="dm-box" id="dmBox">
+    <div class="dm-header" id="dmHeader">
+      <button class="dm-close" onclick="closeModal()">✕</button>
+      <div class="dm-day-tag" id="dmDayTag">Ngày 9 · Tuần 2</div>
+      <div class="dm-title" id="dmTitle">🍎 Animals — Ôn tập & Mini-test</div>
+      <div class="dm-sub" id="dmSub">Hôm nay: Ôn lại và kiểm tra nhỏ</div>
+      <div class="dm-emoji" id="dmEmoji">🐶</div>
+    </div>
+    <div class="dm-body">
+      <!-- Vocab preview -->
+      <div class="vocab-preview" id="dmVocab"></div>
+      <!-- Activities -->
+      <div style="font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:.7rem;color:#555;">📋 Hoạt động hôm nay (20 phút)</div>
+      <div class="activities" id="dmActivities"></div>
+      <!-- Start button -->
+      <button class="dm-start-btn" id="dmStartBtn" onclick="startLesson()">🚀 Bắt đầu học!</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   CURRICULUM DATA — 8 WEEKS × ~7-8 DAYS
+═══════════════════════════════════════════════════ */
+const WEEKS = [
+  {
+    num:1, topic:'Animals', emoji:'🐶', color:'linear-gradient(135deg,#FF6B6B,#FF9F43)',
+    shadow:'rgba(255,107,107,.4)',
+    words:[
+      {en:'dog',em:'🐶'},{en:'cat',em:'🐱'},{en:'fish',em:'🐟'},{en:'bird',em:'🐦'},
+      {en:'rabbit',em:'🐰'},{en:'elephant',em:'🐘'},{en:'tiger',em:'🐯'},{en:'monkey',em:'🐒'},
+    ],
+    days:[
+      {d:1,type:'intro',   label:'Chào hỏi',    icon:'👋', special:false},
+      {d:2,type:'vocab',   label:'Từ vựng',      icon:'📖', special:false},
+      {d:3,type:'listen',  label:'Luyện nghe',   icon:'👂', special:false},
+      {d:4,type:'speak',   label:'Luyện nói',    icon:'🎤', special:false},
+      {d:5,type:'game',    label:'Mini-game',    icon:'🎮', special:false},
+      {d:6,type:'chat',    label:'Chat AI',      icon:'🤖', special:false},
+      {d:7,type:'review',  label:'Ôn tập',       icon:'⭐', special:true},
+    ]
+  },
+  {
+    num:2, topic:'Colors & Shapes', emoji:'🌈', color:'linear-gradient(135deg,#4ECDC4,#6BCB77)',
+    shadow:'rgba(78,205,196,.4)',
+    words:[
+      {en:'red',em:'🔴'},{en:'blue',em:'🔵'},{en:'yellow',em:'🟡'},{en:'green',em:'🟢'},
+      {en:'pink',em:'🩷'},{en:'circle',em:'⭕'},{en:'square',em:'🟦'},{en:'star',em:'⭐'},
+    ],
+    days:[
+      {d:8, type:'vocab',  label:'Màu sắc',      icon:'🎨', special:false},
+      {d:9, type:'listen', label:'Luyện nghe',   icon:'👂', special:false},
+      {d:10,type:'speak',  label:'Luyện nói',    icon:'🎤', special:false},
+      {d:11,type:'game',   label:'Color Game',   icon:'🎮', special:false},
+      {d:12,type:'vocab',  label:'Hình dạng',    icon:'🔷', special:false},
+      {d:13,type:'chat',   label:'Chat AI',      icon:'🤖', special:false},
+      {d:14,type:'review', label:'Ôn tập',       icon:'⭐', special:true},
+    ]
+  },
+  {
+    num:3, topic:'Food & Drinks', emoji:'🍎', color:'linear-gradient(135deg,#FFD93D,#FF9F43)',
+    shadow:'rgba(255,217,61,.4)',
+    words:[
+      {en:'apple',em:'🍎'},{en:'banana',em:'🍌'},{en:'rice',em:'🍚'},{en:'milk',em:'🥛'},
+      {en:'bread',em:'🍞'},{en:'cake',em:'🎂'},{en:'water',em:'💧'},{en:'egg',em:'🥚'},
+    ],
+    days:[
+      {d:15,type:'vocab',  label:'Trái cây',     icon:'🍎', special:false},
+      {d:16,type:'listen', label:'Luyện nghe',   icon:'👂', special:false},
+      {d:17,type:'speak',  label:'Luyện nói',    icon:'🎤', special:false},
+      {d:18,type:'game',   label:'Food Hunt',    icon:'🎮', special:false},
+      {d:19,type:'vocab',  label:'Đồ uống',      icon:'🥛', special:false},
+      {d:20,type:'chat',   label:'Chat AI',      icon:'🤖', special:false},
+      {d:21,type:'review', label:'Ôn tập',       icon:'⭐', special:true},
+    ]
+  },
+  {
+    num:4, topic:'My Family', emoji:'👨‍👩‍👧', color:'linear-gradient(135deg,#C77DFF,#FF6EB4)',
+    shadow:'rgba(199,125,255,.4)',
+    words:[
+      {en:'mother',em:'👩'},{en:'father',em:'👨'},{en:'sister',em:'👧'},{en:'brother',em:'👦'},
+      {en:'grandma',em:'👵'},{en:'grandpa',em:'👴'},{en:'baby',em:'👶'},{en:'family',em:'👪'},
+    ],
+    days:[
+      {d:22,type:'vocab',  label:'Gia đình',     icon:'👪', special:false},
+      {d:23,type:'listen', label:'Luyện nghe',   icon:'👂', special:false},
+      {d:24,type:'speak',  label:'Luyện nói',    icon:'🎤', special:false},
+      {d:25,type:'game',   label:'Family Match', icon:'🎮', special:false},
+      {d:26,type:'vocab',  label:'Cảm xúc',      icon:'😊', special:false},
+      {d:27,type:'chat',   label:'Chat AI',      icon:'🤖', special:false},
+      {d:28,type:'test',   label:'KIỂM TRA',     icon:'📝', special:true},
+    ]
+  },
+  {
+    num:5, topic:'My Body', emoji:'💪', color:'linear-gradient(135deg,#FF6EB4,#FF6B6B)',
+    shadow:'rgba(255,110,180,.4)',
+    words:[
+      {en:'head',em:'🗣️'},{en:'eye',em:'👁️'},{en:'nose',em:'👃'},{en:'mouth',em:'👄'},
+      {en:'hand',em:'🤚'},{en:'leg',em:'🦵'},{en:'ear',em:'👂'},{en:'hair',em:'💇'},
+    ],
+    days:[
+      {d:29,type:'vocab',  label:'Cơ thể',       icon:'💪', special:false},
+      {d:30,type:'listen', label:'Luyện nghe',   icon:'👂', special:false},
+      {d:31,type:'speak',  label:'Luyện nói',    icon:'🎤', special:false},
+      {d:32,type:'game',   label:'Body Game',    icon:'🎮', special:false},
+      {d:33,type:'vocab',  label:'Hành động',    icon:'🏃', special:false},
+      {d:34,type:'chat',   label:'Chat AI',      icon:'🤖', special:false},
+      {d:35,type:'review', label:'Ôn tập',       icon:'⭐', special:true},
+    ]
+  },
+  {
+    num:6, topic:'School', emoji:'📚', color:'linear-gradient(135deg,#4ECDC4,#C77DFF)',
+    shadow:'rgba(78,205,196,.4)',
+    words:[
+      {en:'book',em:'📚'},{en:'pen',em:'🖊️'},{en:'pencil',em:'✏️'},{en:'bag',em:'🎒'},
+      {en:'ruler',em:'📏'},{en:'teacher',em:'👩‍🏫'},{en:'friend',em:'🤝'},{en:'class',em:'🏫'},
+    ],
+    days:[
+      {d:36,type:'vocab',  label:'Đồ dùng',      icon:'📚', special:false},
+      {d:37,type:'listen', label:'Luyện nghe',   icon:'👂', special:false},
+      {d:38,type:'speak',  label:'Luyện nói',    icon:'🎤', special:false},
+      {d:39,type:'game',   label:'School Quiz',  icon:'🎮', special:false},
+      {d:40,type:'vocab',  label:'Môn học',      icon:'🔢', special:false},
+      {d:41,type:'chat',   label:'Chat AI',      icon:'🤖', special:false},
+      {d:42,type:'test',   label:'KIỂM TRA',     icon:'📝', special:true},
+    ]
+  },
+  {
+    num:7, topic:'Numbers & Time', emoji:'🔢', color:'linear-gradient(135deg,#6BCB77,#4ECDC4)',
+    shadow:'rgba(107,203,119,.4)',
+    words:[
+      {en:'one',em:'1️⃣'},{en:'two',em:'2️⃣'},{en:'three',em:'3️⃣'},{en:'four',em:'4️⃣'},
+      {en:'morning',em:'🌅'},{en:'afternoon',em:'🌤️'},{en:'evening',em:'🌆'},{en:'night',em:'🌙'},
+    ],
+    days:[
+      {d:43,type:'vocab',  label:'Số đếm',       icon:'🔢', special:false},
+      {d:44,type:'listen', label:'Luyện nghe',   icon:'👂', special:false},
+      {d:45,type:'speak',  label:'Luyện nói',    icon:'🎤', special:false},
+      {d:46,type:'game',   label:'Number Game',  icon:'🎮', special:false},
+      {d:47,type:'vocab',  label:'Thời gian',    icon:'⏰', special:false},
+      {d:48,type:'chat',   label:'Chat AI',      icon:'🤖', special:false},
+      {d:49,type:'review', label:'Ôn tập',       icon:'⭐', special:true},
+    ]
+  },
+  {
+    num:8, topic:'Nature & World', emoji:'🌍', color:'linear-gradient(135deg,#FFD93D,#6BCB77)',
+    shadow:'rgba(107,203,119,.35)',
+    words:[
+      {en:'sun',em:'☀️'},{en:'rain',em:'🌧️'},{en:'tree',em:'🌳'},{en:'flower',em:'🌸'},
+      {en:'star',em:'⭐'},{en:'cloud',em:'☁️'},{en:'river',em:'🌊'},{en:'mountain',em:'⛰️'},
+    ],
+    days:[
+      {d:50,type:'vocab',  label:'Thiên nhiên',  icon:'🌿', special:false},
+      {d:51,type:'listen', label:'Luyện nghe',   icon:'👂', special:false},
+      {d:52,type:'speak',  label:'Luyện nói',    icon:'🎤', special:false},
+      {d:53,type:'game',   label:'Nature Hunt',  icon:'🎮', special:false},
+      {d:54,type:'vocab',  label:'Thời tiết',    icon:'🌤️', special:false},
+      {d:55,type:'chat',   label:'Chat AI',      icon:'🤖', special:false},
+      {d:56,type:'vocab',  label:'Thế giới',     icon:'🌍', special:false},
+      {d:57,type:'review', label:'Ôn tập lớn',   icon:'🌟', special:true},
+      {d:58,type:'test',   label:'KIỂM TRA',     icon:'📝', special:true},
+      {d:59,type:'game',   label:'Game tổng hợp',icon:'🏆', special:true},
+      {d:60,type:'finish', label:'TỐT NGHIỆP!',  icon:'🎓', special:true},
+    ]
+  },
+];
+
+const TODAY_DAY = 9; // Simulate: currently on day 9
+const COMPLETED_DAYS = [1,2,3,4,5,6,7,8]; // days already done
+
+/* Activity templates by type */
+const ACTIVITY_TEMPLATES = {
+  vocab:[
+    {name:'Học từ mới', desc:'Flashcard 8 từ vựng với hình ảnh & âm thanh', icon:'📖', bg:'#E8F4FF', xp:'+15 XP', mins:'7 phút', link:'kidsenglish-vocab.html'},
+    {name:'Luyện spelling', desc:'Ghép chữ cái tạo thành từ đúng', icon:'✏️', bg:'#F0E8FF', xp:'+10 XP', mins:'5 phút', link:'kidsenglish-vocab.html'},
+    {name:'Quiz từ vựng', desc:'Kiểm tra nhanh 8 từ đã học', icon:'🧠', bg:'#FFF0E8', xp:'+15 XP', mins:'5 phút', link:'kidsenglish-vocab.html'},
+    {name:'Chat với Sunny', desc:'Dùng từ mới trong hội thoại với AI', icon:'🤖', bg:'#F0FFE8', xp:'+10 XP', mins:'3 phút', link:'kidsenglish-chat.html'},
+  ],
+  listen:[
+    {name:'Nghe & Chọn hình', desc:'Nghe từ — chọn đúng 1 trong 4 hình', icon:'🖼️', bg:'#FFE8E8', xp:'+15 XP', mins:'6 phút', link:'kidsenglish-listening.html'},
+    {name:'Xếp câu theo thứ tự', desc:'Nghe câu — sắp xếp các từ đúng thứ tự', icon:'🔤', bg:'#E8F8FF', xp:'+15 XP', mins:'7 phút', link:'kidsenglish-listening.html'},
+    {name:'Điền chỗ trống', desc:'Nghe câu — điền từ còn thiếu', icon:'📝', bg:'#FFF3CC', xp:'+10 XP', mins:'5 phút', link:'kidsenglish-listening.html'},
+    {name:'Nối cặp âm thanh', desc:'Nối âm thanh với hình ảnh tương ứng', icon:'🔗', bg:'#F0E8FF', xp:'+10 XP', mins:'4 phút', link:'kidsenglish-listening.html'},
+  ],
+  speak:[
+    {name:'Phát âm từ đơn', desc:'Nói 8 từ, AI chấm điểm phát âm ngay', icon:'🎤', bg:'#FFE8F5', xp:'+20 XP', mins:'8 phút', link:'kidsenglish-speaking.html'},
+    {name:'Đọc câu hoàn chỉnh', desc:'Đọc câu tiếng Anh — nhận phản hồi tức thì', icon:'📢', bg:'#E8FFF0', xp:'+20 XP', mins:'7 phút', link:'kidsenglish-speaking.html'},
+    {name:'Thử thách tốc độ', desc:'Đọc 5 từ liên tiếp trong 5 giây', icon:'⚡', bg:'#FFF8E8', xp:'+15 XP', mins:'3 phút', link:'kidsenglish-speaking.html'},
+  ],
+  game:[
+    {name:'Word Hunt', desc:'Tìm 5 từ ẩn trong lưới chữ 8×8', icon:'🔍', bg:'#FFE8E8', xp:'+30 XP', mins:'7 phút', link:'kidsenglish-games.html'},
+    {name:'Memory Match', desc:'Lật thẻ tìm cặp từ và hình ảnh', icon:'🃏', bg:'#E8F8FF', xp:'+25 XP', mins:'8 phút', link:'kidsenglish-games.html'},
+    {name:'Balloon Pop', desc:'Bắn bóng có từ tiếng Anh đúng', icon:'🎈', bg:'#F0E8FF', xp:'+20 XP', mins:'5 phút', link:'kidsenglish-games.html'},
+    {name:'Word Scramble', desc:'Xếp lại chữ cái thành từ đúng', icon:'🔤', bg:'#FFF3CC', xp:'+20 XP', mins:'6 phút', link:'kidsenglish-games.html'},
+  ],
+  chat:[
+    {name:'Chat với Sunny', desc:'Trò chuyện tiếng Anh với AI — tự nhiên và vui!', icon:'🤖', bg:'#F0F4FF', xp:'+15 XP', mins:'8 phút', link:'kidsenglish-chat.html'},
+    {name:'Kể chuyện cùng AI', desc:'Cùng Sunny tạo ra một câu chuyện ngắn', icon:'📖', bg:'#FFF0F8', xp:'+20 XP', mins:'7 phút', link:'kidsenglish-chat.html'},
+  ],
+  review:[
+    {name:'Ôn tập từ vựng', desc:'Flashcard nhanh tất cả từ trong tuần', icon:'📚', bg:'#F0FFE8', xp:'+20 XP', mins:'8 phút', link:'kidsenglish-vocab.html'},
+    {name:'Quiz tổng hợp', desc:'10 câu hỏi về tuần vừa học', icon:'🎯', bg:'#E8F8FF', xp:'+25 XP', mins:'7 phút', link:'kidsenglish-listening.html'},
+    {name:'Phát âm ôn tập', desc:'Nói lại tất cả từ — đạt điểm cao nhất', icon:'🎤', bg:'#FFE8F5', xp:'+20 XP', mins:'5 phút', link:'kidsenglish-speaking.html'},
+  ],
+  test:[
+    {name:'Kiểm tra từ vựng', desc:'20 câu hỏi từ vựng toàn tuần', icon:'📝', bg:'#FFF3CC', xp:'+40 XP', mins:'10 phút', link:'kidsenglish-vocab.html'},
+    {name:'Kiểm tra nghe', desc:'10 câu nghe hiểu từ chủ đề đã học', icon:'👂', bg:'#E8F4FF', xp:'+30 XP', mins:'8 phút', link:'kidsenglish-listening.html'},
+    {name:'Kiểm tra phát âm', desc:'Phát âm 10 từ & 3 câu — AI chấm điểm', icon:'🎤', bg:'#FFE8F5', xp:'+30 XP', mins:'7 phút', link:'kidsenglish-speaking.html'},
+  ],
+  intro:[
+    {name:'Xem giới thiệu', desc:'Sunny chào đón và giải thích chương trình hè', icon:'🦉', bg:'#FFF8E8', xp:'+10 XP', mins:'3 phút', link:'kidsenglish-landing.html'},
+    {name:'Học từ vựng đầu tiên', desc:'5 từ đơn giản để bắt đầu hành trình!', icon:'📖', bg:'#E8F4FF', xp:'+15 XP', mins:'8 phút', link:'kidsenglish-vocab.html'},
+    {name:'Chơi game đầu tiên', desc:'Thử Mini-game đơn giản nhất', icon:'🎮', bg:'#F0FFE8', xp:'+10 XP', mins:'5 phút', link:'kidsenglish-games.html'},
+    {name:'Chat với Sunny', desc:'Nói chuyện lần đầu với trợ lý AI!', icon:'🤖', bg:'#F0E8FF', xp:'+10 XP', mins:'4 phút', link:'kidsenglish-chat.html'},
+  ],
+  finish:[
+    {name:'Bài phát biểu tốt nghiệp', desc:'Đọc bài phát biểu tốt nghiệp tiếng Anh với AI!', icon:'🎓', bg:'#FFF8E8', xp:'+100 XP', mins:'10 phút', link:'kidsenglish-speaking.html'},
+    {name:'Nhận chứng chỉ', desc:'Tải và in chứng nhận hoàn thành mùa hè!', icon:'🏆', bg:'#FFF3CC', xp:'+50 XP', mins:'2 phút', link:'#parent'},
+    {name:'Photo với Sunny', desc:'Chụp ảnh kỷ niệm cùng Sunny!', icon:'📸', bg:'#F0E8FF', xp:'+20 XP', mins:'2 phút', link:'#'},
+  ],
+};
+
+/* ═══════════════════════════════════════════════════
+   BUILD UI
+═══════════════════════════════════════════════════ */
+let currentWeekFilter = 0; // 0 = all
+
+function init(){
+  buildClouds();
+  buildWeekTabs();
+  buildWeeks();
+  buildCalendar();
+  buildParentCharts();
+}
+
+function buildClouds(){
+  const bg=document.getElementById('skyBg');
+  const sizes=[[120,50],[180,70],[140,55],[200,80],[100,40]];
+  sizes.forEach((s,i)=>{
+    const c=document.createElement('div');
+    c.className='cloud';
+    c.style.cssText=`width:${s[0]}px;height:${s[1]}px;top:${5+i*8}%;animation-duration:${25+i*8}s;animation-delay:${-i*5}s;opacity:${0.6+Math.random()*.3};`;
+    bg.appendChild(c);
+  });
+}
+
+function buildWeekTabs(){
+  const tabs=document.getElementById('weekTabs');
+  tabs.innerHTML='';
+  const all=document.createElement('div');
+  all.className='ptab active';
+  all.textContent='🗺️ Tất cả';
+  all.onclick=()=>filterWeek(0,all);
+  tabs.appendChild(all);
+  WEEKS.forEach((w,i)=>{
+    const t=document.createElement('div');
+    t.className='ptab';
+    t.textContent=`${w.emoji} T${w.num}`;
+    t.onclick=()=>filterWeek(w.num,t);
+    tabs.appendChild(t);
+  });
+}
+
+function filterWeek(num,tabEl){
+  currentWeekFilter=num;
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  tabEl.classList.add('active');
+  buildWeeks();
+  if(num>0){
+    const el=document.querySelector(`.week-island[data-week="${num}"]`);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+function buildWeeks(){
+  const container=document.getElementById('weeksContainer');
+  container.innerHTML='';
+  const toShow=currentWeekFilter===0?WEEKS:WEEKS.filter(w=>w.num===currentWeekFilter);
+  toShow.forEach(week=>{
+    const island=document.createElement('div');
+    island.className='week-island';
+    island.dataset.week=week.num;
+
+    // Calculate week progress
+    const doneInWeek=week.days.filter(d=>COMPLETED_DAYS.includes(d.d)).length;
+    const pct=Math.round(doneInWeek/week.days.length*100);
+
+    island.innerHTML=`
+      <div class="wi-header" style="background:${week.color};">
+        <div class="wi-week-num">Tuần ${week.num}</div>
+        <div class="wi-emoji">${week.emoji}</div>
+        <div class="wi-topic">${week.topic}</div>
+        <div class="wi-progress-mini">
+          <div class="wpm-bar"><div class="wpm-fill" style="width:${pct}%"></div></div>
+          <div class="wpm-pct">${pct}%</div>
+        </div>
+      </div>
+      <div class="wi-body">
+        <div class="days-scroll" id="week-days-${week.num}"></div>
+      </div>
+    `;
+    container.appendChild(island);
+    buildDays(week);
+  });
+}
+
+function buildDays(week){
+  const row=document.getElementById(`week-days-${week.num}`);
+  week.days.forEach(day=>{
+    const isDone=COMPLETED_DAYS.includes(day.d);
+    const isToday=day.d===TODAY_DAY;
+    const isFuture=day.d>TODAY_DAY;
+    const isSpecial=day.special;
+
+    const node=document.createElement('div');
+    node.className=`day-node ${isDone?'completed':isToday?'today':isFuture?'locked':''} ${isSpecial&&!isFuture?'special':''}`;
+
+    let statusBadge='';
+    if(isDone) statusBadge='<div class="dn-status ds-done">✓</div>';
+    else if(isToday) statusBadge='<div class="dn-status ds-today">•</div>';
+    else if(isSpecial&&!isFuture) statusBadge='<div class="dn-status ds-special">★</div>';
+
+    const stars=isDone?'⭐'.repeat(Math.floor(Math.random()*2)+2):'';
+
+    node.innerHTML=`
+      ${statusBadge}
+      <div class="dn-num">Ngày ${day.d}</div>
+      <div class="dn-icon">${day.icon}</div>
+      <div class="dn-label">${day.label}</div>
+      ${stars?`<div class="dn-stars">${stars}</div>`:''}
+    `;
+
+    if(!isFuture){
+      node.onclick=()=>openDayModal(day,week,isDone,isToday);
+    }
+    row.appendChild(node);
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   DAY MODAL
+═══════════════════════════════════════════════════ */
+function openDayModal(day, week, isDone, isToday){
+  const modal=document.getElementById('dayModal');
+  modal.classList.add('open');
+
+  // Header
+  const colors={1:'#FF6B6B',2:'#4ECDC4',3:'#FFD93D',4:'#C77DFF',5:'#FF6EB4',6:'#4ECDC4',7:'#6BCB77',8:'#FFD93D'};
+  const bgColor=colors[week.num]||'var(--coral)';
+  document.getElementById('dmHeader').style.background=`linear-gradient(135deg,${bgColor},${bgColor}cc)`;
+  document.getElementById('dmDayTag').textContent=`Ngày ${day.d} · Tuần ${week.num}`;
+  document.getElementById('dmTitle').textContent=`${week.emoji} ${week.topic} — ${day.label}`;
+  document.getElementById('dmSub').textContent=isToday?'📍 Hôm nay — Học ngay đi!':isDone?'✅ Đã hoàn thành!':'📖 Bài học này';
+  document.getElementById('dmEmoji').textContent=week.emoji;
+
+  // Vocab preview
+  const vocabEl=document.getElementById('dmVocab');
+  vocabEl.innerHTML=`<div class="vp-title">📖 Từ vựng chủ điểm (${week.topic})</div><div class="vp-words">${
+    week.words.slice(0,6).map(w=>`<div class="vp-word"><span class="vp-em">${w.em}</span>${w.en}</div>`).join('')
+  }</div>`;
+
+  // Activities
+  const acts=ACTIVITY_TEMPLATES[day.type]||ACTIVITY_TEMPLATES.vocab;
+  const actEl=document.getElementById('dmActivities');
+  actEl.innerHTML='';
+  acts.forEach((act,i)=>{
+    const item=document.createElement('div');
+    item.className=`activity-item${i===0?' active-act':''}${isDone?' done':''}`;
+    item.innerHTML=`
+      <div class="ai-icon" style="background:${act.bg};">${act.icon}</div>
+      <div class="ai-info">
+        <div class="ai-name">${act.name}</div>
+        <div class="ai-desc">${act.desc}</div>
+        <div class="ai-meta">
+          <span class="ai-time">⏱ ${act.mins}</span>
+          <span class="ai-xp">${act.xp}</span>
+        </div>
+      </div>
+      <div class="ai-status">${isDone?'✅':i===0?'▶':'○'}</div>
+    `;
+    item.onclick=()=>{
+      if(act.link&&act.link!=='#'){
+        if(act.link==='#parent') switchView('parent');
+        else window.location.href=act.link;
+      }
+    };
+    actEl.appendChild(item);
+  });
+
+  // Start button
+  const btn=document.getElementById('dmStartBtn');
+  if(isDone){
+    btn.textContent='🔄 Học lại';
+    btn.className='dm-start-btn done-btn';
+  } else if(isToday){
+    btn.textContent='🚀 Bắt đầu học hôm nay!';
+    btn.className='dm-start-btn';
+  } else {
+    btn.textContent='▶ Vào bài học';
+    btn.className='dm-start-btn';
+  }
+  btn.dataset.link=acts[0]?.link||'kidsenglish-vocab.html';
+}
+
+function closeModal(){
+  document.getElementById('dayModal').classList.remove('open');
+}
+function handleModalClick(e){
+  if(e.target===document.getElementById('dayModal')) closeModal();
+}
+function startLesson(){
+  const btn=document.getElementById('dmStartBtn');
+  const link=btn.dataset.link;
+  if(link&&link!=='#') window.location.href=link;
+  else closeModal();
+}
+
+/* ═══════════════════════════════════════════════════
+   CALENDAR BUILD
+═══════════════════════════════════════════════════ */
+function buildCalendar(){
+  buildMonth('calGrid', 6, 2025, 0);   // June: starts Saturday = offset 6
+  buildMonth('calGrid2',7, 2025, 1);   // July: starts Tuesday = offset 2
+}
+
+function buildMonth(gridId, month, year, startDay){
+  const grid=document.getElementById(gridId);
+  if(!grid) return;
+  grid.innerHTML='';
+  const daysInMonth=month===6?30:31;
+  const offsets={6:6,7:2};
+  const offset=offsets[month]||0;
+
+  // Empty cells
+  for(let i=0;i<offset;i++){
+    const c=document.createElement('div');
+    c.className='cal-cell cc-empty';
+    grid.appendChild(c);
+  }
+
+  // Day 1 of summer = June 2
+  const summerStart=2; // June 2
+
+  for(let d=1;d<=daysInMonth;d++){
+    const c=document.createElement('div');
+    let lessonDay=null;
+    if(month===6) lessonDay=d-summerStart+1;
+    else lessonDay=30-summerStart+1+d;
+
+    const isDone=COMPLETED_DAYS.includes(lessonDay);
+    const isToday=lessonDay===TODAY_DAY;
+    const inRange=lessonDay>=1&&lessonDay<=60;
+    const isPerfect=isDone&&Math.random()>.4;
+
+    c.className=`cal-cell ${isDone&&isPerfect?'cc-perfect':isDone?'cc-done':isToday?'cc-today':inRange&&lessonDay>TODAY_DAY?'cc-future':'cc-future'}`;
+    if(!inRange) c.className='cal-cell cc-future';
+
+    c.textContent=d;
+    if(isDone) c.innerHTML+=`<span class="star-mark">⭐</span>`;
+    if(isToday) c.innerHTML=`<strong>${d}</strong>`;
+
+    if(isDone||isToday){
+      c.title=`Ngày ${lessonDay} — ${isDone?'Hoàn thành ✅':isToday?'Hôm nay 📍':''}`;
+      c.style.cursor='pointer';
+    }
+    grid.appendChild(c);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   PARENT CHARTS
+═══════════════════════════════════════════════════ */
+function buildParentCharts(){
+  // Weekly activity bars
+  const days=['T2','T3','T4','T5','T6','T7','CN'];
+  const mins=[0,0,18,22,25,28,22,0]; // minutes studied
+  const maxM=Math.max(...mins);
+  const colors=['#FF6B6B','#FF9F43','#FFD93D','#6BCB77','#4ECDC4','#C77DFF','#FF6EB4'];
+  const chart=document.getElementById('weekChart');
+  if(chart){
+    chart.innerHTML='';
+    days.forEach((d,i)=>{
+      const wrap=document.createElement('div');
+      wrap.className='wc-bar-wrap';
+      const h=mins[i+1]?Math.round(mins[i+1]/maxM*90):4;
+      wrap.innerHTML=`
+        ${mins[i+1]?`<div class="wc-val">${mins[i+1]}'</div>`:'<div class="wc-val" style="opacity:0">0</div>'}
+        <div class="wc-bar" style="height:${h}px;background:${colors[i]};"></div>
+        <div class="wc-label">${d}</div>
+      `;
+      chart.appendChild(wrap);
+    });
+  }
+
+  // Skill bars
+  const skills=[
+    {name:'Từ vựng',pct:72,color:'var(--purple)'},
+    {name:'Nghe',   pct:65,color:'var(--blue)'},
+    {name:'Nói',    pct:58,color:'var(--coral)'},
+    {name:'Games',  pct:88,color:'var(--sky)'},
+    {name:'Chat AI',pct:70,color:'var(--orange)'},
+  ];
+  const skillEl=document.getElementById('skillBars');
+  if(skillEl){
+    skillEl.innerHTML='';
+    skills.forEach(s=>{
+      skillEl.innerHTML+=`
+        <div class="skill-row">
+          <div class="skill-name">${s.name}</div>
+          <div class="skill-track"><div class="skill-fill" style="width:${s.pct}%;background:${s.color};"></div></div>
+          <div class="skill-pct" style="color:${s.color};">${s.pct}%</div>
+        </div>
+      `;
+    });
+  }
+
+  // Topic progress
+  const topics=[
+    {name:'🐶 Animals',    pct:100,done:true},
+    {name:'🌈 Colors',     pct:14, done:false},
+    {name:'🍎 Food',       pct:0,  done:false},
+    {name:'👨‍👩‍👧 Family', pct:0,  done:false},
+    {name:'💪 Body',       pct:0,  done:false},
+    {name:'📚 School',     pct:0,  done:false},
+  ];
+  const topicEl=document.getElementById('topicProgress');
+  if(topicEl){
+    topicEl.innerHTML='';
+    topics.forEach(t=>{
+      topicEl.innerHTML+=`
+        <div class="skill-row">
+          <div class="skill-name" style="width:90px;">${t.name}</div>
+          <div class="skill-track"><div class="skill-fill" style="width:${t.pct}%;background:${t.done?'var(--sky)':'var(--purple)'};"></div></div>
+          <div class="skill-pct" style="color:${t.done?'var(--sky)':'var(--purple)'};">${t.pct}%</div>
+        </div>
+      `;
+    });
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   VIEW SWITCHING
+═══════════════════════════════════════════════════ */
+function switchView(view){
+  document.getElementById('view-map').style.display='none';
+  document.getElementById('view-cal').style.display='none';
+  document.getElementById('view-parent').style.display='none';
+  document.getElementById(`view-${view}`).style.display='block';
+  document.querySelectorAll('.vb').forEach(b=>b.classList.remove('active'));
+  const map={map:'vbMap',cal:'vbCal',parent:'vbParent'};
+  document.getElementById(map[view])?.classList.add('active');
+  // Hide week tabs for non-map views
+  document.getElementById('weekTabs').style.display=view==='map'?'flex':'none';
+}
+
+function printCert(){
+  showToast('🖨️ Chuẩn bị in chứng nhận...','t-badge');
+  setTimeout(()=>window.print(),500);
+}
+
+/* ═══════════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════════ */
+function showToast(msg,cls='t-info'){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=document.createElement('div');
+  t.className=`toast ${cls}`;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(()=>t.remove(),400); },2800);
+}
+
+function burst(emojiStr){
+  const emojis=emojiStr.split('');
+  for(let i=0;i<16;i++) setTimeout(()=>{
+    const p=document.createElement('div');
+    p.className='burst-p';
+    p.textContent=emojis[i%emojis.length];
+    p.style.cssText=`left:${Math.random()*window.innerWidth}px;top:${window.innerHeight+10}px;font-size:${1.5+Math.random()*1.5}rem;`;
+    document.body.appendChild(p);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      p.style.transform=`translateY(-${window.innerHeight+60}px) rotate(${Math.random()*720}deg)`;
+      p.style.opacity='0'; p.style.transition=`all ${1.8+Math.random()}s ease`;
+    }));
+    setTimeout(()=>p.remove(),2800);
+  },i*50);
+}
+
+/* ── KICK OFF ── */
+init();
+
+// Animate progress bars after a short delay
+setTimeout(()=>{
+  document.querySelectorAll('.ob-fill').forEach(el=>{
+    el.style.width=el.style.width; // trigger reflow
+  });
+},200);
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+# netlify.toml — Cấu hình deploy cho SunnyWords
+
+[build]
+  publish = "."        # Thư mục gốc chứa các file HTML
+  functions = "netlify/functions"   # Thư mục chứa serverless functions
+
+# Đảm bảo các route HTML hoạt động đúng
+[[redirects]]
+  from = "/app"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/roadmap"
+  to = "/roadmap.html"
+  status = 200
+
+[[redirects]]
+  from = "/vocab"
+  to = "/vocab.html"
+  status = 200
+
+[[redirects]]
+  from = "/listening"
+  to = "/listening.html"
+  status = 200
+
+[[redirects]]
+  from = "/speaking"
+  to = "/speaking.html"
+  status = 200
+
+[[redirects]]
+  from = "/games"
+  to = "/games.html"
+  status = 200
+
+[[redirects]]
+  from = "/chat"
+  to = "/chat.html"
+  status = 200
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

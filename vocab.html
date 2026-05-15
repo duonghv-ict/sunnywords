@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SunnyWords — Vocabulary 📚</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --sun:#FFD93D; --coral:#FF6B6B; --blue:#4ECDC4; --purple:#C77DFF;
+  --sky:#6BCB77; --orange:#FF9F43; --pink:#FF6EB4; --navy:#2D2D44;
+  --white:#FFFEF7; --card-r:28px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--white);color:var(--navy);overflow-x:hidden;min-height:100vh;}
+
+/* ── TOP NAV ── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 2rem;background:rgba(255,255,247,.95);
+  backdrop-filter:blur(8px);border-bottom:3px solid var(--sun);
+  position:sticky;top:0;z-index:50;box-shadow:0 4px 20px rgba(255,217,61,.25);
+}
+.logo{font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--coral);display:flex;align-items:center;gap:.4rem;text-decoration:none;}
+.logo-sun{animation:spin-slow 8s linear infinite;display:inline-block;}
+@keyframes spin-slow{to{transform:rotate(360deg)}}
+.back-btn{font-family:'Fredoka One',cursive;font-size:1rem;padding:.5rem 1.2rem;border-radius:50px;background:var(--navy);color:#fff;border:none;cursor:pointer;transition:transform .2s;}
+.back-btn:hover{transform:scale(1.05);}
+.xp-bar{display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:.9rem;}
+.xp-star{font-size:1.3rem;animation:bounce .8s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.xp-val{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--orange);}
+
+/* ── TOPIC SELECTOR ── */
+.topic-bar{
+  display:flex;gap:.75rem;padding:1.2rem 2rem;overflow-x:auto;
+  scrollbar-width:none;background:#FFF9F0;border-bottom:2px solid #FFE8CC;
+}
+.topic-bar::-webkit-scrollbar{display:none;}
+.topic-pill{
+  display:flex;align-items:center;gap:.4rem;
+  font-family:'Fredoka One',cursive;font-size:.95rem;
+  padding:.5rem 1.2rem;border-radius:50px;border:3px solid transparent;
+  cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;
+}
+.topic-pill.active{transform:scale(1.08);box-shadow:0 4px 12px rgba(0,0,0,.15);}
+.tp1{background:#FFE8E8;color:#cc3333;border-color:#FF6B6B;}
+.tp2{background:#E8F8FF;color:#2a8a85;border-color:#4ECDC4;}
+.tp3{background:#FFF3CC;color:#aa8800;border-color:#FFD93D;}
+.tp4{background:#F0FFE8;color:#2a7a33;border-color:#6BCB77;}
+.tp5{background:#F0E8FF;color:#7733cc;border-color:#C77DFF;}
+.tp6{background:#FFE8F5;color:#cc3380;border-color:#FF6EB4;}
+.tp7{background:#FFE8D0;color:#cc5500;border-color:#FF9F43;}
+.tp8{background:#E8F0FF;color:#2233aa;border-color:#667EEA;}
+
+/* ── MAIN LAYOUT ── */
+.main{display:grid;grid-template-columns:1fr 360px;gap:2rem;padding:2rem;max-width:1200px;margin:0 auto;}
+
+/* ── FLASHCARD AREA ── */
+.card-area{display:flex;flex-direction:column;align-items:center;gap:1.5rem;}
+
+.progress-row{width:100%;display:flex;align-items:center;gap:1rem;}
+.prog-label{font-weight:800;font-size:.9rem;color:#888;white-space:nowrap;}
+.prog-track{flex:1;height:14px;background:#EEE;border-radius:50px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--coral),var(--orange));transition:width .6s ease;position:relative;}
+.prog-fill::after{content:'';position:absolute;top:2px;left:4px;right:4px;height:4px;background:rgba(255,255,255,.4);border-radius:50px;}
+.prog-count{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--coral);white-space:nowrap;}
+
+/* CARD 3D FLIP */
+.card-scene{width:380px;height:280px;perspective:1200px;cursor:pointer;}
+.card-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1);}
+.card-3d.flipped{transform:rotateY(180deg);}
+.card-face{
+  position:absolute;inset:0;border-radius:var(--card-r);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  box-shadow:0 12px 40px rgba(0,0,0,.15),0 4px 0 rgba(0,0,0,.1);
+  border:4px solid rgba(255,255,255,.6);
+  padding:2rem;
+}
+.card-front{background:white;}
+.card-back{background:var(--navy);transform:rotateY(180deg);}
+
+.card-emoji{font-size:6rem;line-height:1;margin-bottom:.5rem;transition:transform .3s;}
+.card-scene:hover .card-emoji{transform:scale(1.1) rotate(-5deg);}
+.card-word{font-family:'Fredoka One',cursive;font-size:2.2rem;color:var(--navy);margin-bottom:.3rem;}
+.card-hint{font-size:.9rem;color:#aaa;font-weight:700;}
+.card-tag{
+  position:absolute;top:1rem;right:1rem;
+  font-size:.75rem;font-weight:800;padding:.3rem .7rem;
+  border-radius:50px;background:var(--sun);color:var(--navy);
+}
+.flip-icon{position:absolute;bottom:1rem;right:1rem;font-size:1.2rem;opacity:.4;}
+
+/* BACK face */
+.back-word{font-family:'Fredoka One',cursive;font-size:1.8rem;color:white;margin-bottom:.5rem;}
+.back-viet{font-size:2.2rem;font-weight:900;color:var(--sun);margin-bottom:.8rem;}
+.back-example{font-size:.95rem;color:rgba(255,255,255,.7);font-style:italic;text-align:center;line-height:1.6;max-width:280px;}
+.back-example span{color:var(--blue);font-style:normal;font-weight:800;}
+
+/* SOUND BTN */
+.sound-btn{
+  width:60px;height:60px;border-radius:50%;border:4px solid var(--blue);
+  background:var(--blue);color:white;font-size:1.5rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .15s,box-shadow .15s;
+  box-shadow:0 4px 0 #2a9a93;
+}
+.sound-btn:hover{transform:scale(1.1);}
+.sound-btn:active{transform:scale(.95) translateY(3px);box-shadow:0 1px 0 #2a9a93;}
+.sound-btn.playing{animation:ring .4s ease;}
+@keyframes ring{0%{transform:scale(1)}25%{transform:scale(1.2) rotate(-10deg)}75%{transform:scale(1.1) rotate(10deg)}100%{transform:scale(1)}}
+
+/* NAV BUTTONS */
+.card-nav{display:flex;gap:1rem;align-items:center;}
+.nav-btn-c{
+  width:52px;height:52px;border-radius:50%;border:3px solid;
+  font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;font-family:'Fredoka One',cursive;
+}
+.nav-prev{background:#fff;border-color:#ddd;color:#aaa;}
+.nav-prev:hover{border-color:var(--navy);color:var(--navy);transform:scale(1.1);}
+.nav-next{background:var(--coral);border-color:var(--coral);color:white;box-shadow:0 4px 0 #cc4444;width:64px;height:64px;font-size:1.8rem;}
+.nav-next:hover{transform:translateY(-3px);box-shadow:0 7px 0 #cc4444;}
+.nav-next:active{transform:translateY(2px);box-shadow:0 2px 0 #cc4444;}
+
+/* SWIPE HINT */
+.swipe-hint{font-size:.85rem;color:#bbb;font-weight:700;display:flex;align-items:center;gap:.4rem;}
+
+/* ── QUIZ MODE PANEL ── */
+.quiz-toggle{
+  display:flex;align-items:center;gap:.75rem;
+  background:#FFF0E8;border:3px solid var(--orange);border-radius:50px;
+  padding:.6rem 1.2rem;cursor:pointer;font-family:'Fredoka One',cursive;font-size:1rem;
+  color:var(--orange);transition:all .2s;width:100%;justify-content:center;
+}
+.quiz-toggle:hover{background:var(--orange);color:white;}
+.quiz-toggle.active{background:var(--orange);color:white;}
+
+/* QUIZ CARD */
+.quiz-card{
+  width:380px;background:white;border-radius:var(--card-r);padding:2rem;
+  box-shadow:0 12px 40px rgba(0,0,0,.12);border:3px solid var(--purple);
+  animation:slideUp .4s ease;display:none;
+}
+.quiz-card.visible{display:block;}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.quiz-q{font-family:'Fredoka One',cursive;font-size:1.2rem;color:#666;margin-bottom:1.2rem;text-align:center;}
+.quiz-img{font-size:5rem;text-align:center;margin-bottom:1rem;animation:pop .3s ease;}
+@keyframes pop{from{transform:scale(0.5)}to{transform:scale(1)}}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+.quiz-opt{
+  padding:.9rem .5rem;border-radius:16px;border:3px solid #eee;
+  font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;
+  text-align:center;transition:all .2s;background:#fafafa;color:var(--navy);
+}
+.quiz-opt:hover{border-color:var(--blue);background:#E8F8FF;transform:scale(1.03);}
+.quiz-opt.correct{border-color:var(--sky);background:#E8FFE8;color:#2a7a33;animation:correct-shake .3s ease;}
+.quiz-opt.wrong{border-color:var(--coral);background:#FFE8E8;color:#cc3333;animation:wrong-shake .3s ease;}
+@keyframes correct-shake{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes wrong-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* ── SIDEBAR ── */
+.sidebar{display:flex;flex-direction:column;gap:1.5rem;}
+
+/* WORD LIST */
+.word-list-box{
+  background:white;border-radius:20px;padding:1.5rem;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);border:2px solid #F0EEE8;
+}
+.box-title{font-family:'Fredoka One',cursive;font-size:1.2rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+.word-list{display:flex;flex-direction:column;gap:.5rem;max-height:320px;overflow-y:auto;padding-right:.3rem;}
+.word-list::-webkit-scrollbar{width:4px;}
+.word-list::-webkit-scrollbar-track{background:#f0f0f0;border-radius:2px;}
+.word-list::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px;}
+.word-item{
+  display:flex;align-items:center;gap:.75rem;padding:.6rem .8rem;
+  border-radius:12px;cursor:pointer;transition:all .2s;border:2px solid transparent;
+}
+.word-item:hover{background:#FFF9F0;border-color:var(--sun);}
+.word-item.current{background:#FFF0E8;border-color:var(--coral);}
+.word-item.learned{background:#F0FFE8;border-color:var(--sky);}
+.wi-emoji{font-size:1.4rem;width:32px;text-align:center;}
+.wi-text{flex:1;}
+.wi-en{font-weight:800;font-size:.95rem;}
+.wi-vn{font-size:.8rem;color:#888;font-weight:600;}
+.wi-status{font-size:1rem;}
+
+/* STATS BOX */
+.stats-box{
+  background:linear-gradient(135deg,var(--navy),#3d3d5c);
+  border-radius:20px;padding:1.5rem;color:white;
+}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;}
+.stat-item{background:rgba(255,255,255,.08);border-radius:14px;padding:1rem;text-align:center;border:1px solid rgba(255,255,255,.1);}
+.stat-n{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--sun);}
+.stat-l{font-size:.75rem;color:rgba(255,255,255,.6);font-weight:700;margin-top:.2rem;}
+
+/* STREAK BOX */
+.streak-box{
+  background:linear-gradient(135deg,#FF6B6B,#FF9F43);
+  border-radius:20px;padding:1.2rem 1.5rem;color:white;
+  display:flex;align-items:center;gap:1rem;
+}
+.streak-fire{font-size:2.5rem;animation:flame 1s ease-in-out infinite;}
+@keyframes flame{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.1) rotate(3deg)}}
+.streak-info{flex:1;}
+.streak-n{font-family:'Fredoka One',cursive;font-size:1.8rem;}
+.streak-l{font-size:.85rem;opacity:.85;font-weight:700;}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;top:5rem;right:1.5rem;z-index:999;
+  background:var(--navy);color:white;padding:1rem 1.5rem;
+  border-radius:16px;font-family:'Fredoka One',cursive;font-size:1.1rem;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  animation:toast-in .4s ease both;pointer-events:none;
+}
+@keyframes toast-in{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+
+/* ── CONFETTI BURST ── */
+.burst-particle{
+  position:fixed;pointer-events:none;z-index:9999;
+  font-size:1.5rem;transition:all .8s ease;
+}
+
+/* ── COMPLETION OVERLAY ── */
+.complete-overlay{
+  position:fixed;inset:0;background:rgba(45,45,68,.9);z-index:200;
+  display:none;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;
+}
+.complete-overlay.show{display:flex;animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.complete-box{
+  background:white;border-radius:32px;padding:3rem 2.5rem;max-width:420px;width:90%;
+  text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.3);
+  animation:zoomIn .5s ease;
+}
+@keyframes zoomIn{from{transform:scale(.7)}80%{transform:scale(1.03)}to{transform:scale(1)}}
+.complete-box h2{font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:.5rem;}
+.complete-trophy{font-size:5rem;animation:bob 2s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.stars-row{display:flex;justify-content:center;gap:.3rem;font-size:2.2rem;margin:1rem 0;}
+.complete-score{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--orange);}
+.cmp-btn{
+  font-family:'Fredoka One',cursive;font-size:1.1rem;padding:.9rem 2rem;
+  border-radius:50px;border:none;cursor:pointer;margin:.4rem;transition:all .2s;
+}
+.cmp-retry{background:var(--coral);color:white;box-shadow:0 4px 0 #cc4444;}
+.cmp-retry:hover{transform:translateY(-2px);box-shadow:0 6px 0 #cc4444;}
+.cmp-next{background:var(--sky);color:white;box-shadow:0 4px 0 #3a8a3a;}
+.cmp-next:hover{transform:translateY(-2px);box-shadow:0 6px 0 #3a8a3a;}
+
+/* ── MODE TABS ── */
+.mode-tabs{display:flex;gap:.5rem;background:#F5F3EE;padding:.4rem;border-radius:50px;margin-bottom:.5rem;}
+.mode-tab{
+  flex:1;text-align:center;padding:.5rem .8rem;border-radius:50px;
+  font-family:'Fredoka One',cursive;font-size:.9rem;cursor:pointer;
+  transition:all .2s;color:#aaa;border:none;background:none;
+}
+.mode-tab.active{background:white;color:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.1);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .main{grid-template-columns:1fr;padding:1rem;}
+  .sidebar{order:-1;}
+  .card-scene{width:320px;height:240px;}
+  .quiz-card{width:320px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="logo" href="kidsenglish-landing.html">
+    <span class="logo-sun">☀️</span> SunnyWords
+  </a>
+  <div class="xp-bar">
+    <span class="xp-star">⭐</span>
+    <span class="xp-val" id="xpDisplay">0 XP</span>
+  </div>
+  <button class="back-btn" onclick="history.back()">← Trang chủ</button>
+</div>
+
+<!-- TOPIC BAR -->
+<div class="topic-bar" id="topicBar"></div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT: CARD AREA -->
+  <div class="card-area">
+
+    <!-- Mode Tabs -->
+    <div class="mode-tabs" style="width:100%;max-width:380px;">
+      <button class="mode-tab active" id="tabFlash" onclick="setMode('flash')">🃏 Flashcard</button>
+      <button class="mode-tab" id="tabQuiz" onclick="setMode('quiz')">🧠 Quiz</button>
+      <button class="mode-tab" id="tabSpell" onclick="setMode('spell')">✏️ Spelling</button>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-row" style="max-width:380px;width:100%;">
+      <span class="prog-label">Tiến độ</span>
+      <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <span class="prog-count" id="progCount">0 / 0</span>
+    </div>
+
+    <!-- FLASHCARD -->
+    <div id="flashMode">
+      <div class="card-scene" id="cardScene" onclick="flipCard()">
+        <div class="card-3d" id="card3d">
+          <div class="card-face card-front" id="cardFront">
+            <div class="card-tag" id="cardTag">🐶 Animals</div>
+            <div class="card-emoji" id="cardEmoji">🐶</div>
+            <div class="card-word" id="cardWord">Dog</div>
+            <div class="card-hint" id="cardHint">Tap to see Vietnamese 👆</div>
+            <div class="flip-icon">🔄</div>
+          </div>
+          <div class="card-face card-back">
+            <div class="back-word" id="backWord">Dog</div>
+            <div class="back-viet" id="backViet">Con chó 🐶</div>
+            <div class="back-example" id="backExample">I have a <span>dog</span>. My dog is brown.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sound + Nav -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;">
+        <button class="sound-btn" id="soundBtn" onclick="speakWord()" title="Nghe phát âm">🔊</button>
+        <div class="swipe-hint">← Chưa biết &nbsp;|&nbsp; Đã biết →</div>
+        <div class="card-nav">
+          <button class="nav-btn-c nav-prev" onclick="prevCard()">‹</button>
+          <button class="nav-btn-c nav-btn-c nav-prev" onclick="markUnknown()" style="background:#FFE8E8;border-color:var(--coral);color:var(--coral);font-size:.9rem;width:52px;height:52px;font-family:'Fredoka One',cursive;">✗</button>
+          <button class="nav-btn-c nav-next" onclick="markKnown()">✓</button>
+          <button class="nav-btn-c nav-prev" onclick="nextCard()">›</button>
+        </div>
+        <div class="swipe-hint" style="font-size:.8rem;">✗ Chưa thuộc &nbsp;|&nbsp; ✓ Đã thuộc</div>
+      </div>
+    </div>
+
+    <!-- QUIZ MODE -->
+    <div class="quiz-card visible" id="quizMode" style="display:none;">
+      <div class="quiz-q" id="quizQ">What animal is this? 🤔</div>
+      <div class="quiz-img" id="quizImg">🐶</div>
+      <div class="quiz-opts" id="quizOpts"></div>
+    </div>
+
+    <!-- SPELLING MODE -->
+    <div id="spellMode" style="display:none;width:100%;max-width:380px;">
+      <div style="background:white;border-radius:var(--card-r);padding:2rem;box-shadow:0 12px 40px rgba(0,0,0,.12);border:3px solid var(--purple);text-align:center;">
+        <div style="font-size:4rem;margin-bottom:.5rem;" id="spellEmoji">🐶</div>
+        <div style="font-size:1rem;color:#888;font-weight:700;margin-bottom:1.2rem;">Type the English word:</div>
+        <div id="spellHint" style="font-size:.95rem;color:var(--blue);font-weight:700;margin-bottom:1rem;letter-spacing:3px;font-family:'Fredoka One',cursive;"></div>
+        <div id="letterBtns" style="display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-bottom:1.2rem;"></div>
+        <div id="spellAnswer" style="font-size:2rem;font-family:'Fredoka One',cursive;letter-spacing:8px;color:var(--navy);min-height:2.5rem;margin-bottom:1rem;"></div>
+        <div style="display:flex;gap:.7rem;justify-content:center;">
+          <button onclick="clearSpell()" style="font-family:'Fredoka One',cursive;padding:.6rem 1.2rem;border-radius:50px;border:2px solid #ddd;background:white;cursor:pointer;font-size:.9rem;">⌫ Clear</button>
+          <button onclick="checkSpell()" style="font-family:'Fredoka One',cursive;padding:.6rem 1.5rem;border-radius:50px;border:none;background:var(--sky);color:white;cursor:pointer;font-size:.9rem;">Check ✓</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /card-area -->
+
+  <!-- RIGHT: SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- Streak -->
+    <div class="streak-box">
+      <div class="streak-fire">🔥</div>
+      <div class="streak-info">
+        <div class="streak-n" id="streakNum">3 Days</div>
+        <div class="streak-l">Streak học liên tiếp — keep going!</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-box">
+      <div class="box-title" style="color:var(--sun);">📊 Hôm nay</div>
+      <div class="stats-grid">
+        <div class="stat-item"><div class="stat-n" id="sLearned">0</div><div class="stat-l">Đã học</div></div>
+        <div class="stat-item"><div class="stat-n" id="sKnown">0</div><div class="stat-l">Đã thuộc</div></div>
+        <div class="stat-item"><div class="stat-n" id="sQuiz">0</div><div class="stat-l">Quiz đúng</div></div>
+        <div class="stat-item"><div class="stat-n" id="sXP">0</div><div class="stat-l">XP kiếm được</div></div>
+      </div>
+    </div>
+
+    <!-- Word List -->
+    <div class="word-list-box">
+      <div class="box-title">📋 Danh sách từ <span style="font-size:.8rem;color:#aaa;font-weight:600;" id="listTopic"></span></div>
+      <div class="word-list" id="wordList"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- COMPLETION OVERLAY -->
+<div class="complete-overlay" id="completeOverlay">
+  <div class="complete-box">
+    <div class="complete-trophy">🏆</div>
+    <h2 id="cmpTitle">Amazing! 🎉</h2>
+    <div class="stars-row" id="cmpStars">⭐⭐⭐</div>
+    <div class="complete-score" id="cmpScore">You learned 10 words!</div>
+    <p style="color:#888;font-size:.95rem;margin:.5rem 0 1.5rem;font-weight:600;" id="cmpMsg">Keep it up — you're a superstar!</p>
+    <div>
+      <button class="cmp-btn cmp-retry" onclick="retrySet()">🔄 Ôn lại</button>
+      <button class="cmp-btn cmp-next" onclick="nextTopic()">▶ Chủ đề tiếp →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ───────────────────────────────────────────
+   DATA
+─────────────────────────────────────────── */
+const TOPICS = [
+  { id:'animals', label:'🐶 Animals', cls:'tp1', color:'#FF6B6B',
+    words:[
+      {en:'Dog',    vn:'Con chó',    emoji:'🐶', ex:'I have a <span>dog</span>. My dog is brown.'},
+      {en:'Cat',    vn:'Con mèo',    emoji:'🐱', ex:'The <span>cat</span> is sleeping on the sofa.'},
+      {en:'Fish',   vn:'Con cá',     emoji:'🐟', ex:'I see a <span>fish</span> in the water.'},
+      {en:'Bird',   vn:'Con chim',   emoji:'🐦', ex:'The <span>bird</span> can fly high in the sky.'},
+      {en:'Rabbit', vn:'Con thỏ',    emoji:'🐰', ex:'The <span>rabbit</span> has long ears.'},
+      {en:'Tiger',  vn:'Con hổ',     emoji:'🐯', ex:'A <span>tiger</span> is a big and strong animal.'},
+      {en:'Elephant',vn:'Con voi',   emoji:'🐘', ex:'The <span>elephant</span> has a long nose.'},
+      {en:'Monkey', vn:'Con khỉ',    emoji:'🐒', ex:'The <span>monkey</span> likes to eat bananas.'},
+      {en:'Frog',   vn:'Con ếch',    emoji:'🐸', ex:'The <span>frog</span> can jump very high.'},
+      {en:'Duck',   vn:'Con vịt',    emoji:'🦆', ex:'The <span>duck</span> swims in the pond.'},
+    ]
+  },
+  { id:'colors', label:'🌈 Colors', cls:'tp2', color:'#4ECDC4',
+    words:[
+      {en:'Red',    vn:'Màu đỏ',     emoji:'🔴', ex:'I have a <span>red</span> apple.'},
+      {en:'Blue',   vn:'Màu xanh dương', emoji:'🔵', ex:'The sky is <span>blue</span>.'},
+      {en:'Yellow', vn:'Màu vàng',   emoji:'🟡', ex:'The sun is <span>yellow</span>.'},
+      {en:'Green',  vn:'Màu xanh lá',emoji:'🟢', ex:'Grass is <span>green</span>.'},
+      {en:'Pink',   vn:'Màu hồng',   emoji:'🩷', ex:'She has a <span>pink</span> dress.'},
+      {en:'Orange', vn:'Màu cam',    emoji:'🟠', ex:'An orange is <span>orange</span>!'},
+      {en:'Purple', vn:'Màu tím',    emoji:'🟣', ex:'Grapes are <span>purple</span>.'},
+      {en:'White',  vn:'Màu trắng',  emoji:'⬜', ex:'Snow is <span>white</span> and cold.'},
+    ]
+  },
+  { id:'food', label:'🍎 Food', cls:'tp3', color:'#FFD93D',
+    words:[
+      {en:'Apple',  vn:'Quả táo',    emoji:'🍎', ex:'I eat an <span>apple</span> every day.'},
+      {en:'Banana', vn:'Quả chuối',  emoji:'🍌', ex:'Monkeys love <span>banana</span>s.'},
+      {en:'Rice',   vn:'Cơm / Gạo',  emoji:'🍚', ex:'I eat <span>rice</span> for lunch.'},
+      {en:'Milk',   vn:'Sữa',        emoji:'🥛', ex:'I drink <span>milk</span> every morning.'},
+      {en:'Bread',  vn:'Bánh mì',    emoji:'🍞', ex:'I have <span>bread</span> for breakfast.'},
+      {en:'Egg',    vn:'Quả trứng',  emoji:'🥚', ex:'I boil an <span>egg</span> for breakfast.'},
+      {en:'Cake',   vn:'Bánh kem',   emoji:'🎂', ex:'We eat <span>cake</span> on birthdays.'},
+      {en:'Water',  vn:'Nước',       emoji:'💧', ex:'Drink <span>water</span> every day.'},
+    ]
+  },
+  { id:'family', label:'👨‍👩‍👧 Family', cls:'tp4', color:'#6BCB77',
+    words:[
+      {en:'Mother', vn:'Mẹ',         emoji:'👩', ex:'My <span>mother</span> is very kind.'},
+      {en:'Father', vn:'Bố / Ba',    emoji:'👨', ex:'My <span>father</span> goes to work.'},
+      {en:'Sister', vn:'Chị / Em gái',emoji:'👧',ex:'My <span>sister</span> likes to read.'},
+      {en:'Brother',vn:'Anh / Em trai',emoji:'👦',ex:'My <span>brother</span> plays football.'},
+      {en:'Baby',   vn:'Em bé',      emoji:'👶', ex:'The <span>baby</span> is sleeping.'},
+      {en:'Grandma',vn:'Bà',         emoji:'👵', ex:'My <span>grandma</span> makes good food.'},
+      {en:'Grandpa',vn:'Ông',        emoji:'👴', ex:'My <span>grandpa</span> tells great stories.'},
+    ]
+  },
+  { id:'body', label:'💪 Body', cls:'tp5', color:'#C77DFF',
+    words:[
+      {en:'Head',   vn:'Đầu',        emoji:'🗣️', ex:'I nod my <span>head</span> to say yes.'},
+      {en:'Eye',    vn:'Mắt',        emoji:'👁️', ex:'I have two <span>eye</span>s.'},
+      {en:'Nose',   vn:'Mũi',        emoji:'👃', ex:'I smell with my <span>nose</span>.'},
+      {en:'Mouth',  vn:'Miệng',      emoji:'👄', ex:'I eat with my <span>mouth</span>.'},
+      {en:'Hand',   vn:'Tay',        emoji:'🤚', ex:'I wave my <span>hand</span> to say hello.'},
+      {en:'Leg',    vn:'Chân',       emoji:'🦵', ex:'I run with my <span>leg</span>s.'},
+      {en:'Ear',    vn:'Tai',        emoji:'👂', ex:'I listen with my <span>ear</span>s.'},
+    ]
+  },
+  { id:'school', label:'📚 School', cls:'tp6', color:'#FF6EB4',
+    words:[
+      {en:'Book',   vn:'Sách',       emoji:'📚', ex:'I read a <span>book</span> every night.'},
+      {en:'Pen',    vn:'Bút bi',     emoji:'🖊️', ex:'I write with a <span>pen</span>.'},
+      {en:'Pencil', vn:'Bút chì',    emoji:'✏️', ex:'I draw with a <span>pencil</span>.'},
+      {en:'Bag',    vn:'Cặp sách',   emoji:'🎒', ex:'My school <span>bag</span> is heavy.'},
+      {en:'Ruler',  vn:'Thước kẻ',  emoji:'📏', ex:'I use a <span>ruler</span> to draw lines.'},
+      {en:'Eraser', vn:'Cục tẩy',   emoji:'🧹', ex:'I use an <span>eraser</span> to fix mistakes.'},
+      {en:'Chair',  vn:'Ghế',        emoji:'🪑', ex:'I sit on a <span>chair</span> in class.'},
+      {en:'Teacher',vn:'Giáo viên', emoji:'👩‍🏫', ex:'My <span>teacher</span> is very nice.'},
+    ]
+  },
+  { id:'numbers', label:'🔢 Numbers', cls:'tp7', color:'#FF9F43',
+    words:[
+      {en:'One',    vn:'Một',        emoji:'1️⃣', ex:'I have <span>one</span> cat.'},
+      {en:'Two',    vn:'Hai',        emoji:'2️⃣', ex:'I have <span>two</span> hands.'},
+      {en:'Three',  vn:'Ba',         emoji:'3️⃣', ex:'There are <span>three</span> dogs.'},
+      {en:'Four',   vn:'Bốn',        emoji:'4️⃣', ex:'A dog has <span>four</span> legs.'},
+      {en:'Five',   vn:'Năm',        emoji:'5️⃣', ex:'I have <span>five</span> fingers.'},
+      {en:'Six',    vn:'Sáu',        emoji:'6️⃣', ex:'A bee has <span>six</span> legs.'},
+      {en:'Seven',  vn:'Bảy',        emoji:'7️⃣', ex:'There are <span>seven</span> days in a week.'},
+      {en:'Eight',  vn:'Tám',        emoji:'8️⃣', ex:'A spider has <span>eight</span> legs.'},
+      {en:'Nine',   vn:'Chín',       emoji:'9️⃣', ex:'I am <span>nine</span> years old.'},
+      {en:'Ten',    vn:'Mười',       emoji:'🔟', ex:'I have <span>ten</span> toes.'},
+    ]
+  },
+  { id:'nature', label:'🌍 Nature', cls:'tp8', color:'#667EEA',
+    words:[
+      {en:'Sun',    vn:'Mặt trời',   emoji:'☀️', ex:'The <span>sun</span> is bright today.'},
+      {en:'Moon',   vn:'Mặt trăng',  emoji:'🌙', ex:'The <span>moon</span> shines at night.'},
+      {en:'Rain',   vn:'Mưa',        emoji:'🌧️', ex:'I love to hear the <span>rain</span>.'},
+      {en:'Tree',   vn:'Cây cối',    emoji:'🌳', ex:'Birds live in the <span>tree</span>.'},
+      {en:'Flower', vn:'Hoa',        emoji:'🌸', ex:'The <span>flower</span> smells sweet.'},
+      {en:'Star',   vn:'Ngôi sao',   emoji:'⭐', ex:'I see a <span>star</span> in the sky.'},
+      {en:'Cloud',  vn:'Đám mây',    emoji:'☁️', ex:'The <span>cloud</span> looks like cotton.'},
+      {en:'River',  vn:'Con sông',   emoji:'🌊', ex:'Fish live in the <span>river</span>.'},
+    ]
+  },
+];
+
+/* ───────────────────────────────────────────
+   STATE
+─────────────────────────────────────────── */
+let currentTopic = 0;
+let currentIdx   = 0;
+let isFlipped    = false;
+let knownSet     = new Set();
+let unknownSet   = new Set();
+let xp           = 0;
+let quizCorrect  = 0;
+let mode         = 'flash'; // 'flash' | 'quiz' | 'spell'
+let spellAnswer  = '';
+let quizAnswered = false;
+
+/* ───────────────────────────────────────────
+   INIT
+─────────────────────────────────────────── */
+function init(){
+  buildTopicBar();
+  loadTopic(0);
+}
+
+function buildTopicBar(){
+  const bar = document.getElementById('topicBar');
+  TOPICS.forEach((t,i)=>{
+    const pill = document.createElement('div');
+    pill.className = `topic-pill ${t.cls}`;
+    pill.textContent = t.label;
+    if(i===0) pill.classList.add('active');
+    pill.onclick = ()=>{ loadTopic(i); };
+    bar.appendChild(pill);
+  });
+}
+
+function loadTopic(idx){
+  currentTopic = idx;
+  currentIdx = 0;
+  isFlipped = false;
+  knownSet.clear(); unknownSet.clear();
+  quizCorrect = 0;
+
+  // Highlight pill
+  document.querySelectorAll('.topic-pill').forEach((p,i)=>{
+    p.classList.toggle('active', i===idx);
+  });
+
+  document.getElementById('listTopic').textContent = TOPICS[idx].label;
+  renderWordList();
+  renderCard();
+  updateProgress();
+  updateStats();
+}
+
+/* ───────────────────────────────────────────
+   FLASHCARD
+─────────────────────────────────────────── */
+function renderCard(){
+  const words = TOPICS[currentTopic].words;
+  const w = words[currentIdx];
+  const t = TOPICS[currentTopic];
+
+  if(isFlipped){ flipCard(); }
+
+  document.getElementById('cardEmoji').textContent = w.emoji;
+  document.getElementById('cardWord').textContent  = w.en;
+  document.getElementById('cardTag').textContent   = t.label;
+  document.getElementById('backWord').textContent  = w.en;
+  document.getElementById('backViet').textContent  = w.vn + ' ' + w.emoji;
+  document.getElementById('backExample').innerHTML = w.ex;
+
+  // Spell mode
+  document.getElementById('spellEmoji').textContent = w.emoji;
+  buildSpellLetters(w.en);
+  spellAnswer = '';
+  document.getElementById('spellAnswer').textContent = '';
+  document.getElementById('spellHint').textContent = '_ '.repeat(w.en.length).trim();
+
+  // Quiz mode
+  if(mode === 'quiz') renderQuiz();
+
+  // Highlight current in list
+  document.querySelectorAll('.word-item').forEach((el,i)=>{
+    el.classList.toggle('current', i===currentIdx);
+  });
+
+  // Bounce emoji
+  const em = document.getElementById('cardEmoji');
+  em.style.animation='none';
+  requestAnimationFrame(()=>{ em.style.animation=''; });
+}
+
+function flipCard(){
+  isFlipped = !isFlipped;
+  document.getElementById('card3d').classList.toggle('flipped', isFlipped);
+}
+
+function nextCard(){
+  const words = TOPICS[currentTopic].words;
+  if(currentIdx < words.length-1){
+    currentIdx++;
+    isFlipped = false;
+    document.getElementById('card3d').classList.remove('flipped');
+    renderCard();
+    updateProgress();
+  } else {
+    showComplete();
+  }
+}
+
+function prevCard(){
+  if(currentIdx > 0){
+    currentIdx--;
+    isFlipped = false;
+    document.getElementById('card3d').classList.remove('flipped');
+    renderCard();
+    updateProgress();
+  }
+}
+
+function markKnown(){
+  knownSet.add(currentIdx);
+  unknownSet.delete(currentIdx);
+  addXP(10);
+  burst(document.getElementById('cardScene'), ['⭐','✨','🎉']);
+  showToast(`✅ "${TOPICS[currentTopic].words[currentIdx].en}" — Đã thuộc! +10 XP`);
+  updateStats();
+  renderWordList();
+  setTimeout(nextCard, 400);
+}
+
+function markUnknown(){
+  unknownSet.add(currentIdx);
+  knownSet.delete(currentIdx);
+  showToast(`💪 Luyện thêm nhé: "${TOPICS[currentTopic].words[currentIdx].en}"`);
+  renderWordList();
+  setTimeout(nextCard, 300);
+}
+
+/* ───────────────────────────────────────────
+   QUIZ
+─────────────────────────────────────────── */
+function renderQuiz(){
+  const words = TOPICS[currentTopic].words;
+  const correct = words[currentIdx];
+  quizAnswered = false;
+
+  // Pick question type
+  const types = ['image','translate'];
+  const qtype = types[Math.floor(Math.random()*types.length)];
+
+  let qText, opts;
+  if(qtype === 'image'){
+    document.getElementById('quizQ').textContent = 'What is this? 🤔';
+    document.getElementById('quizImg').textContent = correct.emoji;
+    // 4 options: 1 correct + 3 random
+    const pool = words.filter((_,i)=>i!==currentIdx);
+    const wrong = shuffle(pool).slice(0,3);
+    opts = shuffle([correct, ...wrong]);
+  } else {
+    document.getElementById('quizQ').textContent = `What is "${correct.en}" in Vietnamese? 🇻🇳`;
+    document.getElementById('quizImg').textContent = correct.emoji;
+    const pool = words.filter((_,i)=>i!==currentIdx);
+    const wrong = shuffle(pool).slice(0,3);
+    opts = shuffle([correct, ...wrong]);
+  }
+
+  const container = document.getElementById('quizOpts');
+  container.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = qtype==='image' ? opt.en : opt.vn;
+    btn.onclick = ()=> answerQuiz(btn, opt.en === correct.en);
+    container.appendChild(btn);
+  });
+}
+
+function answerQuiz(btn, isCorrect){
+  if(quizAnswered) return;
+  quizAnswered = true;
+  if(isCorrect){
+    btn.classList.add('correct');
+    quizCorrect++;
+    addXP(15);
+    burst(btn, ['⭐','🎉','✨']);
+    showToast('🎉 Correct! +15 XP');
+    document.getElementById('sQuiz').textContent = quizCorrect;
+    setTimeout(()=>{ nextCard(); quizAnswered=false; }, 1200);
+  } else {
+    btn.classList.add('wrong');
+    // Show correct
+    document.querySelectorAll('.quiz-opt').forEach(b=>{
+      const words = TOPICS[currentTopic].words;
+      const correct = words[currentIdx];
+      if(b.textContent === correct.en || b.textContent === correct.vn) b.classList.add('correct');
+    });
+    showToast('💪 Sai rồi — thử lại nhé!');
+    setTimeout(()=>{ nextCard(); quizAnswered=false; }, 1800);
+  }
+  updateStats();
+}
+
+/* ───────────────────────────────────────────
+   SPELLING
+─────────────────────────────────────────── */
+function buildSpellLetters(word){
+  const container = document.getElementById('letterBtns');
+  container.innerHTML = '';
+  const letters = shuffle(word.toUpperCase().split('').concat(
+    'AEIOURNTSLPBDMCFGHK'.split('').slice(0, Math.max(0, 8-word.length))
+  ));
+  letters.forEach(ch => {
+    const btn = document.createElement('button');
+    btn.textContent = ch;
+    btn.style.cssText=`font-family:'Fredoka One',cursive;width:44px;height:44px;border-radius:12px;border:3px solid #ddd;background:white;cursor:pointer;font-size:1.1rem;transition:all .15s;`;
+    btn.onmouseenter=()=>{btn.style.borderColor='var(--blue)';btn.style.transform='scale(1.1)';}
+    btn.onmouseleave=()=>{btn.style.borderColor='#ddd';btn.style.transform='';}
+    btn.onclick=()=>{ if(!btn.disabled){ spellAnswer+=ch; updateSpellDisplay(); btn.disabled=true; btn.style.opacity='.3'; }};
+    container.appendChild(btn);
+  });
+}
+
+function updateSpellDisplay(){
+  const word = TOPICS[currentTopic].words[currentIdx].en.toUpperCase();
+  const hint = spellAnswer.split('').join(' ') + (spellAnswer.length < word.length ? '  …' : '');
+  document.getElementById('spellAnswer').textContent = hint;
+}
+
+function clearSpell(){
+  spellAnswer = '';
+  document.getElementById('spellAnswer').textContent = '';
+  document.querySelectorAll('#letterBtns button').forEach(b=>{b.disabled=false;b.style.opacity='1';});
+}
+
+function checkSpell(){
+  const word = TOPICS[currentTopic].words[currentIdx].en.toUpperCase();
+  if(spellAnswer === word){
+    addXP(20);
+    burst(document.getElementById('spellMode'), ['⭐','🎊','🏆','✨']);
+    showToast(`🏆 Spelling Master! "${word}" — +20 XP`);
+    markKnown();
+  } else {
+    showToast(`💪 "${spellAnswer}" — thử lại! Gợi ý: ${word[0]}...`);
+    clearSpell();
+  }
+}
+
+/* ───────────────────────────────────────────
+   MODE SWITCH
+─────────────────────────────────────────── */
+function setMode(m){
+  mode = m;
+  document.getElementById('tabFlash').classList.toggle('active', m==='flash');
+  document.getElementById('tabQuiz').classList.toggle('active',  m==='quiz');
+  document.getElementById('tabSpell').classList.toggle('active', m==='spell');
+  document.getElementById('flashMode').style.display = m==='flash'?'flex':'none';
+  document.getElementById('flashMode').style.flexDirection='column';
+  document.getElementById('flashMode').style.alignItems='center';
+  document.getElementById('flashMode').style.gap='1rem';
+  document.getElementById('quizMode').style.display  = m==='quiz'?'block':'none';
+  document.getElementById('spellMode').style.display = m==='spell'?'block':'none';
+  if(m==='quiz') renderQuiz();
+  if(m==='spell'){ buildSpellLetters(TOPICS[currentTopic].words[currentIdx].en); spellAnswer=''; }
+}
+
+/* ───────────────────────────────────────────
+   SPEECH
+─────────────────────────────────────────── */
+function speakWord(){
+  const word = TOPICS[currentTopic].words[currentIdx].en;
+  if('speechSynthesis' in window){
+    window.speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(word);
+    utt.lang = 'en-US'; utt.rate = 0.85; utt.pitch = 1.1;
+    // Prefer female voice
+    const voices = window.speechSynthesis.getVoices();
+    const en = voices.find(v=>v.lang.startsWith('en')&&v.name.toLowerCase().includes('female'))
+            || voices.find(v=>v.lang.startsWith('en'));
+    if(en) utt.voice = en;
+    window.speechSynthesis.speak(utt);
+    const btn = document.getElementById('soundBtn');
+    btn.classList.add('playing');
+    utt.onend = ()=>btn.classList.remove('playing');
+  } else {
+    showToast('🔊 Trình duyệt chưa hỗ trợ — thử Chrome!');
+  }
+}
+window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined && (window.speechSynthesis.onvoiceschanged = ()=>{});
+
+/* ───────────────────────────────────────────
+   WORD LIST
+─────────────────────────────────────────── */
+function renderWordList(){
+  const words = TOPICS[currentTopic].words;
+  const list = document.getElementById('wordList');
+  list.innerHTML = '';
+  words.forEach((w,i)=>{
+    const item = document.createElement('div');
+    item.className = 'word-item' + (i===currentIdx?' current':'') + (knownSet.has(i)?' learned':'');
+    item.innerHTML = `
+      <div class="wi-emoji">${w.emoji}</div>
+      <div class="wi-text">
+        <div class="wi-en">${w.en}</div>
+        <div class="wi-vn">${w.vn}</div>
+      </div>
+      <div class="wi-status">${knownSet.has(i)?'✅':unknownSet.has(i)?'🔄':''}</div>
+    `;
+    item.onclick=()=>{ currentIdx=i; isFlipped=false; document.getElementById('card3d').classList.remove('flipped'); renderCard(); updateProgress(); };
+    list.appendChild(item);
+  });
+}
+
+/* ───────────────────────────────────────────
+   PROGRESS & STATS
+─────────────────────────────────────────── */
+function updateProgress(){
+  const total = TOPICS[currentTopic].words.length;
+  const pct = Math.round((currentIdx+1)/total*100);
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progCount').textContent = `${currentIdx+1} / ${total}`;
+  document.getElementById('sLearned').textContent = currentIdx+1;
+}
+
+function updateStats(){
+  document.getElementById('sKnown').textContent = knownSet.size;
+  document.getElementById('sXP').textContent    = xp;
+  document.getElementById('xpDisplay').textContent = xp+' XP';
+}
+
+function addXP(amount){
+  xp += amount;
+  updateStats();
+}
+
+/* ───────────────────────────────────────────
+   COMPLETE
+─────────────────────────────────────────── */
+function showComplete(){
+  const words = TOPICS[currentTopic].words;
+  const known = knownSet.size;
+  const pct   = Math.round(known/words.length*100);
+  const stars  = pct>=80?3:pct>=50?2:1;
+  document.getElementById('cmpTitle').textContent = pct>=80?'Amazing! 🎉':pct>=50?'Good job! 👍':'Keep trying! 💪';
+  document.getElementById('cmpStars').textContent = '⭐'.repeat(stars)+'🌑'.repeat(3-stars);
+  document.getElementById('cmpScore').textContent = `${known}/${words.length} từ đã thuộc!`;
+  document.getElementById('cmpMsg').textContent   = pct>=80?'You are a superstar learner!':'Practice makes perfect — try again!';
+  document.getElementById('completeOverlay').classList.add('show');
+  burst(document.body, ['🎉','⭐','🏆','✨','🌟','🎊']);
+}
+
+function retrySet(){
+  document.getElementById('completeOverlay').classList.remove('show');
+  loadTopic(currentTopic);
+}
+
+function nextTopic(){
+  document.getElementById('completeOverlay').classList.remove('show');
+  const next = (currentTopic+1) % TOPICS.length;
+  loadTopic(next);
+  // Scroll topic bar
+  document.querySelectorAll('.topic-pill')[next].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+
+/* ───────────────────────────────────────────
+   HELPERS
+─────────────────────────────────────────── */
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-.5); }
+
+function showToast(msg){
+  const old = document.querySelector('.toast');
+  if(old) old.remove();
+  const t = document.createElement('div');
+  t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(()=>t.remove(),400); }, 2500);
+}
+
+function burst(el, emojis){
+  const rect = (el.getBoundingClientRect ? el.getBoundingClientRect() : {left:window.innerWidth/2,top:window.innerHeight/2,width:0,height:0});
+  const cx = rect.left + rect.width/2;
+  const cy = rect.top  + rect.height/2;
+  for(let i=0;i<8;i++){
+    const p = document.createElement('div');
+    p.className='burst-particle';
+    p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.left = cx+'px'; p.style.top = cy+'px';
+    document.body.appendChild(p);
+    const angle = Math.random()*360;
+    const dist  = 70+Math.random()*80;
+    const dx = Math.cos(angle*Math.PI/180)*dist;
+    const dy = Math.sin(angle*Math.PI/180)*dist - 30;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      p.style.transform=`translate(${dx}px,${dy}px) rotate(${angle}deg) scale(0)`;
+      p.style.opacity='0';
+    }));
+    setTimeout(()=>p.remove(), 900);
+  }
+}
+
+/* Keyboard navigation */
+document.addEventListener('keydown', e=>{
+  if(mode!=='flash') return;
+  if(e.key==='ArrowRight') markKnown();
+  if(e.key==='ArrowLeft')  markUnknown();
+  if(e.key==='ArrowUp'||e.key===' ') { e.preventDefault(); flipCard(); }
+  if(e.key==='s'||e.key==='S') speakWord();
+});
+
+/* Touch swipe */
+let touchStartX=0;
+document.addEventListener('touchstart',e=>{ touchStartX=e.touches[0].clientX; });
+document.addEventListener('touchend',e=>{
+  if(mode!=='flash') return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(dx)>60){ dx>0 ? markKnown() : markUnknown(); }
+});
+
+/* ───────────────────────────────────────────
+   KICK OFF
+─────────────────────────────────────────── */
+init();
+// Auto-speak first word after voices load
+setTimeout(()=>speakWord(), 1200);
+</script>
+</body>
+</html>

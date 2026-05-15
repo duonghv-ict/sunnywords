@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SunnyWords — Speaking 🎤</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --coral:#FF6B6B; --sun:#FFD93D; --blue:#4ECDC4; --purple:#C77DFF;
+  --sky:#6BCB77;   --orange:#FF9F43; --pink:#FF6EB4; --navy:#2D2D44;
+  --bg:#F8F4FF;    --card:#FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--navy);min-height:100vh;overflow-x:hidden;}
+
+/* ══ ANIMATED GRADIENT BG ══ */
+.bg-aura{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 20%, rgba(199,125,255,.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 80%, rgba(78,205,196,.10) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(255,217,61,.08) 0%, transparent 70%);
+  animation:aura-shift 8s ease-in-out infinite alternate;
+}
+@keyframes aura-shift{
+  from{background-position:0% 0%,100% 100%,50% 50%;}
+  to{background-position:10% 10%,90% 90%,55% 45%;}
+}
+
+/* ══ TOPBAR ══ */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.85rem 2rem;
+  background:rgba(248,244,255,.95);backdrop-filter:blur(12px);
+  border-bottom:3px solid var(--purple);
+  box-shadow:0 4px 24px rgba(199,125,255,.2);
+}
+.logo{font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--coral);display:flex;align-items:center;gap:.4rem;text-decoration:none;}
+.logo-sun{animation:spin 8s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.module-badge{
+  font-family:'Fredoka One',cursive;font-size:1rem;padding:.4rem 1.2rem;border-radius:50px;
+  background:linear-gradient(135deg,var(--coral),var(--purple));color:white;
+  box-shadow:0 3px 12px rgba(199,125,255,.4);
+}
+.xp-pill{
+  display:flex;align-items:center;gap:.5rem;
+  background:var(--navy);color:white;padding:.4rem 1rem;border-radius:50px;
+  font-family:'Fredoka One',cursive;font-size:.95rem;
+}
+.xp-star{animation:pulse 1.2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
+
+/* ══ MODE TABS ══ */
+.mode-row{
+  display:flex;gap:1rem;padding:1.2rem 2rem;
+  justify-content:center;position:relative;z-index:5;
+  flex-wrap:wrap;
+}
+.mode-tab{
+  display:flex;align-items:center;gap:.5rem;
+  font-family:'Fredoka One',cursive;font-size:1rem;
+  padding:.65rem 1.4rem;border-radius:50px;border:3px solid transparent;
+  cursor:pointer;transition:all .22s;background:white;color:#aaa;
+  box-shadow:0 3px 10px rgba(0,0,0,.07);
+}
+.mode-tab:hover{transform:translateY(-3px);color:var(--navy);}
+.mode-tab.active{color:white;transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.18);}
+.mt0.active{background:linear-gradient(135deg,var(--coral),var(--orange));border-color:var(--coral);}
+.mt1.active{background:linear-gradient(135deg,var(--blue),var(--purple));border-color:var(--blue);}
+.mt2.active{background:linear-gradient(135deg,var(--sky),var(--blue));border-color:var(--sky);}
+
+/* ══ MAIN LAYOUT ══ */
+.main{max-width:920px;margin:0 auto;padding:1rem 1.5rem 4rem;position:relative;z-index:5;}
+
+/* ══ PROGRESS ROW ══ */
+.prog-row{display:flex;align-items:center;gap:.8rem;margin-bottom:1.5rem;}
+.prog-track{flex:1;height:14px;background:rgba(199,125,255,.15);border-radius:50px;overflow:hidden;border:2px solid rgba(199,125,255,.2);}
+.prog-fill{
+  height:100%;border-radius:50px;
+  background:linear-gradient(90deg,var(--coral),var(--purple),var(--blue));
+  transition:width .55s cubic-bezier(.34,1.56,.64,1);
+}
+.prog-label{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--purple);white-space:nowrap;}
+
+/* ══ CARD SHELL ══ */
+.card{
+  background:white;border-radius:28px;
+  box-shadow:0 12px 40px rgba(0,0,0,.09);
+  border:2px solid rgba(199,125,255,.15);
+  margin-bottom:1.5rem;overflow:hidden;
+  animation:cardIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes cardIn{from{opacity:0;transform:scale(.93) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+/* ══ TARGET WORD / SENTENCE ══ */
+.target-area{
+  padding:2rem 2rem 1.5rem;
+  background:linear-gradient(135deg,#FFF5FF,#F0F5FF);
+  border-bottom:2px dashed rgba(199,125,255,.2);
+  text-align:center;position:relative;
+}
+.target-topic{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.8rem;font-weight:800;padding:.3rem .9rem;border-radius:50px;
+  background:var(--purple);color:white;margin-bottom:.8rem;letter-spacing:.5px;
+}
+.target-emoji{font-size:5rem;display:block;margin-bottom:.6rem;line-height:1;filter:drop-shadow(0 6px 12px rgba(0,0,0,.15));animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.target-word{
+  font-family:'Fredoka One',cursive;font-size:2.8rem;color:var(--navy);
+  letter-spacing:.5px;margin-bottom:.3rem;
+}
+.target-word.sentence-mode{font-size:1.8rem;line-height:1.4;}
+.target-phonetic{font-size:1rem;color:var(--purple);font-weight:700;margin-bottom:.5rem;font-style:italic;}
+.target-viet{font-size:1rem;color:#888;font-weight:700;}
+/* Highlighted word-by-word for sentences */
+.target-word .w{display:inline;transition:color .2s,text-shadow .2s;}
+.target-word .w.lit{color:var(--coral);text-shadow:0 0 20px rgba(255,107,107,.4);}
+
+/* Native speaker button */
+.native-btn{
+  display:inline-flex;align-items:center;gap:.5rem;margin-top:.8rem;
+  font-family:'Fredoka One',cursive;font-size:.95rem;padding:.5rem 1.2rem;
+  border-radius:50px;border:2px solid var(--blue);color:var(--blue);
+  background:rgba(78,205,196,.08);cursor:pointer;transition:all .2s;
+}
+.native-btn:hover{background:var(--blue);color:white;transform:scale(1.05);}
+.native-btn.speaking{background:var(--blue);color:white;animation:btn-pulse 1s ease-in-out infinite;}
+@keyframes btn-pulse{0%,100%{box-shadow:0 0 0 0 rgba(78,205,196,.5)}50%{box-shadow:0 0 0 10px rgba(78,205,196,0)}}
+
+/* ══ MIC SECTION ══ */
+.mic-section{padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem;}
+
+/* BIG MIC BUTTON */
+.mic-outer{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  width:160px;height:160px;cursor:pointer;
+}
+.mic-ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:4px solid rgba(255,107,107,.25);
+  animation:ring-expand 2s ease-out infinite;
+}
+.mic-ring:nth-child(2){animation-delay:.5s;}
+.mic-ring:nth-child(3){animation-delay:1s;}
+@keyframes ring-expand{0%{transform:scale(.9);opacity:.8}100%{transform:scale(1.5);opacity:0}}
+.mic-btn{
+  position:relative;z-index:2;
+  width:130px;height:130px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:3.5rem;transition:transform .15s,box-shadow .15s;
+  background:linear-gradient(145deg,var(--coral),#ff4444);
+  box-shadow:0 8px 0 #cc2222, 0 14px 35px rgba(255,107,107,.5);
+}
+.mic-btn:hover{transform:translateY(-4px);box-shadow:0 12px 0 #cc2222,0 20px 45px rgba(255,107,107,.5);}
+.mic-btn:active{transform:translateY(4px);box-shadow:0 4px 0 #cc2222;}
+.mic-btn.recording{
+  background:linear-gradient(145deg,#ff2222,var(--coral));
+  animation:mic-rec 1.5s ease-in-out infinite;
+  box-shadow:0 8px 0 #990000,0 0 40px rgba(255,50,50,.7);
+}
+@keyframes mic-rec{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.mic-btn.recording .mic-ring{border-color:rgba(255,50,50,.5);}
+.mic-btn.success{background:linear-gradient(145deg,var(--sky),#3ab03a);box-shadow:0 8px 0 #2a7a2a,0 0 40px rgba(107,203,119,.6);}
+.mic-btn.fail{background:linear-gradient(145deg,#ffaa00,var(--orange));box-shadow:0 8px 0 #cc7700;}
+.mic-icon{font-size:3.5rem;pointer-events:none;}
+
+.mic-state-label{
+  font-family:'Fredoka One',cursive;font-size:1.1rem;color:#888;
+  transition:all .3s;
+}
+.mic-state-label.recording{color:var(--coral);animation:label-blink .8s ease-in-out infinite;}
+@keyframes label-blink{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ══ SOUND WAVE VISUALIZER ══ */
+.wave-wrap{width:100%;max-width:380px;height:60px;display:flex;align-items:center;justify-content:center;gap:3px;}
+.wave-bar{
+  width:6px;border-radius:3px;background:linear-gradient(to top,var(--coral),var(--purple));
+  transition:height .08s ease;min-height:4px;
+}
+
+/* ══ RESULT PANEL ══ */
+.result-panel{
+  padding:1.5rem 2rem;background:#FAFAFF;
+  border-top:2px dashed rgba(199,125,255,.2);
+  animation:slideUp .4s cubic-bezier(.34,1.56,.64,1);display:none;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.result-panel.show{display:block;}
+
+/* SCORE RING */
+.score-area{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;justify-content:center;}
+.score-ring-wrap{position:relative;width:110px;height:110px;flex-shrink:0;}
+.score-ring-svg{width:100%;height:100%;transform:rotate(-90deg);}
+.score-ring-track{fill:none;stroke:#EEE;stroke-width:10;}
+.score-ring-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.34,1.56,.64,1);}
+.score-ring-text{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;
+}
+.score-ring-num{font-size:1.9rem;line-height:1;}
+.score-ring-pct{font-size:.7rem;color:#999;font-weight:700;}
+
+/* HEARD TEXT */
+.heard-box{flex:1;min-width:200px;}
+.heard-label{font-size:.8rem;font-weight:800;color:#aaa;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;}
+.heard-text{
+  font-family:'Fredoka One',cursive;font-size:1.3rem;line-height:1.5;
+  padding:.7rem 1rem;border-radius:14px;border:2px solid #EEE;background:white;
+}
+.heard-text .match{color:var(--sky);}
+.heard-text .miss{color:var(--coral);text-decoration:underline wavy var(--coral);}
+.heard-text .extra{color:#aaa;font-size:1rem;}
+
+/* STARS ROW */
+.stars-display{display:flex;justify-content:center;gap:.3rem;font-size:2.2rem;margin:.8rem 0 .5rem;}
+.star-item{animation:star-pop .4s cubic-bezier(.34,1.56,.64,1) both;}
+.star-item:nth-child(1){animation-delay:.1s;}
+.star-item:nth-child(2){animation-delay:.25s;}
+.star-item:nth-child(3){animation-delay:.4s;}
+@keyframes star-pop{from{transform:scale(0) rotate(-20deg)}80%{transform:scale(1.2) rotate(5deg)}to{transform:scale(1) rotate(0)}}
+
+/* FEEDBACK TEXT */
+.feedback-msg{
+  text-align:center;font-family:'Fredoka One',cursive;font-size:1.1rem;
+  padding:.6rem 1rem;border-radius:12px;margin:.5rem 0;
+}
+.fb-perfect{background:#E8FFE8;color:#2a7a33;}
+.fb-good{background:#E8F8FF;color:#2a8a85;}
+.fb-ok{background:#FFF3CC;color:#aa8800;}
+.fb-try{background:#FFE8E8;color:#cc3333;}
+
+/* TIPS */
+.tips-row{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:.6rem;}
+.tip-chip{
+  font-size:.8rem;font-weight:700;padding:.3rem .8rem;border-radius:50px;
+  background:#F0F0FF;color:var(--purple);border:1px solid rgba(199,125,255,.3);
+}
+
+/* ACTION BTNS */
+.action-row{display:flex;gap:.8rem;justify-content:center;margin-top:1.2rem;flex-wrap:wrap;}
+.act-btn{
+  font-family:'Fredoka One',cursive;font-size:1rem;padding:.7rem 1.5rem;
+  border-radius:50px;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem;
+}
+.ab-retry{background:#FFE8E8;color:var(--coral);border:2px solid var(--coral);}
+.ab-retry:hover{background:var(--coral);color:white;transform:translateY(-2px);}
+.ab-next{background:var(--sky);color:white;box-shadow:0 4px 0 #3a8a3a;}
+.ab-next:hover{transform:translateY(-2px);box-shadow:0 6px 0 #3a8a3a;}
+.ab-next:active{transform:translateY(2px);box-shadow:0 2px 0 #3a8a3a;}
+.ab-listen{background:#E8F8FF;color:var(--blue);border:2px solid var(--blue);}
+.ab-listen:hover{background:var(--blue);color:white;transform:translateY(-2px);}
+
+/* ══ SIDEBAR — WORD LIST ══ */
+.layout{display:grid;grid-template-columns:1fr 300px;gap:1.5rem;max-width:1100px;margin:0 auto;padding:0 1.5rem 4rem;position:relative;z-index:5;}
+.sidebar{display:flex;flex-direction:column;gap:1rem;}
+.side-card{background:white;border-radius:20px;padding:1.2rem;box-shadow:0 6px 24px rgba(0,0,0,.07);border:2px solid rgba(199,125,255,.12);}
+.side-title{font-family:'Fredoka One',cursive;font-size:1.1rem;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem;}
+.word-row{
+  display:flex;align-items:center;gap:.7rem;padding:.55rem .7rem;
+  border-radius:12px;cursor:pointer;transition:all .18s;border:2px solid transparent;
+  margin-bottom:.3rem;
+}
+.word-row:hover{background:#F8F4FF;border-color:rgba(199,125,255,.3);}
+.word-row.active-word{background:#F0E8FF;border-color:var(--purple);}
+.word-row.mastered{background:#F0FFE8;border-color:var(--sky);}
+.word-row.attempted{background:#FFF8E8;border-color:rgba(255,217,61,.5);}
+.wr-em{font-size:1.5rem;width:30px;text-align:center;}
+.wr-info{flex:1;}
+.wr-en{font-weight:800;font-size:.9rem;}
+.wr-score{font-size:.75rem;color:#aaa;font-weight:700;}
+.wr-badge{font-size:.85rem;}
+
+/* Score bar mini */
+.mini-bar{height:4px;border-radius:2px;background:#EEE;margin-top:3px;overflow:hidden;}
+.mini-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--coral),var(--sky));transition:width .5s ease;}
+
+/* STREAK / STATS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;}
+.stat-box{background:#F8F4FF;border-radius:12px;padding:.7rem;text-align:center;}
+.stat-n{font-family:'Fredoka One',cursive;font-size:1.5rem;color:var(--coral);}
+.stat-l{font-size:.7rem;color:#999;font-weight:700;}
+
+/* ══ SENTENCE CHALLENGE OVERLAY ══ */
+.words-highlight{
+  font-family:'Fredoka One',cursive;font-size:1.6rem;line-height:2;
+  text-align:center;padding:1rem;
+}
+.wh-word{
+  display:inline-block;padding:.1rem .4rem;margin:.1rem;border-radius:8px;
+  transition:all .3s;cursor:default;
+}
+.wh-word.pending{background:#F0F0F0;color:#ccc;}
+.wh-word.current{background:rgba(255,107,107,.15);color:var(--coral);transform:scale(1.1);}
+.wh-word.done-ok{background:rgba(107,203,119,.2);color:#2a7a33;}
+.wh-word.done-miss{background:rgba(255,107,107,.15);color:var(--coral);text-decoration:underline wavy var(--coral);}
+
+/* ══ COMPLETION BANNER ══ */
+.complete-banner{
+  position:fixed;inset:0;background:rgba(45,45,68,.88);z-index:200;
+  display:none;align-items:center;justify-content:center;
+}
+.complete-banner.show{display:flex;animation:fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.complete-box{
+  background:white;border-radius:32px;padding:2.5rem 2rem;max-width:440px;width:92%;text-align:center;
+  box-shadow:0 30px 80px rgba(0,0,0,.35);animation:zoomIn .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes zoomIn{from{transform:scale(.6)}to{transform:scale(1)}}
+.cb-trophy{font-size:5rem;animation:bob 2s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.cb-title{font-family:'Fredoka One',cursive;font-size:2rem;margin:.5rem 0;}
+.cb-stars{font-size:2.8rem;margin:.5rem 0;letter-spacing:.3rem;}
+.cb-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin:1rem 0;}
+.cbs-item{background:#F8F4FF;border-radius:14px;padding:.8rem .4rem;}
+.cbs-n{font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--purple);}
+.cbs-l{font-size:.72rem;color:#999;font-weight:700;}
+.cb-btns{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;}
+.cbb{font-family:'Fredoka One',cursive;font-size:.95rem;padding:.7rem 1.4rem;border-radius:50px;border:none;cursor:pointer;transition:all .2s;}
+.cbb-retry{background:var(--coral);color:white;box-shadow:0 4px 0 #cc4444;}
+.cbb-retry:hover{transform:translateY(-2px);box-shadow:0 6px 0 #cc4444;}
+.cbb-next{background:var(--sky);color:white;box-shadow:0 4px 0 #3a8a3a;}
+.cbb-next:hover{transform:translateY(-2px);box-shadow:0 6px 0 #3a8a3a;}
+.cbb-mode{background:var(--purple);color:white;box-shadow:0 4px 0 #8833cc;}
+.cbb-mode:hover{transform:translateY(-2px);box-shadow:0 6px 0 #8833cc;}
+
+/* ══ TOAST ══ */
+.toast{
+  position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
+  z-index:999;padding:.9rem 2rem;border-radius:50px;
+  font-family:'Fredoka One',cursive;font-size:1.05rem;
+  box-shadow:0 8px 30px rgba(0,0,0,.2);pointer-events:none;
+  animation:toastPop .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;
+}
+@keyframes toastPop{from{opacity:0;transform:translateX(-50%) translateY(20px) scale(.8)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+.toast-good{background:var(--sky);color:white;}
+.toast-bad{background:var(--coral);color:white;}
+.toast-info{background:var(--navy);color:white;}
+
+/* ══ BURST PARTICLES ══ */
+.burst-p{position:fixed;pointer-events:none;z-index:9999;font-size:1.8rem;transition:all .9s ease;}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:780px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{order:2;}
+  .target-word{font-size:2rem;}
+  .target-emoji{font-size:3.5rem;}
+  .mic-btn{width:100px;height:100px;font-size:2.8rem;}
+  .mic-outer{width:130px;height:130px;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-aura"></div>
+
+<!-- ══ TOPBAR ══ -->
+<div class="topbar">
+  <a class="logo" href="kidsenglish-landing.html"><span class="logo-sun">☀️</span> SunnyWords</a>
+  <div class="module-badge">🎤 Luyện Nói</div>
+  <div class="xp-pill"><span class="xp-star">⭐</span><span id="xpNum">0</span> XP</div>
+</div>
+
+<!-- ══ MODE TABS ══ -->
+<div class="mode-row">
+  <div class="mode-tab mt0 active" id="tab0" onclick="setMode(0)">🔤 Từ đơn</div>
+  <div class="mode-tab mt1" id="tab1" onclick="setMode(1)">📢 Câu hoàn chỉnh</div>
+  <div class="mode-tab mt2" id="tab2" onclick="setMode(2)">🌟 Thử thách tốc độ</div>
+</div>
+
+<!-- ══ DUAL LAYOUT ══ -->
+<div class="layout">
+
+<!-- LEFT: MAIN PRACTICE AREA -->
+<div>
+  <!-- Progress -->
+  <div class="prog-row">
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-label" id="progLabel">0 / 0</div>
+  </div>
+
+  <!-- PRACTICE CARD -->
+  <div class="card" id="practiceCard">
+
+    <!-- Target Area -->
+    <div class="target-area">
+      <div class="target-topic" id="targetTopic">🐶 Animals</div>
+      <span class="target-emoji" id="targetEmoji">🐶</span>
+      <div class="target-word" id="targetWord">Dog</div>
+      <div class="target-phonetic" id="targetPhonetic">/dɒɡ/</div>
+      <div class="target-viet" id="targetViet">Con chó</div>
+      <button class="native-btn" id="nativeBtn" onclick="playNative()">
+        🔊 Nghe người bản xứ
+      </button>
+    </div>
+
+    <!-- Mic Section -->
+    <div class="mic-section">
+      <div class="mic-outer" onclick="toggleRecord()">
+        <div class="mic-ring"></div>
+        <div class="mic-ring"></div>
+        <div class="mic-ring"></div>
+        <button class="mic-btn" id="micBtn"><span class="mic-icon">🎤</span></button>
+      </div>
+      <div class="mic-state-label" id="micLabel">Bấm mic để nói! 👆</div>
+
+      <!-- Sound Wave -->
+      <div class="wave-wrap" id="waveWrap"></div>
+    </div>
+
+    <!-- Result Panel -->
+    <div class="result-panel" id="resultPanel">
+      <div class="score-area">
+        <!-- Score Ring -->
+        <div class="score-ring-wrap">
+          <svg class="score-ring-svg" viewBox="0 0 100 100">
+            <circle class="score-ring-track" cx="50" cy="50" r="40"/>
+            <circle class="score-ring-fill" id="ringFill" cx="50" cy="50" r="40"
+              stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+          </svg>
+          <div class="score-ring-text">
+            <div class="score-ring-num" id="scoreNum">0</div>
+            <div class="score-ring-pct">điểm</div>
+          </div>
+        </div>
+        <!-- Heard text -->
+        <div class="heard-box">
+          <div class="heard-label">🎤 Bé đã nói:</div>
+          <div class="heard-text" id="heardText">—</div>
+        </div>
+      </div>
+
+      <!-- Stars -->
+      <div class="stars-display" id="starsRow"></div>
+
+      <!-- Feedback -->
+      <div class="feedback-msg" id="feedbackMsg"></div>
+
+      <!-- Tips -->
+      <div class="tips-row" id="tipsRow"></div>
+
+      <!-- Actions -->
+      <div class="action-row">
+        <button class="act-btn ab-listen" onclick="playNative()">🔊 Nghe lại</button>
+        <button class="act-btn ab-retry" onclick="retryWord()">🔄 Thử lại</button>
+        <button class="act-btn ab-next" id="nextBtn" onclick="nextWord()">Từ tiếp → </button>
+      </div>
+    </div>
+
+  </div><!-- /card -->
+
+  <!-- SPEED CHALLENGE PANEL (mode 2) -->
+  <div id="challengePanel" style="display:none;">
+    <div class="card" style="padding:1.5rem;">
+      <div style="font-family:'Fredoka One',cursive;font-size:1.2rem;text-align:center;margin-bottom:1rem;color:var(--purple);">
+        🌟 Thử thách: Đọc 5 từ liên tiếp!
+      </div>
+      <!-- Countdown timer -->
+      <div style="display:flex;justify-content:center;margin-bottom:1rem;">
+        <div id="timerRing" style="width:80px;height:80px;position:relative;">
+          <svg width="80" height="80" style="transform:rotate(-90deg)">
+            <circle cx="40" cy="40" r="34" fill="none" stroke="#EEE" stroke-width="7"/>
+            <circle id="timerArc" cx="40" cy="40" r="34" fill="none" stroke="var(--coral)" stroke-width="7" stroke-linecap="round"
+              stroke-dasharray="213.6" stroke-dashoffset="0" style="transition:stroke-dashoffset .1s linear;"/>
+          </svg>
+          <div id="timerNum" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--coral);">5</div>
+        </div>
+      </div>
+      <!-- Challenge word strip -->
+      <div id="challengeStrip" style="display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.2rem;"></div>
+      <!-- Challenge mic -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:.8rem;">
+        <div class="mic-outer" onclick="toggleRecord()" style="width:100px;height:100px;">
+          <div class="mic-ring"></div><div class="mic-ring"></div>
+          <button class="mic-btn" id="micBtn2" style="width:80px;height:80px;font-size:2.5rem;"><span class="mic-icon">🎤</span></button>
+        </div>
+        <div class="mic-state-label" id="micLabel2">Bấm để bắt đầu thử thách!</div>
+      </div>
+      <div class="wave-wrap" id="waveWrap2" style="margin-top:.5rem;"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT: SIDEBAR -->
+<div class="sidebar">
+
+  <!-- Stats -->
+  <div class="side-card">
+    <div class="side-title">📊 Hôm nay</div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-n" id="sPracticed">0</div><div class="stat-l">Đã luyện</div></div>
+      <div class="stat-box"><div class="stat-n" id="sMastered">0</div><div class="stat-l">Xuất sắc</div></div>
+      <div class="stat-box"><div class="stat-n" id="sAvgScore">0</div><div class="stat-l">Điểm TB</div></div>
+      <div class="stat-box"><div class="stat-n" id="sXP">0</div><div class="stat-l">XP kiếm</div></div>
+    </div>
+  </div>
+
+  <!-- Word List -->
+  <div class="side-card">
+    <div class="side-title">🎤 Từ luyện tập <span style="font-size:.8rem;color:#aaa;font-weight:600;" id="sideTopicLabel"></span></div>
+    <div id="wordListEl" style="max-height:380px;overflow-y:auto;padding-right:.2rem;"></div>
+  </div>
+
+  <!-- Tips -->
+  <div class="side-card" style="background:linear-gradient(135deg,#FFF0E8,#FFE8FF);">
+    <div class="side-title">💡 Mẹo phát âm</div>
+    <div id="tipBox" style="font-size:.9rem;color:#555;font-weight:600;line-height:1.7;"></div>
+  </div>
+
+</div>
+</div><!-- /layout -->
+
+<!-- COMPLETION BANNER -->
+<div class="complete-banner" id="completeBanner">
+  <div class="complete-box">
+    <div class="cb-trophy" id="cbTrophy">🏆</div>
+    <div class="cb-title" id="cbTitle">Tuyệt vời!</div>
+    <div class="cb-stars" id="cbStars">⭐⭐⭐</div>
+    <p style="color:#888;font-size:.95rem;font-weight:600;margin:.3rem 0 .8rem;" id="cbMsg">Bé đã luyện xong tất cả các từ!</p>
+    <div class="cb-stats">
+      <div class="cbs-item"><div class="cbs-n" id="cbXP">0</div><div class="cbs-l">XP kiếm</div></div>
+      <div class="cbs-item"><div class="cbs-n" id="cbAvg">0</div><div class="cbs-l">Điểm TB</div></div>
+      <div class="cbs-item"><div class="cbs-n" id="cbMastered">0</div><div class="cbs-l">Xuất sắc</div></div>
+    </div>
+    <div class="cb-btns">
+      <button class="cbb cbb-retry" onclick="restartSession()">🔄 Luyện lại</button>
+      <button class="cbb cbb-mode" onclick="switchMode()">🎮 Đổi chế độ</button>
+      <button class="cbb cbb-next" onclick="closeBanner()">▶ Tiếp tục</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════ */
+const WORDS = [
+  {en:'Dog',    vn:'Con chó',    emoji:'🐶', phonetic:'/dɒɡ/',     topic:'🐶 Animals', tips:'Âm "og" giống "ó" nhưng ngắn hơn. Miệng tròn.'},
+  {en:'Cat',    vn:'Con mèo',   emoji:'🐱', phonetic:'/kæt/',     topic:'🐶 Animals', tips:'Âm "a" trong CAT rất ngắn và rộng. Hé miệng nhiều.'},
+  {en:'Fish',   vn:'Con cá',    emoji:'🐟', phonetic:'/fɪʃ/',     topic:'🐶 Animals', tips:'Âm "sh" cuối: đẩy hơi như đang "suỵt" ai đó.'},
+  {en:'Bird',   vn:'Con chim',  emoji:'🐦', phonetic:'/bɜːrd/',   topic:'🐶 Animals', tips:'Âm "ir" giống "ơ" kéo dài. Lưỡi cuộn nhẹ lên.'},
+  {en:'Apple',  vn:'Quả táo',   emoji:'🍎', phonetic:'/ˈæpl/',    topic:'🍎 Food',    tips:'Nhấn âm đầu "AP". Âm "a" rộng như khi há miệng khám họng.'},
+  {en:'Banana', vn:'Quả chuối', emoji:'🍌', phonetic:'/bəˈnɑːnə/',topic:'🍎 Food',    tips:'ba-NA-na — nhấn âm giữa NA. Ba âm tiết rõ ràng.'},
+  {en:'Milk',   vn:'Sữa',       emoji:'🥛', phonetic:'/mɪlk/',    topic:'🍎 Food',    tips:'Phát âm "l" rõ trước âm "k". Không bỏ âm l!'},
+  {en:'Red',    vn:'Màu đỏ',    emoji:'🔴', phonetic:'/rɛd/',     topic:'🌈 Colors',  tips:'Âm "r" trong tiếng Anh: lưỡi KHÔNG chạm vòm miệng.'},
+  {en:'Blue',   vn:'Màu xanh',  emoji:'🔵', phonetic:'/bluː/',    topic:'🌈 Colors',  tips:'Âm "ue" kéo dài như "u" trong tiếng Việt nhưng tròn hơn.'},
+  {en:'Sun',    vn:'Mặt trời',  emoji:'☀️', phonetic:'/sʌn/',     topic:'🌍 Nature',  tips:'Âm "u" trong SUN ngắn và nhẹ. Giống âm "ă" trong "ăn".'},
+  {en:'Star',   vn:'Ngôi sao',  emoji:'⭐', phonetic:'/stɑːr/',   topic:'🌍 Nature',  tips:'ST đầu câu: không có nguyên âm giữa S và T! sta-r.'},
+  {en:'Flower', vn:'Bông hoa',  emoji:'🌸', phonetic:'/ˈflaʊər/', topic:'🌍 Nature',  tips:'FLower: FL liền nhau, không có âm đệm giữa F và L.'},
+  {en:'Book',   vn:'Sách',      emoji:'📚', phonetic:'/bʊk/',     topic:'📚 School',  tips:'Âm "oo" trong BOOK ngắn hơn "oo" trong FOOD. Chú ý!'},
+  {en:'Happy',  vn:'Vui vẻ',    emoji:'😊', phonetic:'/ˈhæpi/',   topic:'💬 Feelings',tips:'HA-py: nhấn âm đầu. Âm "py" nhẹ và nhanh.'},
+  {en:'Friend', vn:'Bạn bè',    emoji:'🤝', phonetic:'/frɛnd/',   topic:'💬 Feelings',tips:'FR liền nhau: môi dưới chạm răng trên, sau đó R ngay.'},
+];
+
+const SENTENCES = [
+  {en:'I have a dog at home.',     vn:'Tôi có một con chó ở nhà.',   emoji:'🐶'},
+  {en:'The cat is sleeping now.',  vn:'Con mèo đang ngủ bây giờ.',   emoji:'🐱'},
+  {en:'I eat an apple every day.', vn:'Tôi ăn một quả táo mỗi ngày.',emoji:'🍎'},
+  {en:'The sun is very bright.',   vn:'Mặt trời rất sáng.',           emoji:'☀️'},
+  {en:'My book is on the desk.',   vn:'Sách của tôi ở trên bàn.',    emoji:'📚'},
+  {en:'I see a star in the sky.',  vn:'Tôi thấy một ngôi sao trên bầu trời.',emoji:'⭐'},
+  {en:'She has a red flower.',     vn:'Cô ấy có một bông hoa đỏ.',    emoji:'🌸'},
+  {en:'We drink cold milk.',       vn:'Chúng tôi uống sữa lạnh.',     emoji:'🥛'},
+];
+
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+let currentMode    = 0;   // 0=words 1=sentences 2=challenge
+let currentIdx     = 0;
+let wordData       = WORDS;
+let scores         = {};  // en -> best score
+let practiced      = 0;
+let mastered       = 0;
+let sessionXP      = 0;
+let totalScore     = 0;
+let scoreCount     = 0;
+let recognition    = null;
+let isRecording    = false;
+let audioCtx       = null;
+let analyser       = null;
+let waveInterval   = null;
+let waveBars       = [];
+let waveBars2      = [];
+let challengeTimer = null;
+let challengeTime  = 5;
+let challengeWords = [];
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+window.addEventListener('load', ()=>{
+  buildWave('waveWrap', waveBars);
+  buildWave('waveWrap2', waveBars2);
+  initSpeechRecognition();
+  loadWord();
+  renderWordList();
+  updateStats();
+});
+
+function buildWave(id, arr){
+  const wrap = document.getElementById(id);
+  if(!wrap) return;
+  wrap.innerHTML='';
+  for(let i=0;i<32;i++){
+    const b=document.createElement('div');
+    b.className='wave-bar';
+    b.style.height='4px';
+    wrap.appendChild(b);
+    arr.push(b);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   MODE SWITCHING
+═══════════════════════════════════════════════ */
+function setMode(m){
+  stopRecording();
+  currentMode=m;
+  currentIdx=0;
+  document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active',i===m));
+  const isChallenge=m===2;
+  document.getElementById('practiceCard').style.display=isChallenge?'none':'block';
+  document.getElementById('challengePanel').style.display=isChallenge?'block':'none';
+
+  if(m===0){ wordData=WORDS; }
+  else if(m===1){ wordData=SENTENCES; }
+  else { wordData=WORDS; startChallenge(); }
+
+  loadWord();
+  renderWordList();
+  hideResult();
+}
+
+/* ═══════════════════════════════════════════════
+   LOAD WORD/SENTENCE
+═══════════════════════════════════════════════ */
+function loadWord(){
+  const data = wordData;
+  if(currentIdx >= data.length){ showCompletion(); return; }
+  const w = data[currentIdx];
+
+  // Update progress
+  const pct = Math.round(currentIdx/data.length*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progLabel').textContent=`${currentIdx+1} / ${data.length}`;
+
+  if(currentMode===0){
+    // Word mode
+    document.getElementById('targetTopic').textContent=w.topic||'📚 Words';
+    document.getElementById('targetEmoji').textContent=w.emoji;
+    document.getElementById('targetWord').textContent=w.en;
+    document.getElementById('targetWord').className='target-word';
+    document.getElementById('targetPhonetic').textContent=w.phonetic||'';
+    document.getElementById('targetViet').textContent=w.vn;
+    document.getElementById('tipBox').textContent=w.tips||'Cố gắng phát âm thật rõ ràng và chính xác!';
+
+    // Highlight current word in list
+    document.querySelectorAll('.word-row').forEach((r,i)=>r.classList.toggle('active-word',i===currentIdx));
+  } else if(currentMode===1){
+    // Sentence mode
+    document.getElementById('targetTopic').textContent='📢 Câu hoàn chỉnh';
+    document.getElementById('targetEmoji').textContent=w.emoji;
+    // Render word-by-word
+    const words=w.en.split(' ');
+    const html=words.map(wd=>`<span class="w">${wd}</span>`).join(' ');
+    const tw=document.getElementById('targetWord');
+    tw.innerHTML=html;
+    tw.className='target-word sentence-mode';
+    document.getElementById('targetPhonetic').textContent='';
+    document.getElementById('targetViet').textContent=w.vn;
+    document.getElementById('tipBox').textContent='Đọc chậm và rõ từng từ. Sau đó thử đọc nhanh hơn! 🚀';
+  }
+
+  // Reset mic UI
+  resetMicUI();
+  hideResult();
+}
+
+/* ═══════════════════════════════════════════════
+   SPEECH RECOGNITION
+═══════════════════════════════════════════════ */
+function initSpeechRecognition(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ showToast('Cần dùng Chrome để nhận diện giọng nói! 🌐','info'); return; }
+  recognition = new SR();
+  recognition.lang='en-US';
+  recognition.continuous=false;
+  recognition.interimResults=true;
+  recognition.maxAlternatives=3;
+
+  recognition.onresult=(e)=>{
+    let interim='', final='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal) final+=e.results[i][0].transcript;
+      else interim+=e.results[i][0].transcript;
+    }
+    const heard=(final||interim).trim();
+    if(heard) updateMicLabel(`Nghe được: "${heard}" 🎤`);
+    if(final){
+      stopRecording();
+      processResult(final.trim());
+    }
+  };
+  recognition.onerror=(e)=>{
+    stopRecording();
+    if(e.error==='no-speech') showToast('Không nghe thấy — thử lại nhé! 🎤','info');
+    else if(e.error==='not-allowed') showToast('Cần cấp quyền microphone! 🎤','bad');
+    else showToast('Lỗi: '+e.error,'bad');
+  };
+  recognition.onend=()=>{ if(isRecording){ stopRecording(); } };
+}
+
+function toggleRecord(){
+  if(isRecording) stopRecording();
+  else startRecording();
+}
+
+function startRecording(){
+  if(!recognition){ showToast('Cần dùng Chrome! 🌐','info'); return; }
+  isRecording=true;
+  recognition.start();
+  setBothMicState('recording');
+  updateMicLabel('Đang nghe... nói to lên! 🗣️');
+  startWaveAnimation();
+  // Auto-stop after 5s
+  setTimeout(()=>{ if(isRecording) stopRecording(); }, 6000);
+}
+
+function stopRecording(){
+  if(!isRecording) return;
+  isRecording=false;
+  try{ recognition && recognition.stop(); } catch(e){}
+  setBothMicState('idle');
+  updateMicLabel('Bấm mic để nói! 👆');
+  stopWaveAnimation();
+}
+
+function setBothMicState(state){
+  ['micBtn','micBtn2'].forEach(id=>{
+    const btn=document.getElementById(id);
+    if(!btn) return;
+    btn.className='mic-btn';
+    if(state==='recording') btn.classList.add('recording');
+    if(state==='success')   btn.classList.add('success');
+    if(state==='fail')      btn.classList.add('fail');
+  });
+  const lbl=document.getElementById('micLabel');
+  const lbl2=document.getElementById('micLabel2');
+  if(lbl) lbl.className='mic-state-label'+(state==='recording'?' recording':'');
+  if(lbl2) lbl2.className='mic-state-label'+(state==='recording'?' recording':'');
+}
+
+function updateMicLabel(txt){
+  const l=document.getElementById('micLabel');
+  const l2=document.getElementById('micLabel2');
+  if(l) l.textContent=txt;
+  if(l2) l2.textContent=txt;
+}
+
+function resetMicUI(){
+  setBothMicState('idle');
+  updateMicLabel('Bấm mic để nói! 👆');
+  stopWaveAnimation();
+}
+
+/* ═══════════════════════════════════════════════
+   WAVE ANIMATION (mic analyser + fake fallback)
+═══════════════════════════════════════════════ */
+function startWaveAnimation(){
+  // Try real audio analysis
+  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+      if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+      const src=audioCtx.createMediaStreamSource(stream);
+      analyser=audioCtx.createAnalyser();
+      analyser.fftSize=64;
+      src.connect(analyser);
+      const data=new Uint8Array(analyser.frequencyBinCount);
+      waveInterval=setInterval(()=>{
+        analyser.getByteFrequencyData(data);
+        animateBars(data);
+      },60);
+    }).catch(()=>fakeWave());
+  } else fakeWave();
+}
+
+function animateBars(data){
+  [waveBars,waveBars2].forEach(bars=>{
+    bars.forEach((b,i)=>{
+      const val=data[i%data.length]||0;
+      const h=4+Math.round(val/255*48);
+      b.style.height=h+'px';
+    });
+  });
+}
+
+function fakeWave(){
+  let t=0;
+  waveInterval=setInterval(()=>{
+    t+=0.3;
+    [waveBars,waveBars2].forEach(bars=>{
+      bars.forEach((b,i)=>{
+        const h=4+Math.abs(Math.sin(t+i*.4)*30+Math.sin(t*.7+i*.2)*12);
+        b.style.height=Math.round(h)+'px';
+      });
+    });
+  },60);
+}
+
+function stopWaveAnimation(){
+  clearInterval(waveInterval);
+  waveInterval=null;
+  [[waveBars],[waveBars2]].flat().forEach(arr=>{
+    (arr||[]).forEach(b=>{ if(b) b.style.height='4px'; });
+  });
+  // Flat both
+  waveBars.forEach(b=>b.style.height='4px');
+  waveBars2.forEach(b=>b.style.height='4px');
+}
+
+/* ═══════════════════════════════════════════════
+   PROCESS RECOGNITION RESULT
+═══════════════════════════════════════════════ */
+function processResult(heard){
+  const w=wordData[currentIdx];
+  const target=(currentMode===0?w.en:w.en).toLowerCase();
+  const spokenClean=heard.toLowerCase().replace(/[.,!?]/g,'').trim();
+
+  let score=0;
+  let matchedWords=[];
+
+  if(currentMode===0){
+    // WORD MODE: fuzzy compare
+    score=fuzzyScore(spokenClean, target);
+  } else {
+    // SENTENCE MODE: word-by-word
+    const targetWords=target.split(' ');
+    const spokenWords=spokenClean.split(' ');
+    let hits=0;
+    matchedWords=targetWords.map(tw=>{
+      const found=spokenWords.some(sw=>fuzzyScore(sw,tw)>=70);
+      if(found) hits++;
+      return found;
+    });
+    score=Math.round((hits/targetWords.length)*100);
+    highlightSentenceWords(matchedWords);
+  }
+
+  score=Math.min(100,Math.max(0,score));
+  showResult(score, heard, w);
+
+  // Track scores
+  if(!scores[w.en]||scores[w.en]<score) scores[w.en]=score;
+  practiced++;
+  if(score>=80) mastered++;
+  const xp=score>=90?30:score>=70?20:score>=50?10:5;
+  sessionXP+=xp;
+  totalScore+=score; scoreCount++;
+  updateStats();
+  renderWordList();
+
+  // Mic state
+  setBothMicState(score>=70?'success':'fail');
+  setTimeout(()=>setBothMicState('idle'),2000);
+
+  if(score>=90) burst(document.getElementById('micBtn'),'⭐🎉✨🏆');
+}
+
+function fuzzyScore(spoken, target){
+  if(!spoken||!target) return 0;
+  // Exact match
+  if(spoken===target) return 100;
+  // Contains
+  if(spoken.includes(target)||target.includes(spoken)) return 85;
+  // Levenshtein ratio
+  const dist=levenshtein(spoken,target);
+  const maxLen=Math.max(spoken.length,target.length);
+  const ratio=1-(dist/maxLen);
+  return Math.round(ratio*100);
+}
+
+function levenshtein(a,b){
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+
+function highlightSentenceWords(matchedArr){
+  const spans=document.querySelectorAll('#targetWord .w');
+  spans.forEach((sp,i)=>{
+    sp.classList.remove('lit');
+    if(i<matchedArr.length){
+      sp.style.color=matchedArr[i]?'var(--sky)':'var(--coral)';
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   SHOW RESULT
+═══════════════════════════════════════════════ */
+function showResult(score, heard, w){
+  const panel=document.getElementById('resultPanel');
+  panel.style.display='block';
+  panel.className='result-panel show';
+
+  // Ring animation
+  const circ=251.2;
+  const offset=circ-(score/100*circ);
+  const ring=document.getElementById('ringFill');
+  const color=score>=90?'#6BCB77':score>=70?'#4ECDC4':score>=50?'#FFD93D':'#FF6B6B';
+  ring.style.stroke=color;
+  ring.style.strokeDashoffset=circ;
+  document.getElementById('scoreNum').textContent=score;
+  document.getElementById('scoreNum').style.color=color;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>ring.style.strokeDashoffset=offset));
+
+  // Stars
+  const stars=score>=90?3:score>=65?2:score>=40?1:0;
+  const starsEl=document.getElementById('starsRow');
+  starsEl.innerHTML='';
+  for(let i=0;i<3;i++){
+    const s=document.createElement('span');
+    s.className='star-item';
+    s.textContent=i<stars?'⭐':'🌑';
+    starsEl.appendChild(s);
+  }
+
+  // Heard text with diff highlight
+  const target=(currentMode===0?w.en:w.en).toLowerCase();
+  const spokenWords=heard.toLowerCase().split(' ');
+  const targetWords=target.split(' ');
+  const heardHTML=spokenWords.map(sw=>{
+    const matched=targetWords.some(tw=>fuzzyScore(sw,tw)>=70);
+    return `<span class="${matched?'match':'miss'}">${sw}</span>`;
+  }).join(' ');
+  document.getElementById('heardText').innerHTML=heardHTML||'<span style="color:#ccc">Không nghe rõ...</span>';
+
+  // Feedback
+  const fb=document.getElementById('feedbackMsg');
+  const msgs=[
+    {min:90,cls:'fb-perfect',txt:`🏆 Xuất sắc! Phát âm chuẩn như người bản xứ!`},
+    {min:70,cls:'fb-good',txt:`😊 Tốt lắm! Gần chuẩn rồi — luyện thêm chút nữa!`},
+    {min:45,cls:'fb-ok',txt:`💪 Khá ổn! Nghe lại người bản xứ và thử thêm nhé!`},
+    {min:0, cls:'fb-try',txt:`🌱 Cố lên! Nghe kỹ rồi nói thật chậm từng âm!`},
+  ];
+  const chosen=msgs.find(m=>score>=m.min)||msgs[msgs.length-1];
+  fb.className='feedback-msg '+chosen.cls;
+  fb.textContent=chosen.txt;
+
+  // Tips
+  const tips=document.getElementById('tipsRow');
+  tips.innerHTML='';
+  const tipList=score>=90?['🌟 Hoàn hảo!','💎 Tiếp tục vậy nhé!']:
+                 score>=70?['💡 Thử nói chậm hơn','🎯 Gần chuẩn rồi!']:
+                 ['🐢 Nói thật chậm','👂 Nghe lại trước','📖 Xem phiên âm'];
+  tipList.forEach(t=>{ const ch=document.createElement('div'); ch.className='tip-chip'; ch.textContent=t; tips.appendChild(ch); });
+
+  // Next btn label
+  const isLast=currentIdx>=wordData.length-1;
+  document.getElementById('nextBtn').textContent=isLast?'🏆 Xem kết quả':'Từ tiếp →';
+}
+
+function hideResult(){
+  const p=document.getElementById('resultPanel');
+  p.style.display='none';
+  p.className='result-panel';
+}
+
+/* ═══════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════ */
+function retryWord(){
+  hideResult();
+  resetMicUI();
+  // Bounce the emoji
+  const em=document.getElementById('targetEmoji');
+  em.style.animation='none';
+  requestAnimationFrame(()=>em.style.animation='float 3s ease-in-out infinite');
+}
+
+function nextWord(){
+  currentIdx++;
+  if(currentIdx>=wordData.length){ showCompletion(); return; }
+  loadWord();
+  hideResult();
+  resetMicUI();
+}
+
+/* ═══════════════════════════════════════════════
+   NATIVE SPEAKER (TTS)
+═══════════════════════════════════════════════ */
+function playNative(){
+  const w=wordData[currentIdx];
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const text=currentMode===0?w.en:w.en;
+  const utt=new SpeechSynthesisUtterance(text);
+  utt.lang='en-US'; utt.rate=0.82; utt.pitch=1.05;
+  const voices=window.speechSynthesis.getVoices();
+  const v=voices.find(v=>v.lang.startsWith('en')&&v.name.toLowerCase().includes('female'))
+          ||voices.find(v=>v.lang.startsWith('en'));
+  if(v) utt.voice=v;
+
+  const btn=document.getElementById('nativeBtn');
+  btn.classList.add('speaking');
+  btn.textContent='🔊 Đang nói...';
+
+  // For sentences, highlight words as they play
+  if(currentMode===1){
+    const words=w.en.split(' ');
+    const duration=text.length*55;
+    const perWord=duration/words.length;
+    words.forEach((_,i)=>{
+      setTimeout(()=>{
+        document.querySelectorAll('#targetWord .w').forEach((s,j)=>s.classList.toggle('lit',j===i));
+      },i*perWord);
+    });
+    setTimeout(()=>{
+      document.querySelectorAll('#targetWord .w').forEach(s=>s.classList.remove('lit'));
+    },duration+200);
+  }
+
+  utt.onend=()=>{
+    btn.classList.remove('speaking');
+    btn.textContent='🔊 Nghe người bản xứ';
+  };
+  window.speechSynthesis.speak(utt);
+}
+
+/* ═══════════════════════════════════════════════
+   SPEED CHALLENGE (MODE 2)
+═══════════════════════════════════════════════ */
+function startChallenge(){
+  challengeWords=shuffle([...WORDS]).slice(0,5);
+  renderChallengeStrip();
+  challengeTime=5;
+  resetTimerRing();
+}
+
+function renderChallengeStrip(){
+  const strip=document.getElementById('challengeStrip');
+  if(!strip) return;
+  strip.innerHTML='';
+  challengeWords.forEach((w,i)=>{
+    const ch=document.createElement('div');
+    ch.id=`cw${i}`;
+    ch.style.cssText=`font-family:'Fredoka One',cursive;font-size:1.1rem;padding:.5rem 1rem;border-radius:12px;border:3px solid #EEE;background:white;text-align:center;transition:all .3s;`;
+    ch.innerHTML=`<span style="font-size:1.8rem;">${w.emoji}</span><br>${w.en}`;
+    strip.appendChild(ch);
+  });
+}
+
+function startChallengeTimer(){
+  clearInterval(challengeTimer);
+  challengeTime=5;
+  challengeTimer=setInterval(()=>{
+    challengeTime-=0.1;
+    updateTimerRing(challengeTime/5);
+    document.getElementById('timerNum').textContent=Math.ceil(challengeTime);
+    if(challengeTime<=0){
+      clearInterval(challengeTimer);
+      document.getElementById('timerNum').textContent='⏰';
+    }
+  },100);
+}
+
+function updateTimerRing(ratio){
+  const arc=document.getElementById('timerArc');
+  if(!arc) return;
+  const offset=213.6*(1-ratio);
+  arc.style.strokeDashoffset=offset;
+  arc.style.stroke=ratio>0.5?'var(--sky)':ratio>0.25?'var(--orange)':'var(--coral)';
+}
+function resetTimerRing(){ updateTimerRing(1); }
+
+/* ═══════════════════════════════════════════════
+   WORD LIST SIDEBAR
+═══════════════════════════════════════════════ */
+function renderWordList(){
+  const list=document.getElementById('wordListEl');
+  if(!list) return;
+  const data=currentMode===1?SENTENCES:WORDS;
+  document.getElementById('sideTopicLabel').textContent=`(${data.length} ${currentMode===1?'câu':'từ'})`;
+  list.innerHTML='';
+  data.forEach((w,i)=>{
+    const sc=scores[w.en]||0;
+    const isMastered=sc>=80;
+    const isAttempted=sc>0;
+    const row=document.createElement('div');
+    row.className=`word-row${i===currentIdx?' active-word':''}${isMastered?' mastered':isAttempted?' attempted':''}`;
+    row.innerHTML=`
+      <div class="wr-em">${w.emoji}</div>
+      <div class="wr-info">
+        <div class="wr-en">${w.en}</div>
+        <div class="wr-score">${isAttempted?`Điểm: ${sc}`:'Chưa luyện'}</div>
+        ${isAttempted?`<div class="mini-bar"><div class="mini-fill" style="width:${sc}%"></div></div>`:''}
+      </div>
+      <div class="wr-badge">${isMastered?'✅':isAttempted?'🔄':''}</div>
+    `;
+    row.onclick=()=>{ currentIdx=i; loadWord(); hideResult(); resetMicUI(); renderWordList(); };
+    list.appendChild(row);
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   STATS
+═══════════════════════════════════════════════ */
+function updateStats(){
+  document.getElementById('sPracticed').textContent=practiced;
+  document.getElementById('sMastered').textContent=mastered;
+  document.getElementById('sAvgScore').textContent=scoreCount?Math.round(totalScore/scoreCount):0;
+  document.getElementById('sXP').textContent=sessionXP;
+  document.getElementById('xpNum').textContent=sessionXP;
+}
+
+/* ═══════════════════════════════════════════════
+   COMPLETION
+═══════════════════════════════════════════════ */
+function showCompletion(){
+  const avg=scoreCount?Math.round(totalScore/scoreCount):0;
+  const stars=avg>=80?3:avg>=55?2:1;
+  document.getElementById('cbTrophy').textContent=stars===3?'🏆':stars===2?'🥈':'🎖️';
+  document.getElementById('cbTitle').textContent=avg>=80?'Tuyệt vời! 🎉':avg>=55?'Giỏi lắm! 👍':'Cố gắng lên! 💪';
+  document.getElementById('cbStars').textContent='⭐'.repeat(stars)+'🌑'.repeat(3-stars);
+  document.getElementById('cbMsg').textContent=avg>=80?'Bé phát âm chuẩn như người bản xứ!':'Luyện thêm để đạt điểm hoàn hảo nhé!';
+  document.getElementById('cbXP').textContent=sessionXP;
+  document.getElementById('cbAvg').textContent=avg;
+  document.getElementById('cbMastered').textContent=mastered;
+  document.getElementById('completeBanner').classList.add('show');
+  if(stars===3) bigBurst();
+}
+
+function restartSession(){
+  currentIdx=0; practiced=0; mastered=0; sessionXP=0; totalScore=0; scoreCount=0; scores={};
+  document.getElementById('completeBanner').classList.remove('show');
+  loadWord(); renderWordList(); updateStats(); hideResult();
+}
+function switchMode(){ document.getElementById('completeBanner').classList.remove('show'); setMode((currentMode+1)%3); }
+function closeBanner(){ document.getElementById('completeBanner').classList.remove('show'); }
+
+/* ═══════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════ */
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-.5); }
+
+function showToast(msg,type='info'){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=document.createElement('div');
+  t.className=`toast toast-${type}`;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(()=>t.remove(),400); },2500);
+}
+
+function burst(el,emojiStr){
+  const emojis=emojiStr.split('');
+  const r=el?el.getBoundingClientRect():{left:window.innerWidth/2,top:window.innerHeight/2,width:0,height:0};
+  const cx=r.left+r.width/2, cy=r.top+r.height/2;
+  for(let i=0;i<10;i++){
+    const p=document.createElement('div');
+    p.className='burst-p';
+    p.textContent=emojis[i%emojis.length];
+    p.style.cssText=`left:${cx}px;top:${cy}px;`;
+    document.body.appendChild(p);
+    const a=Math.random()*360, d=80+Math.random()*100;
+    const dx=Math.cos(a*Math.PI/180)*d, dy=Math.sin(a*Math.PI/180)*d-40;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      p.style.transform=`translate(${dx}px,${dy}px) scale(0)`;
+      p.style.opacity='0';
+    }));
+    setTimeout(()=>p.remove(),1000);
+  }
+}
+
+function bigBurst(){
+  const emojis=['🎉','⭐','🏆','✨','🌟','🎊','💫','🎤'];
+  for(let i=0;i<24;i++) setTimeout(()=>{
+    const p=document.createElement('div');
+    p.className='burst-p';
+    p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.cssText=`left:${Math.random()*window.innerWidth}px;top:${window.innerHeight+10}px;font-size:${1.5+Math.random()*1.5}rem;`;
+    document.body.appendChild(p);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      p.style.transform=`translateY(-${window.innerHeight+80}px) rotate(${Math.random()*720}deg)`;
+      p.style.opacity='0'; p.style.transition=`all ${2+Math.random()}s ease`;
+    }));
+    setTimeout(()=>p.remove(),3200);
+  },i*70);
+}
+
+// Preload voices
+if(window.speechSynthesis){
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged=()=>{};
+}
+// Space bar to record
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'&&e.target===document.body){ e.preventDefault(); toggleRecord(); }
+});
+</script>
+</body>
+</html>

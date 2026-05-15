@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<meta name="theme-color" content="#2D2D44"/>
+<meta name="description" content="SunnyWords — Học tiếng Anh hè vui nhộn cho trẻ em"/>
+<title>SunnyWords ☀️</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+/* ════════════════════════════════════════════
+   ROOT & RESET
+════════════════════════════════════════════ */
+:root{
+  --coral:#FF6B6B; --sun:#FFD93D; --blue:#4ECDC4; --purple:#C77DFF;
+  --sky:#6BCB77;   --orange:#FF9F43; --pink:#FF6EB4; --navy:#2D2D44;
+  --navy2:#3d3d5c; --white:#FFFEF7;
+  --tab-h:72px; --top-h:64px;
+  --ease-bounce:cubic-bezier(.34,1.56,.64,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;}
+body{background:var(--navy);color:var(--white);display:flex;flex-direction:column;position:relative;}
+
+/* ════════════════════════════════════════════
+   PARTICLE CANVAS
+════════════════════════════════════════════ */
+#particleCanvas{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  opacity:.55;
+}
+
+/* ════════════════════════════════════════════
+   ONBOARDING SCREEN
+════════════════════════════════════════════ */
+#onboarding{
+  position:fixed;inset:0;z-index:500;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,#1a1a2e 0%,#16213e 40%,#0f3460 100%);
+  overflow:hidden;
+}
+.ob-stars-bg{position:absolute;inset:0;pointer-events:none;}
+.ob-star-p{
+  position:absolute;border-radius:50%;
+  background:white;animation:twinkle ease-in-out infinite;
+}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.9;transform:scale(1.5)}}
+
+.ob-slide{
+  display:none;flex-direction:column;align-items:center;text-align:center;
+  padding:2rem 2rem;max-width:420px;width:100%;
+  animation:slideReveal .5s var(--ease-bounce);
+}
+.ob-slide.active{display:flex;}
+@keyframes slideReveal{from{opacity:0;transform:translateY(30px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.ob-mascot{
+  width:160px;height:160px;border-radius:50%;
+  background:linear-gradient(145deg,var(--orange),var(--sun));
+  display:flex;align-items:center;justify-content:center;
+  font-size:5rem;margin-bottom:1.5rem;
+  box-shadow:0 0 0 12px rgba(255,217,61,.15),0 0 0 24px rgba(255,217,61,.07),
+             0 20px 60px rgba(255,159,67,.5);
+  animation:mascot-float 3s ease-in-out infinite;
+}
+@keyframes mascot-float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-14px) rotate(3deg)}}
+
+.ob-title{font-family:'Fredoka One',cursive;font-size:2.2rem;color:var(--sun);margin-bottom:.5rem;line-height:1.2;}
+.ob-desc{font-size:1.05rem;color:rgba(255,255,255,.75);font-weight:600;line-height:1.7;margin-bottom:2rem;}
+
+.ob-features{display:flex;flex-direction:column;gap:.7rem;width:100%;margin-bottom:2rem;}
+.ob-feat{
+  display:flex;align-items:center;gap:.8rem;
+  background:rgba(255,255,255,.07);border-radius:14px;padding:.8rem 1rem;
+  border:1px solid rgba(255,255,255,.08);
+  animation:featIn .4s var(--ease-bounce) both;
+}
+.ob-feat:nth-child(1){animation-delay:.1s}
+.ob-feat:nth-child(2){animation-delay:.2s}
+.ob-feat:nth-child(3){animation-delay:.3s}
+.ob-feat:nth-child(4){animation-delay:.4s}
+@keyframes featIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+.of-icon{font-size:1.8rem;flex-shrink:0;}
+.of-text{text-align:left;}
+.of-title{font-weight:800;font-size:.95rem;color:white;}
+.of-sub{font-size:.8rem;color:rgba(255,255,255,.55);font-weight:600;}
+
+/* Name input slide */
+.ob-input-wrap{
+  width:100%;background:rgba(255,255,255,.1);border-radius:20px;
+  padding:1.5rem;margin-bottom:1.5rem;
+  border:2px solid rgba(255,255,255,.12);
+}
+.ob-input-label{font-family:'Fredoka One',cursive;font-size:1rem;color:rgba(255,255,255,.7);margin-bottom:.8rem;display:block;}
+.ob-name-input{
+  width:100%;background:white;border-radius:14px;border:none;outline:none;
+  padding:.9rem 1.1rem;font-family:'Fredoka One',cursive;font-size:1.3rem;
+  color:var(--navy);text-align:center;margin-bottom:1rem;
+}
+.ob-avatar-row{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;}
+.ob-av{
+  width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.1);
+  border:3px solid rgba(255,255,255,.2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:1.6rem;
+  transition:all .2s;
+}
+.ob-av.sel{border-color:var(--sun);background:rgba(255,217,61,.2);transform:scale(1.15);}
+.ob-av:hover{transform:scale(1.1);}
+
+/* Dots */
+.ob-dots{display:flex;gap:.5rem;justify-content:center;margin-bottom:1.2rem;}
+.ob-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,.25);transition:all .3s;cursor:pointer;
+}
+.ob-dot.active{background:var(--sun);width:24px;border-radius:5px;}
+
+/* CTA */
+.ob-btn{
+  width:100%;font-family:'Fredoka One',cursive;font-size:1.2rem;
+  padding:1rem;border-radius:50px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--coral),var(--orange));
+  color:white;box-shadow:0 6px 0 #cc4400,0 10px 30px rgba(255,107,107,.4);
+  transition:all .2s;
+}
+.ob-btn:hover{transform:translateY(-3px);box-shadow:0 9px 0 #cc4400,0 14px 40px rgba(255,107,107,.5);}
+.ob-btn:active{transform:translateY(3px);box-shadow:0 3px 0 #cc4400;}
+.ob-skip{font-size:.85rem;color:rgba(255,255,255,.35);cursor:pointer;margin-top:1rem;font-weight:600;border:none;background:none;text-decoration:underline;}
+.ob-skip:hover{color:rgba(255,255,255,.6);}
+
+/* ════════════════════════════════════════════
+   APP SHELL
+════════════════════════════════════════════ */
+#appShell{
+  flex:1;display:flex;flex-direction:column;
+  height:100%;overflow:hidden;position:relative;z-index:5;
+  opacity:0;pointer-events:none;transition:opacity .5s ease;
+}
+#appShell.visible{opacity:1;pointer-events:all;}
+
+/* ── TOP HEADER ── */
+.app-header{
+  flex-shrink:0;height:var(--top-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.2rem;
+  background:rgba(45,45,68,.97);
+  border-bottom:2px solid rgba(255,217,61,.3);
+  box-shadow:0 2px 20px rgba(0,0,0,.3);
+  position:relative;z-index:20;
+}
+.ah-logo{font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--sun);display:flex;align-items:center;gap:.4rem;}
+.ah-sun{animation:spin 8s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.ah-center{display:flex;align-items:center;gap:.5rem;}
+.ah-greeting{font-family:'Fredoka One',cursive;font-size:1rem;color:white;}
+.ah-avatar-mini{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--orange),var(--sun));
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+  border:2px solid rgba(255,217,61,.4);
+}
+
+.ah-right{display:flex;align-items:center;gap:.6rem;}
+.ah-xp{
+  display:flex;align-items:center;gap:.3rem;
+  background:rgba(255,217,61,.12);border:1.5px solid rgba(255,217,61,.35);
+  color:var(--sun);padding:.3rem .75rem;border-radius:50px;
+  font-family:'Fredoka One',cursive;font-size:.88rem;
+}
+.xp-star-anim{animation:bounce .8s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+/* Music toggle */
+.music-btn{
+  width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(255,255,255,.1);color:white;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;position:relative;
+}
+.music-btn:hover{background:rgba(255,255,255,.2);}
+.music-btn.playing{background:rgba(107,203,119,.3);border:1.5px solid var(--sky);color:var(--sky);}
+.music-btn.playing::after{
+  content:'';position:absolute;inset:-4px;border-radius:50%;
+  border:2px solid rgba(107,203,119,.4);
+  animation:music-ring 1.5s ease-out infinite;
+}
+@keyframes music-ring{from{transform:scale(1);opacity:.8}to{transform:scale(1.6);opacity:0}}
+
+/* ── PAGE CONTAINER ── */
+.page-container{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  scroll-behavior:smooth;
+  padding-bottom:calc(var(--tab-h) + 1rem);
+}
+.page-container::-webkit-scrollbar{width:0;}
+
+/* ── SCREENS ── */
+.screen{display:none;animation:screenIn .35s var(--ease-bounce);}
+.screen.active{display:block;}
+@keyframes screenIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════════════════
+   HOME SCREEN
+══════════════════════════════════════ */
+.home-hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 60%,#1a1a35 100%);
+  padding:1.5rem 1.5rem 3rem;
+}
+.home-hero::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,217,61,.12),transparent 70%);
+}
+.home-hero::after{
+  content:'';position:absolute;bottom:-20px;left:-30px;
+  width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(78,205,196,.09),transparent 70%);
+}
+.hero-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.2rem;}
+.hero-day-info{flex:1;}
+.hero-date{font-size:.82rem;color:rgba(255,255,255,.45);font-weight:700;margin-bottom:.2rem;}
+.hero-welcome{font-family:'Fredoka One',cursive;font-size:1.6rem;color:white;line-height:1.2;}
+.hero-welcome span{color:var(--sun);}
+.hero-mascot-float{
+  font-size:3.5rem;animation:mascot-float 3s ease-in-out infinite;
+  filter:drop-shadow(0 8px 16px rgba(0,0,0,.3));
+}
+
+/* Daily progress ring */
+.daily-ring-wrap{
+  display:flex;align-items:center;gap:1.2rem;
+  background:rgba(255,255,255,.06);border-radius:20px;
+  padding:1rem 1.2rem;border:1px solid rgba(255,255,255,.07);
+  margin-bottom:1.2rem;
+}
+.ring-container{position:relative;width:72px;height:72px;flex-shrink:0;}
+.ring-svg{width:100%;height:100%;transform:rotate(-90deg);}
+.ring-track{fill:none;stroke:rgba(255,255,255,.08);stroke-width:7;}
+.ring-prog{
+  fill:none;stroke-width:7;stroke-linecap:round;
+  stroke-dasharray:188.5;stroke-dashoffset:188.5;
+  transition:stroke-dashoffset 1.2s var(--ease-bounce);
+  stroke:var(--sky);
+}
+.ring-text{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.ring-num{font-family:'Fredoka One',cursive;font-size:1.1rem;color:white;line-height:1;}
+.ring-label{font-size:.6rem;color:rgba(255,255,255,.5);font-weight:700;}
+.ring-info{flex:1;}
+.ri-title{font-family:'Fredoka One',cursify;font-family:'Fredoka One',cursive;font-size:1rem;color:white;margin-bottom:.2rem;}
+.ri-sub{font-size:.8rem;color:rgba(255,255,255,.5);font-weight:600;margin-bottom:.6rem;}
+.ri-activities{display:flex;gap:.4rem;flex-wrap:wrap;}
+.ri-act{
+  font-size:.72rem;font-weight:800;padding:.2rem .6rem;border-radius:50px;
+  background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.1);
+}
+.ri-act.done{background:rgba(107,203,119,.2);color:var(--sky);border-color:rgba(107,203,119,.3);}
+
+/* Streak + XP row */
+.hero-stats-row{display:flex;gap:.7rem;}
+.hsr-item{
+  flex:1;background:rgba(255,255,255,.06);border-radius:14px;padding:.8rem .7rem;
+  text-align:center;border:1px solid rgba(255,255,255,.06);
+}
+.hsr-n{font-family:'Fredoka One',cursive;font-size:1.5rem;color:var(--sun);}
+.hsr-l{font-size:.7rem;color:rgba(255,255,255,.45);font-weight:700;}
+
+/* Module grid */
+.modules-section{padding:1.2rem 1.2rem 0;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;}
+.section-title{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--navy);}
+.section-more{font-size:.8rem;font-weight:800;color:var(--blue);cursor:pointer;}
+.modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-bottom:1.2rem;}
+.mod-card{
+  border-radius:20px;padding:1.1rem .8rem;text-align:center;cursor:pointer;
+  transition:transform .22s var(--ease-bounce),box-shadow .22s;
+  position:relative;overflow:hidden;border:2px solid rgba(255,255,255,.1);
+  min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;
+}
+.mod-card::before{
+  content:'';position:absolute;top:-15px;right:-15px;
+  width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.08);
+}
+.mod-card:active{transform:scale(.95);}
+.mod-card:hover{transform:translateY(-4px);}
+.mc-icon{font-size:2.2rem;filter:drop-shadow(0 3px 6px rgba(0,0,0,.2));line-height:1;}
+.mc-label{font-family:'Fredoka One',cursive;font-size:.88rem;color:white;line-height:1.2;}
+.mc-xp{font-size:.68rem;font-weight:800;background:rgba(255,255,255,.2);color:white;padding:.1rem .4rem;border-radius:50px;}
+.mc-badge{
+  position:absolute;top:.4rem;right:.4rem;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--coral);color:white;font-size:.6rem;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* Continue today CTA */
+.continue-cta{
+  margin:0 1.2rem 1.2rem;border-radius:20px;padding:1.2rem;
+  background:linear-gradient(135deg,var(--coral),var(--orange));
+  display:flex;align-items:center;gap:.8rem;cursor:pointer;
+  box-shadow:0 6px 0 rgba(204,68,0,.4),0 8px 20px rgba(255,107,107,.3);
+  transition:transform .2s;
+  border:none;width:calc(100% - 2.4rem);text-align:left;
+}
+.continue-cta:active{transform:scale(.97);}
+.cta-icon{font-size:2.5rem;flex-shrink:0;}
+.cta-text{flex:1;}
+.cta-title{font-family:'Fredoka One',cursive;font-size:1.1rem;color:white;margin-bottom:.15rem;}
+.cta-sub{font-size:.8rem;color:rgba(255,255,255,.8);font-weight:600;}
+.cta-arrow{font-size:1.5rem;color:rgba(255,255,255,.7);}
+
+/* Recent achievements */
+.achievements-row{
+  display:flex;gap:.6rem;padding:0 1.2rem 1.2rem;overflow-x:auto;
+}
+.achievements-row::-webkit-scrollbar{display:none;}
+.ach-chip{
+  flex-shrink:0;display:flex;align-items:center;gap:.4rem;
+  background:white;border-radius:50px;padding:.4rem .9rem;
+  box-shadow:0 3px 10px rgba(0,0,0,.1);
+  border:2px solid transparent;transition:transform .2s;
+}
+.ach-chip:hover{transform:scale(1.05);}
+.ach-chip.new-ach{border-color:var(--sun);animation:ach-glow 1.5s ease-in-out infinite;}
+@keyframes ach-glow{0%,100%{box-shadow:0 3px 10px rgba(0,0,0,.1)}50%{box-shadow:0 3px 20px rgba(255,217,61,.4)}}
+.ach-icon{font-size:1.1rem;}
+.ach-text{font-size:.78rem;font-weight:800;color:var(--navy);}
+
+/* ══════════════════════════════════════
+   BOTTOM TAB BAR
+══════════════════════════════════════ */
+.tab-bar{
+  flex-shrink:0;height:var(--tab-h);
+  display:flex;align-items:stretch;
+  background:rgba(30,30,50,.98);
+  border-top:2px solid rgba(255,255,255,.06);
+  box-shadow:0 -4px 20px rgba(0,0,0,.3);
+  position:relative;z-index:20;
+}
+.tab-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.2rem;cursor:pointer;transition:all .2s;position:relative;
+  border:none;background:transparent;
+  padding:.3rem .2rem;
+}
+.tab-item::before{
+  content:'';position:absolute;top:0;left:20%;right:20%;height:3px;
+  border-radius:0 0 4px 4px;background:transparent;transition:background .2s;
+}
+.tab-item.active::before{background:var(--coral);}
+.tab-icon{font-size:1.5rem;transition:transform .25s var(--ease-bounce);line-height:1;}
+.tab-item.active .tab-icon{transform:scale(1.18) translateY(-2px);}
+.tab-label{
+  font-family:'Fredoka One',cursive;font-size:.65rem;color:rgba(255,255,255,.35);
+  transition:color .2s;white-space:nowrap;
+}
+.tab-item.active .tab-label{color:var(--coral);}
+.tab-notif{
+  position:absolute;top:.4rem;right:calc(50% - 16px);
+  width:14px;height:14px;border-radius:50%;
+  background:var(--coral);color:white;font-size:.55rem;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  animation:notif-pop .3s var(--ease-bounce);
+}
+@keyframes notif-pop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* ── MUSIC VISUALIZER (small bars) ── */
+.music-viz{
+  display:flex;align-items:center;gap:1px;height:12px;
+  position:absolute;bottom:3px;right:50%;transform:translateX(50%);
+  opacity:0;transition:opacity .3s;
+}
+.mv-bar{
+  width:2px;border-radius:1px;background:var(--sky);
+  animation:viz-bar .6s ease-in-out infinite;
+  transform-origin:bottom;
+}
+.mv-bar:nth-child(2){animation-delay:.1s;}
+.mv-bar:nth-child(3){animation-delay:.2s;}
+.mv-bar:nth-child(4){animation-delay:.15s;}
+.mv-bar:nth-child(5){animation-delay:.05s;}
+@keyframes viz-bar{0%,100%{height:3px}50%{height:10px}}
+.music-btn.playing .music-viz{opacity:1;}
+
+/* ══════════════════════════════════════
+   IFRAME SCREENS (module loader)
+══════════════════════════════════════ */
+.iframe-screen{
+  width:100%;height:100%;border:none;
+  display:none;background:white;
+}
+.iframe-screen.active{display:block;}
+
+/* ══════════════════════════════════════
+   LOADING SPLASH
+══════════════════════════════════════ */
+#loadSplash{
+  position:fixed;inset:0;z-index:600;
+  background:linear-gradient(160deg,#1a1a2e,#0f3460);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;
+}
+.ls-logo{font-family:'Fredoka One',cursive;font-size:3rem;color:var(--sun);display:flex;align-items:center;gap:.5rem;}
+.ls-sun{animation:spin 2s linear infinite;display:inline-block;}
+.ls-bar{width:200px;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.ls-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--coral),var(--sun));animation:load-bar 2.2s ease both;}
+@keyframes load-bar{0%{width:0}60%{width:75%}100%{width:100%}}
+.ls-text{font-family:'Fredoka One',cursive;font-size:1rem;color:rgba(255,255,255,.5);animation:blink 1s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* ══════════════════════════════════════
+   TOAST & EFFECTS
+══════════════════════════════════════ */
+.toast-container{position:fixed;top:var(--top-h);right:0;z-index:400;padding:.8rem;display:flex;flex-direction:column;gap:.5rem;align-items:flex-end;pointer-events:none;}
+.toast{
+  padding:.7rem 1.3rem;border-radius:50px;
+  font-family:'Fredoka One',cursive;font-size:.88rem;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);pointer-events:none;
+  animation:toastIn .4s var(--ease-bounce) both;white-space:nowrap;
+  max-width:280px;
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(60px) scale(.85)}to{opacity:1;transform:translateX(0) scale(1)}}
+.toast.out{animation:toastOut .3s ease forwards;}
+@keyframes toastOut{to{opacity:0;transform:translateX(60px)}}
+.t-good{background:var(--sky);color:white;}
+.t-xp{background:var(--sun);color:var(--navy);}
+.t-badge{background:linear-gradient(135deg,var(--purple),var(--coral));color:white;}
+.t-info{background:var(--navy2);color:white;}
+.t-music{background:linear-gradient(135deg,var(--blue),var(--sky));color:white;}
+
+/* Confetti burst */
+.burst-p{position:fixed;pointer-events:none;z-index:9999;transition:all .85s ease;}
+
+/* Screen transition wipe */
+.screen-wipe{
+  position:fixed;inset:0;z-index:300;pointer-events:none;
+  background:linear-gradient(135deg,var(--coral),var(--purple));
+  transform:scaleX(0);transform-origin:left;
+}
+.screen-wipe.go{animation:wipe-in .25s ease forwards;}
+.screen-wipe.back{animation:wipe-out .25s ease forwards;}
+@keyframes wipe-in{to{transform:scaleX(1)}}
+@keyframes wipe-out{from{transform:scaleX(1)}to{transform:scaleX(0);transform-origin:right}}
+
+/* ══════════════════════════════════════
+   EMPTY SCREENS PLACEHOLDER
+══════════════════════════════════════ */
+.module-placeholder{
+  min-height:calc(100vh - var(--top-h) - var(--tab-h));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2rem;text-align:center;gap:1rem;
+}
+.mp-icon{font-size:5rem;animation:mascot-float 3s ease-in-out infinite;filter:drop-shadow(0 8px 20px rgba(0,0,0,.2));}
+.mp-title{font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--navy);}
+.mp-desc{font-size:.95rem;color:#888;font-weight:600;line-height:1.6;}
+.mp-btn{
+  font-family:'Fredoka One',cursive;font-size:1.1rem;padding:.85rem 2rem;
+  border-radius:50px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--coral),var(--orange));
+  color:white;box-shadow:0 5px 0 #cc4400;transition:all .2s;
+}
+.mp-btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 #cc4400;}
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media(min-width:600px){
+  .modules-grid{grid-template-columns:repeat(4,1fr);}
+}
+@media(min-width:900px){
+  :root{--tab-h:80px;}
+  .modules-grid{grid-template-columns:repeat(6,1fr);}
+  .home-hero{padding:2rem 3rem 3rem;}
+  .modules-section{padding:1.5rem 3rem 0;}
+  .continue-cta{margin:0 3rem 1.5rem;width:calc(100% - 6rem);}
+  .achievements-row{padding:0 3rem 1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOADING SPLASH ══ -->
+<div id="loadSplash">
+  <div class="ls-logo"><span class="ls-sun">☀️</span>SunnyWords</div>
+  <div class="ls-bar"><div class="ls-fill"></div></div>
+  <div class="ls-text">Đang chuẩn bị bài học hôm nay...</div>
+</div>
+
+<!-- ══ PARTICLE CANVAS ══ -->
+<canvas id="particleCanvas"></canvas>
+
+<!-- ══ SCREEN WIPE ══ -->
+<div class="screen-wipe" id="screenWipe"></div>
+
+<!-- ══ TOAST CONTAINER ══ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ══ ONBOARDING ══ -->
+<div id="onboarding">
+  <div class="ob-stars-bg" id="obStars"></div>
+
+  <!-- Slide 0: Welcome -->
+  <div class="ob-slide active" id="ob0">
+    <div class="ob-mascot">🦉</div>
+    <h1 class="ob-title">Chào mừng đến<br>SunnyWords! ☀️</h1>
+    <p class="ob-desc">Học tiếng Anh vui nhộn cùng Sunny — chương trình hè đặc biệt dành riêng cho bé!</p>
+    <div class="ob-features">
+      <div class="ob-feat"><span class="of-icon">📚</span><div class="of-text"><div class="of-title">500+ từ vựng</div><div class="of-sub">Học qua flashcard, hình ảnh sinh động</div></div></div>
+      <div class="ob-feat"><span class="of-icon">🎤</span><div class="of-text"><div class="of-title">Luyện nói & phát âm</div><div class="of-sub">AI chấm điểm phát âm chuẩn như người bản xứ</div></div></div>
+      <div class="ob-feat"><span class="of-icon">🤖</span><div class="of-text"><div class="of-title">Chat với Sunny AI</div><div class="of-sub">Trò chuyện tiếng Anh tự nhiên mỗi ngày</div></div></div>
+      <div class="ob-feat"><span class="of-icon">🏆</span><div class="of-text"><div class="of-title">Mini-games & huy hiệu</div><div class="of-sub">Học qua chơi, thu thập phần thưởng</div></div></div>
+    </div>
+    <div class="ob-dots">
+      <div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div>
+    </div>
+    <button class="ob-btn" onclick="nextSlide()">Tiếp theo ›</button>
+    <button class="ob-skip" onclick="skipOnboard()">Bỏ qua</button>
+  </div>
+
+  <!-- Slide 1: Name -->
+  <div class="ob-slide" id="ob1">
+    <div class="ob-mascot" style="width:120px;height:120px;font-size:3.5rem;margin-bottom:1rem;">🦉</div>
+    <h1 class="ob-title">Tên bé là gì? 😊</h1>
+    <p class="ob-desc">Sunny muốn biết tên bé để gọi tên trong suốt hành trình học!</p>
+    <div class="ob-input-wrap">
+      <label class="ob-input-label">✏️ Tên của bé:</label>
+      <input class="ob-name-input" id="nameInput" type="text" placeholder="Ví dụ: Minh Anh" maxlength="20" onkeyup="if(event.key==='Enter')nextSlide()"/>
+      <div class="ob-avatar-row" id="avatarRow">
+        <div class="ob-av sel" onclick="pickAv(this)">🦉</div>
+        <div class="ob-av" onclick="pickAv(this)">🐸</div>
+        <div class="ob-av" onclick="pickAv(this)">🦊</div>
+        <div class="ob-av" onclick="pickAv(this)">🐼</div>
+        <div class="ob-av" onclick="pickAv(this)">🐨</div>
+        <div class="ob-av" onclick="pickAv(this)">🦁</div>
+      </div>
+    </div>
+    <div class="ob-dots">
+      <div class="ob-dot"></div><div class="ob-dot active"></div><div class="ob-dot"></div>
+    </div>
+    <button class="ob-btn" onclick="nextSlide()">Xong! 🎉</button>
+    <button class="ob-skip" onclick="prevSlide()">‹ Quay lại</button>
+  </div>
+
+  <!-- Slide 2: Ready -->
+  <div class="ob-slide" id="ob2">
+    <div class="ob-mascot" style="font-size:5.5rem;background:linear-gradient(145deg,var(--sky),var(--blue));">🚀</div>
+    <h1 class="ob-title">Sẵn sàng chưa? 🌟</h1>
+    <p class="ob-desc" id="obReadyDesc">Hành trình 60 ngày hè bắt đầu ngay hôm nay!</p>
+    <div class="ob-features">
+      <div class="ob-feat"><span class="of-icon">📅</span><div class="of-text"><div class="of-title">60 ngày học hè</div><div class="of-sub">Mỗi ngày chỉ 20 phút — đơn giản & hiệu quả</div></div></div>
+      <div class="ob-feat"><span class="of-icon">🔥</span><div class="of-text"><div class="of-title">Học mỗi ngày để giữ streak</div><div class="of-sub">Streak cao = phần thưởng đặc biệt!</div></div></div>
+    </div>
+    <div class="ob-dots">
+      <div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div>
+    </div>
+    <button class="ob-btn" onclick="finishOnboard()" style="background:linear-gradient(135deg,var(--sky),var(--blue));box-shadow:0 6px 0 #2a7a55;">🚀 Bắt đầu học ngay!</button>
+    <button class="ob-skip" onclick="prevSlide()">‹ Quay lại</button>
+  </div>
+</div>
+
+<!-- ══ APP SHELL ══ -->
+<div id="appShell">
+
+  <!-- TOP HEADER -->
+  <div class="app-header">
+    <div class="ah-logo"><span class="ah-sun">☀️</span>SunnyWords</div>
+    <div class="ah-center">
+      <div class="ah-avatar-mini" id="headerAv">🦉</div>
+      <div class="ah-greeting">Xin chào, <span id="headerName" style="color:var(--sun)">bé!</span></div>
+    </div>
+    <div class="ah-right">
+      <div class="ah-xp"><span class="xp-star-anim">⭐</span><span id="headerXP">0</span></div>
+      <button class="music-btn" id="musicBtn" onclick="toggleMusic()" title="Nhạc nền">
+        🎵
+        <div class="music-viz">
+          <div class="mv-bar"></div><div class="mv-bar"></div><div class="mv-bar"></div>
+          <div class="mv-bar"></div><div class="mv-bar"></div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- PAGE CONTAINER -->
+  <div class="page-container" id="pageContainer">
+
+    <!-- HOME SCREEN -->
+    <div class="screen active" id="screen-home">
+      <!-- Hero -->
+      <div class="home-hero">
+        <div class="hero-top">
+          <div class="hero-day-info">
+            <div class="hero-date" id="heroDate">Thứ Sáu, 15/5/2026</div>
+            <div class="hero-welcome">Hôm nay học gì, <span id="heroName">bé</span>? 😊</div>
+          </div>
+          <div class="hero-mascot-float" id="heroMascot">🦉</div>
+        </div>
+
+        <!-- Daily ring -->
+        <div class="daily-ring-wrap">
+          <div class="ring-container">
+            <svg class="ring-svg" viewBox="0 0 72 72">
+              <circle class="ring-track" cx="36" cy="36" r="30"/>
+              <circle class="ring-prog" id="dailyRing" cx="36" cy="36" r="30"/>
+            </svg>
+            <div class="ring-text">
+              <div class="ring-num" id="ringPct">25%</div>
+              <div class="ring-label">hôm nay</div>
+            </div>
+          </div>
+          <div class="ring-info">
+            <div class="ri-title">📅 Ngày 9 — Tuần 2: Colors</div>
+            <div class="ri-sub">1/4 hoạt động xong · Còn 15 phút</div>
+            <div class="ri-activities">
+              <span class="ri-act done">📖 Từ vựng ✓</span>
+              <span class="ri-act">👂 Nghe</span>
+              <span class="ri-act">🎤 Nói</span>
+              <span class="ri-act">🎮 Game</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="hero-stats-row">
+          <div class="hsr-item"><div class="hsr-n">🔥3</div><div class="hsr-l">Ngày streak</div></div>
+          <div class="hsr-item"><div class="hsr-n">235</div><div class="hsr-l">XP tổng</div></div>
+          <div class="hsr-item"><div class="hsr-n">8/60</div><div class="hsr-l">Ngày học</div></div>
+          <div class="hsr-item"><div class="hsr-n">5🏅</div><div class="hsr-l">Huy hiệu</div></div>
+        </div>
+      </div>
+
+      <!-- Continue CTA -->
+      <button class="continue-cta" onclick="navigateTo('listen')">
+        <span class="cta-icon">👂</span>
+        <div class="cta-text">
+          <div class="cta-title">Tiếp tục hôm nay! — Luyện Nghe 🎯</div>
+          <div class="cta-sub">Ngày 9 · Tuần 2: Colors & Shapes · +15 XP</div>
+        </div>
+        <span class="cta-arrow">›</span>
+      </button>
+
+      <!-- Modules grid -->
+      <div class="modules-section">
+        <div class="section-header">
+          <div class="section-title" style="color:white;">🎯 Các module học</div>
+        </div>
+        <div class="modules-grid" id="modulesGrid"></div>
+      </div>
+
+      <!-- Recent achievements -->
+      <div class="achievements-row" id="achRow">
+        <div class="ach-chip new-ach"><span class="ach-icon">🏅</span><span class="ach-text">Animal Lover!</span></div>
+        <div class="ach-chip"><span class="ach-icon">🔥</span><span class="ach-text">3-Day Streak</span></div>
+        <div class="ach-chip"><span class="ach-icon">⭐</span><span class="ach-text">First Word!</span></div>
+        <div class="ach-chip"><span class="ach-icon">🎮</span><span class="ach-text">Gamer!</span></div>
+        <div class="ach-chip"><span class="ach-icon">🎤</span><span class="ach-text">Speak Up!</span></div>
+      </div>
+    </div>
+
+    <!-- MODULE SCREENS (iframe loaders) -->
+    <div class="screen" id="screen-vocab">
+      <div class="module-placeholder">
+        <div class="mp-icon">📚</div>
+        <div class="mp-title">Flashcard Từ Vựng</div>
+        <div class="mp-desc">Học 500+ từ vựng qua thẻ flashcard 3D sinh động với hình ảnh, âm thanh và mini-quiz!</div>
+        <button class="mp-btn" onclick="openModule('kidsenglish-vocab.html')">📖 Bắt đầu học từ vựng!</button>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-listen">
+      <div class="module-placeholder">
+        <div class="mp-icon">👂</div>
+        <div class="mp-title">Luyện Nghe</div>
+        <div class="mp-desc">4 mini-games luyện nghe: Nghe & Chọn, Xếp Câu, Điền Chỗ Trống, Nối Cặp. Hệ thống combo và 3 mạng sống!</div>
+        <button class="mp-btn" onclick="openModule('kidsenglish-listening.html')">👂 Bắt đầu luyện nghe!</button>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-speak">
+      <div class="module-placeholder">
+        <div class="mp-icon">🎤</div>
+        <div class="mp-title">Luyện Nói</div>
+        <div class="mp-desc">Nhận diện giọng nói AI chấm điểm phát âm 0-100, sóng âm trực tiếp, mẹo phát âm cho từng từ!</div>
+        <button class="mp-btn" onclick="openModule('kidsenglish-speaking.html')" style="background:linear-gradient(135deg,var(--coral),var(--pink));">🎤 Bắt đầu luyện nói!</button>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-chat">
+      <div class="module-placeholder">
+        <div class="mp-icon">🤖</div>
+        <div class="mp-title">Chat với Sunny AI</div>
+        <div class="mp-desc">Trò chuyện tiếng Anh với Sunny AI — sửa lỗi nhẹ nhàng, highlight từ vựng, phát âm tự động, an toàn 100% cho trẻ!</div>
+        <button class="mp-btn" onclick="openModule('kidsenglish-chat.html')" style="background:linear-gradient(135deg,var(--purple),var(--blue));">🤖 Chat với Sunny!</button>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-games">
+      <div class="module-placeholder">
+        <div class="mp-icon">🎮</div>
+        <div class="mp-title">Game Zone</div>
+        <div class="mp-desc">Word Hunt, Memory Match, Balloon Pop, Word Scramble + hệ thống XP, huy hiệu, bảng xếp hạng và phần thưởng hàng ngày!</div>
+        <button class="mp-btn" onclick="openModule('kidsenglish-games.html')" style="background:linear-gradient(135deg,var(--orange),var(--sun));color:var(--navy);">🎮 Vào Game Zone!</button>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-road">
+      <div class="module-placeholder">
+        <div class="mp-icon">🗺️</div>
+        <div class="mp-title">Lộ Trình 60 Ngày</div>
+        <div class="mp-desc">Bản đồ hành trình 8 tuần, chi tiết bài học mỗi ngày, lịch streak, dashboard phụ huynh và chứng chỉ hoàn thành!</div>
+        <button class="mp-btn" onclick="openModule('kidsenglish-roadmap.html')" style="background:linear-gradient(135deg,var(--sky),var(--blue));">🗺️ Xem lộ trình!</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-item active" id="tab-home" onclick="switchTab('home')">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-label">Trang chủ</span>
+    </button>
+    <button class="tab-item" id="tab-vocab" onclick="switchTab('vocab')">
+      <span class="tab-icon">📚</span>
+      <span class="tab-label">Từ vựng</span>
+    </button>
+    <button class="tab-item" id="tab-listen" onclick="switchTab('listen')">
+      <span class="tab-icon">👂</span>
+      <span class="tab-label">Nghe</span>
+      <div class="tab-notif">!</div>
+    </button>
+    <button class="tab-item" id="tab-speak" onclick="switchTab('speak')">
+      <span class="tab-icon">🎤</span>
+      <span class="tab-label">Nói</span>
+    </button>
+    <button class="tab-item" id="tab-chat" onclick="switchTab('chat')">
+      <span class="tab-icon">🤖</span>
+      <span class="tab-label">Chat AI</span>
+    </button>
+    <button class="tab-item" id="tab-games" onclick="switchTab('games')">
+      <span class="tab-icon">🎮</span>
+      <span class="tab-label">Games</span>
+    </button>
+    <button class="tab-item" id="tab-road" onclick="switchTab('road')">
+      <span class="tab-icon">🗺️</span>
+      <span class="tab-label">Lộ trình</span>
+    </button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+let playerName = 'bé';
+let playerAvatar = '🦉';
+let xp = 235;
+let obSlide = 0;
+let musicPlaying = false;
+let audioCtx = null;
+let musicNodes = {};
+let currentTab = 'home';
+
+/* ═══════════════════════════════════════════════
+   LOADING SPLASH
+═══════════════════════════════════════════════ */
+setTimeout(() => {
+  document.getElementById('loadSplash').style.opacity = '0';
+  document.getElementById('loadSplash').style.transition = 'opacity .5s ease';
+  setTimeout(() => {
+    document.getElementById('loadSplash').style.display = 'none';
+    checkOnboarding();
+  }, 500);
+}, 2400);
+
+/* ═══════════════════════════════════════════════
+   ONBOARDING
+═══════════════════════════════════════════════ */
+function checkOnboarding() {
+  const saved = localStorage.getItem('sw_name');
+  if (saved) {
+    playerName = saved;
+    playerAvatar = localStorage.getItem('sw_avatar') || '🦉';
+    xp = parseInt(localStorage.getItem('sw_xp') || '0');
+    finishOnboard(true);
+  }
+  // Always show onboarding for fresh run
+}
+
+function buildObStars() {
+  const c = document.getElementById('obStars');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
+    s.className = 'ob-star-p';
+    const size = 1 + Math.random() * 3;
+    s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s;`;
+    c.appendChild(s);
+  }
+}
+buildObStars();
+
+function nextSlide() {
+  if (obSlide === 1) {
+    const n = document.getElementById('nameInput').value.trim();
+    if (!n) { document.getElementById('nameInput').focus(); shakeInput(); return; }
+    playerName = n;
+    document.getElementById('obReadyDesc').textContent = `Hành trình 60 ngày hè của ${n} bắt đầu ngay hôm nay!`;
+  }
+  obSlide = Math.min(obSlide + 1, 2);
+  updateObSlides();
+}
+function prevSlide() { obSlide = Math.max(obSlide - 1, 0); updateObSlides(); }
+function skipOnboard() { if (!playerName || playerName === 'bé') playerName = 'bé'; finishOnboard(); }
+function pickAv(el) { document.querySelectorAll('.ob-av').forEach(e => e.classList.remove('sel')); el.classList.add('sel'); playerAvatar = el.textContent; }
+
+function updateObSlides() {
+  document.querySelectorAll('.ob-slide').forEach((s, i) => s.classList.toggle('active', i === obSlide));
+  document.querySelectorAll('.ob-dot').forEach((d, i) => d.classList.toggle('active', i === obSlide));
+}
+
+function shakeInput() {
+  const inp = document.getElementById('nameInput');
+  inp.style.animation = 'none';
+  requestAnimationFrame(() => { inp.style.animation = 'wrong-shake .35s ease'; inp.style.borderColor = 'var(--coral)'; });
+  setTimeout(() => inp.style.borderColor = '', 1000);
+}
+
+function finishOnboard(silent = false) {
+  localStorage.setItem('sw_name', playerName);
+  localStorage.setItem('sw_avatar', playerAvatar);
+  localStorage.setItem('sw_xp', xp);
+
+  const ob = document.getElementById('onboarding');
+  ob.style.transition = 'opacity .6s ease, transform .6s ease';
+  ob.style.opacity = '0';
+  ob.style.transform = 'scale(1.05)';
+  setTimeout(() => { ob.style.display = 'none'; }, 600);
+
+  const shell = document.getElementById('appShell');
+  shell.classList.add('visible');
+
+  updateHeaderInfo();
+  initParticles();
+  buildModulesGrid();
+  setHeroDate();
+  animateDailyRing();
+
+  if (!silent) {
+    setTimeout(() => {
+      showToast(`🎉 Xin chào, ${playerName}! Hành trình bắt đầu!`, 't-badge');
+      burst('🎉⭐🚀✨');
+    }, 800);
+    setTimeout(() => startMusicPrompt(), 2000);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   HEADER & HERO
+═══════════════════════════════════════════════ */
+function updateHeaderInfo() {
+  document.getElementById('headerName').textContent = playerName;
+  document.getElementById('headerAv').textContent = playerAvatar;
+  document.getElementById('heroName').textContent = playerName;
+  document.getElementById('heroMascot').textContent = playerAvatar;
+  document.getElementById('headerXP').textContent = xp;
+}
+
+function setHeroDate() {
+  const days = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+  const now = new Date();
+  document.getElementById('heroDate').textContent =
+    `${days[now.getDay()]}, ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
+}
+
+function animateDailyRing() {
+  const pct = 25;
+  const circ = 188.5;
+  const offset = circ - (pct / 100 * circ);
+  setTimeout(() => {
+    document.getElementById('dailyRing').style.strokeDashoffset = offset;
+    document.getElementById('ringPct').textContent = pct + '%';
+  }, 500);
+}
+
+/* ═══════════════════════════════════════════════
+   MODULES GRID
+═══════════════════════════════════════════════ */
+const MODULES = [
+  { id:'vocab',  icon:'📚', label:'Từ Vựng',  xp:'+15',  color:'linear-gradient(135deg,#4ECDC4,#6BCB77)',  notif:false },
+  { id:'listen', icon:'👂', label:'Luyện Nghe', xp:'+20', color:'linear-gradient(135deg,#FF6B6B,#FF9F43)', notif:true  },
+  { id:'speak',  icon:'🎤', label:'Luyện Nói',  xp:'+25', color:'linear-gradient(135deg,#FF6EB4,#C77DFF)', notif:false },
+  { id:'chat',   icon:'🤖', label:'Chat AI',    xp:'+15', color:'linear-gradient(135deg,#C77DFF,#4ECDC4)', notif:false },
+  { id:'games',  icon:'🎮', label:'Games',       xp:'+30', color:'linear-gradient(135deg,#FFD93D,#FF9F43)', notif:false },
+  { id:'road',   icon:'🗺️', label:'Lộ Trình',  xp:'',    color:'linear-gradient(135deg,#6BCB77,#4ECDC4)', notif:false },
+];
+
+function buildModulesGrid() {
+  const grid = document.getElementById('modulesGrid');
+  grid.innerHTML = '';
+  MODULES.forEach((m, i) => {
+    const card = document.createElement('div');
+    card.className = 'mod-card';
+    card.style.background = m.color;
+    card.style.boxShadow = '0 6px 20px rgba(0,0,0,.2)';
+    card.style.animationDelay = `${i * 0.07}s`;
+    card.innerHTML = `
+      ${m.notif ? '<div class="mc-badge">!</div>' : ''}
+      <div class="mc-icon">${m.icon}</div>
+      <div class="mc-label">${m.label}</div>
+      ${m.xp ? `<div class="mc-xp">${m.xp} XP</div>` : ''}
+    `;
+    card.onclick = () => {
+      playSfx('click');
+      switchTab(m.id);
+    };
+    grid.appendChild(card);
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   TAB NAVIGATION
+═══════════════════════════════════════════════ */
+function switchTab(id) {
+  if (id === currentTab) return;
+  playSfx('tab');
+
+  // Wipe transition
+  const wipe = document.getElementById('screenWipe');
+  wipe.classList.add('go');
+  setTimeout(() => {
+    currentTab = id;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(`screen-${id}`)?.classList.add('active');
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    document.getElementById(`tab-${id}`)?.classList.add('active');
+    // Remove notif badge
+    const notifEl = document.querySelector(`#tab-${id} .tab-notif`);
+    if (notifEl) notifEl.remove();
+    document.getElementById('pageContainer').scrollTop = 0;
+    wipe.classList.remove('go');
+    wipe.classList.add('back');
+    setTimeout(() => wipe.classList.remove('back'), 300);
+  }, 200);
+}
+
+function navigateTo(tabId) { switchTab(tabId); }
+
+function openModule(url) {
+  playSfx('whoosh');
+  window.open(url, '_blank');
+  showToast('🚀 Mở module trong tab mới!', 't-info');
+}
+
+/* ═══════════════════════════════════════════════
+   WEB AUDIO — MUSIC ENGINE
+═══════════════════════════════════════════════ */
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+// Generative chiptune music using Web Audio oscillators
+function startMusic() {
+  initAudio();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  const master = audioCtx.createGain();
+  master.gain.value = 0.18;
+  master.connect(audioCtx.destination);
+  musicNodes.master = master;
+
+  // Melody notes (C major pentatonic) — cheerful children's feel
+  const NOTES = { C4:261.63, D4:293.66, E4:329.63, G4:392.00, A4:440.00, C5:523.25, D5:587.33, E5:659.25, G5:783.99 };
+  const MELODY = [
+    'C5','E5','G5','A4','G5','E5','C5','D5',
+    'E5','G5','A5','G5','E5','D5','C5','G4',
+    'C5','D5','E5','G5','A5','G5','E5','C5',
+    'G4','A4','C5','D5','E5','G5','A5','C5',
+  ].map(n => NOTES[n] || NOTES['C5']);
+
+  const BASS = ['C4','G4','C4','G4'].map(n => NOTES[n]);
+
+  let step = 0, bstep = 0;
+  const BPM = 132;
+  const beat = 60 / BPM;
+
+  function playNote(freq, type, dur, vol, when) {
+    if (!audioCtx || !musicNodes.master) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol, when);
+    gain.gain.exponentialRampToValueAtTime(0.001, when + dur);
+    osc.connect(gain);
+    gain.connect(musicNodes.master);
+    osc.start(when);
+    osc.stop(when + dur + 0.01);
+  }
+
+  // Add reverb-like chorus
+  function scheduleNotes() {
+    if (!musicPlaying || !audioCtx) return;
+    const now = audioCtx.currentTime;
+    const look = 0.3;
+    while ((musicNodes.nextBeat || 0) < now + look) {
+      const t = musicNodes.nextBeat || now;
+      const note = MELODY[step % MELODY.length];
+      const bass = BASS[bstep % BASS.length];
+      // Melody (square - chiptune)
+      playNote(note, 'square', beat * .4, .6, t);
+      // Harmony slightly detuned
+      playNote(note * 1.003, 'square', beat * .38, .25, t + .005);
+      // Bass (triangle - soft)
+      if (step % 4 === 0) { playNote(bass * .5, 'triangle', beat * 1.8, .5, t); bstep++; }
+      // Percussion (noise bursts via sawtooth)
+      if (step % 8 === 0) playNote(80, 'sawtooth', beat * .08, .3, t);
+      if (step % 8 === 4) playNote(60, 'sawtooth', beat * .06, .2, t);
+      musicNodes.nextBeat = t + beat;
+      step++;
+    }
+    musicNodes.schedId = setTimeout(scheduleNotes, 100);
+  }
+
+  musicNodes.nextBeat = audioCtx.currentTime;
+  scheduleNotes();
+}
+
+function stopMusic() {
+  clearTimeout(musicNodes.schedId);
+  if (musicNodes.master) {
+    musicNodes.master.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+    setTimeout(() => {
+      try { musicNodes.master.disconnect(); } catch(e) {}
+      musicNodes = {};
+    }, 600);
+  }
+}
+
+function toggleMusic() {
+  musicPlaying = !musicPlaying;
+  const btn = document.getElementById('musicBtn');
+  if (musicPlaying) {
+    startMusic();
+    btn.classList.add('playing');
+    btn.textContent = '🎵';
+    showToast('🎵 Nhạc nền bật! Học vui hơn nào!', 't-music');
+  } else {
+    stopMusic();
+    btn.classList.remove('playing');
+    btn.textContent = '🔇';
+    showToast('🔇 Đã tắt nhạc nền', 't-info');
+  }
+}
+
+function startMusicPrompt() {
+  showToast('🎵 Bật nhạc nền không?', 't-music');
+}
+
+/* ═══════════════════════════════════════════════
+   SFX
+═══════════════════════════════════════════════ */
+function playSfx(type) {
+  try {
+    if (!audioCtx) initAudio();
+    if (!audioCtx || audioCtx.state === 'suspended') return;
+    const t = audioCtx.currentTime;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    const sfx = {
+      click:   { f:600, type:'sine',   dur:.08, vol:.12 },
+      tab:     { f:440, type:'sine',   dur:.12, vol:.1  },
+      correct: { f:880, type:'square', dur:.2,  vol:.15 },
+      wrong:   { f:220, type:'sawtooth',dur:.15,vol:.12 },
+      whoosh:  { f:300, type:'sine',   dur:.18, vol:.1  },
+      star:    { f:1046,type:'sine',   dur:.25, vol:.15 },
+    };
+    const s = sfx[type] || sfx.click;
+    o.type = s.type;
+    o.frequency.setValueAtTime(s.f, t);
+    if (type === 'correct') o.frequency.exponentialRampToValueAtTime(s.f * 1.5, t + s.dur);
+    if (type === 'star') { o.frequency.setValueAtTime(s.f, t); o.frequency.exponentialRampToValueAtTime(s.f * 2, t + s.dur); }
+    g.gain.setValueAtTime(s.vol, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + s.dur);
+    o.start(t); o.stop(t + s.dur + .01);
+  } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════════
+   PARTICLE SYSTEM
+═══════════════════════════════════════════════ */
+function initParticles() {
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COLORS = ['#FFD93D','#FF6B6B','#4ECDC4','#C77DFF','#6BCB77','#FF9F43','#FF6EB4'];
+
+  class Particle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.size = 1.5 + Math.random() * 3;
+      this.vx = (Math.random() - 0.5) * 0.4;
+      this.vy = -0.2 - Math.random() * 0.5;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.alpha = 0.15 + Math.random() * 0.35;
+      this.life = 1;
+      this.decay = 0.002 + Math.random() * 0.003;
+    }
+    update() {
+      this.x += this.vx; this.y += this.vy;
+      this.life -= this.decay;
+      if (this.life <= 0 || this.y < -10) this.reset();
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = this.life * this.alpha;
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+/* ═══════════════════════════════════════════════
+   TOAST SYSTEM
+═══════════════════════════════════════════════ */
+function showToast(msg, cls = 't-info', duration = 2800) {
+  const container = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${cls}`;
+  t.textContent = msg;
+  container.appendChild(t);
+  setTimeout(() => {
+    t.classList.add('out');
+    setTimeout(() => t.remove(), 300);
+  }, duration);
+}
+
+/* ═══════════════════════════════════════════════
+   BURST EFFECT
+═══════════════════════════════════════════════ */
+function burst(emojiStr) {
+  const emojis = emojiStr.split('');
+  for (let i = 0; i < 20; i++) setTimeout(() => {
+    const p = document.createElement('div');
+    p.className = 'burst-p';
+    p.textContent = emojis[i % emojis.length];
+    p.style.cssText = `left:${Math.random() * window.innerWidth}px;top:${window.innerHeight + 10}px;font-size:${1.2 + Math.random() * 1.5}rem;`;
+    document.body.appendChild(p);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      p.style.transform = `translateY(-${window.innerHeight + 80}px) rotate(${Math.random() * 720}deg)`;
+      p.style.opacity = '0';
+      p.style.transition = `all ${1.5 + Math.random()}s ease`;
+    }));
+    setTimeout(() => p.remove(), 2500);
+  }, i * 55);
+}
+
+/* ═══════════════════════════════════════════════
+   INIT AUDIO ON FIRST INTERACTION
+═══════════════════════════════════════════════ */
+document.addEventListener('click', function initOnce() {
+  initAudio();
+  document.removeEventListener('click', initOnce);
+}, { once: true });
+
+/* ═══════════════════════════════════════════════
+   XP UPDATE EXAMPLE (simulate gaining XP)
+═══════════════════════════════════════════════ */
+function addXP(amount) {
+  xp += amount;
+  document.getElementById('headerXP').textContent = xp;
+  localStorage.setItem('sw_xp', xp);
+  playSfx('star');
+  showToast(`⭐ +${amount} XP!`, 't-xp', 2000);
+}
+
+// Simulate daily XP gain after 3s
+setTimeout(() => {
+  const shell = document.getElementById('appShell');
+  if (shell.classList.contains('visible')) {
+    showToast('🌟 Phần thưởng đăng nhập: +10 XP!', 't-xp');
+  }
+}, 4000);
+
+// PWA-style: handle back button on mobile
+window.addEventListener('popstate', () => {
+  if (currentTab !== 'home') switchTab('home');
+});
+</script>
+</body>
+</html>

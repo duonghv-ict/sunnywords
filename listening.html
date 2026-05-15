@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SunnyWords — Listen & Play 👂</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --sun:#FFD93D;--coral:#FF6B6B;--blue:#4ECDC4;--purple:#C77DFF;
+  --sky:#6BCB77;--orange:#FF9F43;--pink:#FF6EB4;--navy:#2D2D44;
+  --bg:#FFFBF0;--card:#FFFFFF;--r:24px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--navy);overflow-x:hidden;min-height:100vh;}
+
+/* ── ANIMATED BG ── */
+.bg-deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.bg-deco span{position:absolute;font-size:2rem;opacity:.07;animation:drift linear infinite;}
+@keyframes drift{from{transform:translateY(100vh) rotate(0deg)}to{transform:translateY(-100px) rotate(360deg)}}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 2rem;
+  background:rgba(255,251,240,.96);
+  backdrop-filter:blur(10px);
+  border-bottom:3px solid var(--sun);
+  box-shadow:0 4px 24px rgba(255,217,61,.2);
+}
+.logo{font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--coral);display:flex;align-items:center;gap:.4rem;text-decoration:none;}
+.logo-sun{animation:spin 8s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.topbar-center{display:flex;align-items:center;gap:.5rem;}
+.module-badge{
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  color:white;font-family:'Fredoka One',cursive;font-size:1rem;
+  padding:.4rem 1.2rem;border-radius:50px;
+  box-shadow:0 3px 10px rgba(78,205,196,.4);
+}
+.score-chip{
+  display:flex;align-items:center;gap:.5rem;
+  background:var(--navy);color:white;
+  padding:.4rem 1rem;border-radius:50px;
+  font-family:'Fredoka One',cursive;font-size:.95rem;
+}
+.score-chip .s-star{animation:pulse 1.2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+
+/* ── GAME SELECTOR ── */
+.game-selector{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;
+  padding:1.5rem 2rem;max-width:1100px;margin:0 auto;
+  position:relative;z-index:5;
+}
+.game-card{
+  border-radius:20px;padding:1.2rem 1rem;text-align:center;cursor:pointer;
+  transition:transform .2s,box-shadow .2s;border:3px solid transparent;
+  position:relative;overflow:hidden;
+}
+.game-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s;background:rgba(255,255,255,.25);}
+.game-card:hover{transform:translateY(-6px) rotate(-1deg);}
+.game-card:hover::before{opacity:1;}
+.game-card.active{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.2)!important;}
+.gc1{background:#FFE8E8;border-color:#FF6B6B;box-shadow:0 6px 0 rgba(255,107,107,.35);}
+.gc2{background:#E8F8FF;border-color:#4ECDC4;box-shadow:0 6px 0 rgba(78,205,196,.35);}
+.gc3{background:#FFF3CC;border-color:#FFD93D;box-shadow:0 6px 0 rgba(255,217,61,.35);}
+.gc4{background:#F0E8FF;border-color:#C77DFF;box-shadow:0 6px 0 rgba(199,125,255,.35);}
+.gc-icon{font-size:2.5rem;display:block;margin-bottom:.4rem;}
+.gc-name{font-family:'Fredoka One',cursive;font-size:1rem;}
+.gc-desc{font-size:.75rem;opacity:.7;font-weight:700;margin-top:.2rem;}
+.gc-badge{
+  position:absolute;top:.5rem;right:.5rem;
+  font-size:.65rem;font-weight:800;padding:.2rem .5rem;
+  border-radius:50px;background:var(--navy);color:white;
+}
+
+/* ── GAME ARENA ── */
+.game-arena{
+  max-width:900px;margin:0 auto;padding:1.5rem 2rem 3rem;
+  position:relative;z-index:5;
+}
+
+/* ── PROGRESS BAR ── */
+.prog-wrap{display:flex;align-items:center;gap:.8rem;margin-bottom:1.5rem;}
+.prog-bar{flex:1;height:16px;background:#EEE;border-radius:50px;overflow:hidden;border:2px solid #DDD;}
+.prog-fill{
+  height:100%;border-radius:50px;
+  background:linear-gradient(90deg,var(--coral),var(--orange),var(--sun));
+  transition:width .5s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+}
+.prog-fill::after{content:'';position:absolute;top:3px;left:6px;right:6px;height:4px;background:rgba(255,255,255,.5);border-radius:50px;}
+.prog-txt{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--coral);white-space:nowrap;}
+.lives{display:flex;gap:.3rem;}
+.heart{font-size:1.3rem;transition:transform .3s;}
+.heart.lost{filter:grayscale(1);opacity:.3;transform:scale(.8);}
+
+/* ── GAME PANEL ── */
+.game-panel{animation:panelIn .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes panelIn{from{opacity:0;transform:scale(.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+/* LISTEN BUTTON — BIG PULSING MIC */
+.listen-zone{display:flex;flex-direction:column;align-items:center;gap:1.2rem;margin-bottom:2rem;}
+.listen-btn{
+  width:130px;height:130px;border-radius:50%;border:none;cursor:pointer;
+  background:linear-gradient(145deg,var(--blue),#2bb5ac);
+  color:white;font-size:3.5rem;
+  box-shadow:0 8px 0 #2a8a85, 0 12px 30px rgba(78,205,196,.5);
+  transition:transform .15s,box-shadow .15s;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.listen-btn:hover{transform:translateY(-4px);box-shadow:0 12px 0 #2a8a85, 0 18px 40px rgba(78,205,196,.5);}
+.listen-btn:active{transform:translateY(4px);box-shadow:0 4px 0 #2a8a85;}
+.listen-btn.playing{animation:listen-pulse 1s ease-in-out infinite;}
+@keyframes listen-pulse{
+  0%,100%{box-shadow:0 8px 0 #2a8a85,0 0 0 0 rgba(78,205,196,.5)}
+  50%{box-shadow:0 8px 0 #2a8a85,0 0 0 24px rgba(78,205,196,0)}
+}
+.listen-btn .ripple{
+  position:absolute;inset:-8px;border-radius:50%;
+  border:3px solid rgba(78,205,196,.4);
+  animation:ripple-out 1.5s ease-out infinite;display:none;
+}
+.listen-btn.playing .ripple{display:block;}
+@keyframes ripple-out{from{transform:scale(1);opacity:1}to{transform:scale(1.6);opacity:0}}
+.listen-label{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#888;}
+.listen-speed{display:flex;gap:.5rem;}
+.speed-btn{
+  font-size:.8rem;font-weight:800;padding:.3rem .8rem;
+  border-radius:50px;border:2px solid #ddd;background:white;cursor:pointer;
+  transition:all .2s;color:#888;
+}
+.speed-btn.active{background:var(--blue);border-color:var(--blue);color:white;}
+.speed-btn:hover{transform:scale(1.05);}
+
+/* ═══════════════════════════════════════
+   GAME 1 — LISTEN & PICK
+═══════════════════════════════════════ */
+.g1-question{
+  font-family:'Fredoka One',cursive;font-size:1.4rem;
+  text-align:center;margin-bottom:1.5rem;color:#555;
+}
+.g1-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;
+  max-width:560px;margin:0 auto;
+}
+.pick-card{
+  background:white;border-radius:20px;padding:1.8rem 1rem;
+  text-align:center;cursor:pointer;border:4px solid #EEE;
+  transition:all .2s;box-shadow:0 4px 0 #DDD;
+  position:relative;overflow:hidden;
+}
+.pick-card::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at center,rgba(255,255,255,.8),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.pick-card:hover{transform:translateY(-5px) scale(1.03);border-color:var(--blue);box-shadow:0 9px 0 rgba(78,205,196,.4);}
+.pick-card:active::after{opacity:1;}
+.pick-card.correct{border-color:var(--sky);background:#F0FFE8;box-shadow:0 6px 0 rgba(107,203,119,.4);animation:correct-bounce .4s ease;}
+.pick-card.wrong{border-color:var(--coral);background:#FFE8E8;box-shadow:0 6px 0 rgba(255,107,107,.4);animation:wrong-shake .3s ease;}
+.pick-card.disabled{pointer-events:none;}
+@keyframes correct-bounce{0%,100%{transform:scale(1)}40%{transform:scale(1.08) rotate(-2deg)}70%{transform:scale(1.04) rotate(1deg)}}
+@keyframes wrong-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pick-emoji{font-size:4rem;display:block;margin-bottom:.6rem;line-height:1;}
+.pick-label{font-family:'Fredoka One',cursive;font-size:1.2rem;}
+.pick-result{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2.5rem;opacity:0;transition:opacity .2s;}
+.pick-card.correct .pick-result,.pick-card.wrong .pick-result{opacity:1;}
+
+/* ═══════════════════════════════════════
+   GAME 2 — LISTEN & ORDER
+═══════════════════════════════════════ */
+.g2-sentence{
+  font-family:'Fredoka One',cursive;font-size:1.1rem;color:#888;
+  text-align:center;margin-bottom:1.5rem;
+}
+.g2-sentence em{color:var(--coral);font-style:normal;}
+.answer-slots{
+  display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;
+  min-height:70px;padding:1rem;
+  border:3px dashed #CCC;border-radius:16px;
+  background:#FAFAF8;margin-bottom:1.5rem;
+  transition:border-color .2s;
+}
+.answer-slots.dragover{border-color:var(--blue);background:#F0F9FF;}
+.word-tile{
+  font-family:'Fredoka One',cursive;font-size:1.1rem;
+  padding:.6rem 1.2rem;border-radius:14px;cursor:grab;
+  border:3px solid;transition:all .2s;user-select:none;
+  position:relative;
+}
+.word-tile:active{cursor:grabbing;transform:scale(1.05) rotate(-2deg);}
+.word-tile.in-slot{cursor:pointer;}
+.word-tile.in-slot:hover{opacity:.7;}
+.word-bank{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;min-height:60px;}
+.wt0{background:#FFE8E8;border-color:#FF6B6B;color:#cc3333;}
+.wt1{background:#E8F8FF;border-color:#4ECDC4;color:#2a8a85;}
+.wt2{background:#FFF3CC;border-color:#FFD93D;color:#aa8800;}
+.wt3{background:#F0FFE8;border-color:#6BCB77;color:#2a7a33;}
+.wt4{background:#F0E8FF;border-color:#C77DFF;color:#7733cc;}
+.wt5{background:#FFE8F5;border-color:#FF6EB4;color:#cc3380;}
+.g2-check{
+  display:flex;justify-content:center;gap:.8rem;margin-top:1rem;
+}
+.g2-check button{
+  font-family:'Fredoka One',cursive;font-size:1rem;
+  padding:.7rem 1.8rem;border-radius:50px;border:none;cursor:pointer;
+  transition:all .2s;
+}
+.btn-check{background:var(--sky);color:white;box-shadow:0 4px 0 #3a8a3a;}
+.btn-check:hover{transform:translateY(-2px);box-shadow:0 6px 0 #3a8a3a;}
+.btn-clear{background:#eee;color:#888;box-shadow:0 4px 0 #ccc;}
+.btn-clear:hover{background:#ddd;transform:translateY(-2px);}
+.feedback-bar{
+  padding:.8rem 1.2rem;border-radius:14px;text-align:center;
+  font-family:'Fredoka One',cursive;font-size:1.1rem;margin-top:1rem;
+  display:none;animation:slideUp .3s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fb-correct{background:#E8FFE8;color:#2a7a33;border:2px solid var(--sky);}
+.fb-wrong{background:#FFE8E8;color:#cc3333;border:2px solid var(--coral);}
+
+/* ═══════════════════════════════════════
+   GAME 3 — FILL THE BLANK
+═══════════════════════════════════════ */
+.g3-sentence{
+  font-size:1.5rem;font-weight:800;text-align:center;
+  line-height:2;margin-bottom:2rem;padding:1.5rem;
+  background:white;border-radius:20px;
+  border:3px solid var(--sun);
+  box-shadow:0 6px 0 rgba(255,217,61,.3);
+}
+.blank{
+  display:inline-block;min-width:120px;border-bottom:4px solid var(--coral);
+  color:var(--coral);font-family:'Fredoka One',cursive;
+  padding:0 .5rem;text-align:center;vertical-align:bottom;
+  transition:all .3s;
+}
+.blank.filled{color:var(--sky);border-color:var(--sky);}
+.g3-options{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;}
+.g3-opt{
+  font-family:'Fredoka One',cursive;font-size:1.1rem;
+  padding:.7rem 1.5rem;border-radius:50px;cursor:pointer;
+  border:3px solid;transition:all .2s;
+}
+.g3-opt:hover:not(.used):not(.disabled){transform:translateY(-3px) scale(1.05);}
+.g3-opt.used{opacity:.3;pointer-events:none;}
+.g3-opt.correct{background:#E8FFE8!important;color:#2a7a33!important;border-color:var(--sky)!important;}
+.g3-opt.wrong{animation:wrong-shake .3s ease;background:#FFE8E8!important;border-color:var(--coral)!important;}
+.go0{background:#FFE8E8;border-color:#FF6B6B;color:#cc3333;}
+.go1{background:#E8F8FF;border-color:#4ECDC4;color:#2a8a85;}
+.go2{background:#FFF3CC;border-color:#FFD93D;color:#aa8800;}
+.go3{background:#F0E8FF;border-color:#C77DFF;color:#7733cc;}
+
+/* ═══════════════════════════════════════
+   GAME 4 — SOUND MATCH (PAIRS)
+═══════════════════════════════════════ */
+.g4-instruction{
+  font-family:'Fredoka One',cursive;font-size:1.1rem;color:#777;
+  text-align:center;margin-bottom:1.5rem;
+}
+.match-layout{display:grid;grid-template-columns:1fr 60px 1fr;gap:1rem;align-items:start;}
+.match-col{display:flex;flex-direction:column;gap:.75rem;}
+.match-col-title{font-family:'Fredoka One',cursive;font-size:.9rem;color:#aaa;text-align:center;margin-bottom:.3rem;}
+.match-item{
+  padding:.9rem 1rem;border-radius:16px;cursor:pointer;
+  border:3px solid #EEE;background:white;
+  font-family:'Fredoka One',cursive;font-size:1rem;
+  text-align:center;transition:all .2s;position:relative;
+  box-shadow:0 3px 0 #EEE;
+}
+.match-item:hover:not(.matched):not(.disabled){transform:translateY(-3px);border-color:var(--blue);box-shadow:0 6px 0 rgba(78,205,196,.3);}
+.match-item.selected{border-color:var(--orange);background:#FFF3CC;box-shadow:0 3px 0 rgba(255,159,67,.4);}
+.match-item.matched{border-color:var(--sky);background:#F0FFE8;pointer-events:none;box-shadow:0 3px 0 rgba(107,203,119,.3);}
+.match-item.wrong-flash{animation:wrong-shake .3s ease;border-color:var(--coral);background:#FFE8E8;}
+.match-arrow{display:flex;align-items:center;justify-content:center;font-size:1.5rem;padding-top:2rem;}
+.match-emoji{font-size:1.8rem;display:block;margin-bottom:.2rem;}
+.match-line{font-size:.85rem;}
+.match-sound-icon{font-size:1.4rem;}
+.matched-indicator{
+  position:absolute;top:-8px;right:-8px;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--sky);color:white;
+  display:none;align-items:center;justify-content:center;font-size:.8rem;
+}
+.match-item.matched .matched-indicator{display:flex;}
+
+/* ── RESULT OVERLAY ── */
+.result-overlay{
+  position:fixed;inset:0;background:rgba(45,45,68,.88);
+  z-index:200;display:none;align-items:center;justify-content:center;
+}
+.result-overlay.show{display:flex;animation:fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.result-box{
+  background:white;border-radius:32px;padding:2.5rem 2rem;
+  max-width:420px;width:90%;text-align:center;
+  box-shadow:0 30px 80px rgba(0,0,0,.35);
+  animation:zoomIn .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes zoomIn{from{transform:scale(.6)}to{transform:scale(1)}}
+.result-trophy{font-size:5rem;animation:bob 2s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.result-title{font-family:'Fredoka One',cursive;font-size:2rem;margin:.5rem 0;}
+.result-stars{font-size:2.5rem;margin:.5rem 0;letter-spacing:.2rem;}
+.result-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1.2rem 0;
+}
+.rs-item{background:#F8F8F8;border-radius:14px;padding:.8rem .5rem;}
+.rs-n{font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--coral);}
+.rs-l{font-size:.75rem;color:#888;font-weight:700;}
+.result-btns{display:flex;gap:.7rem;justify-content:center;margin-top:1rem;}
+.rb{
+  font-family:'Fredoka One',cursive;font-size:1rem;padding:.8rem 1.6rem;
+  border-radius:50px;border:none;cursor:pointer;transition:all .2s;
+}
+.rb-retry{background:var(--coral);color:white;box-shadow:0 4px 0 #cc4444;}
+.rb-retry:hover{transform:translateY(-2px);box-shadow:0 6px 0 #cc4444;}
+.rb-next{background:var(--sky);color:white;box-shadow:0 4px 0 #3a8a3a;}
+.rb-next:hover{transform:translateY(-2px);box-shadow:0 6px 0 #3a8a3a;}
+.rb-games{background:var(--purple);color:white;box-shadow:0 4px 0 #8833cc;}
+.rb-games:hover{transform:translateY(-2px);box-shadow:0 6px 0 #8833cc;}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
+  z-index:999;padding:1rem 2rem;border-radius:50px;
+  font-family:'Fredoka One',cursive;font-size:1.1rem;
+  box-shadow:0 8px 30px rgba(0,0,0,.25);pointer-events:none;
+  animation:toast-pop .4s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;
+}
+@keyframes toast-pop{from{opacity:0;transform:translateX(-50%) scale(.7) translateY(20px)}to{opacity:1;transform:translateX(-50%) scale(1) translateY(0)}}
+.toast.good{background:var(--sky);color:white;}
+.toast.bad{background:var(--coral);color:white;}
+.toast.info{background:var(--navy);color:white;}
+
+/* ── BURST ── */
+.burst{position:fixed;pointer-events:none;z-index:9999;font-size:1.8rem;transition:all .9s ease;}
+
+/* ── COMBO ── */
+.combo-display{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'Fredoka One',cursive;font-size:3.5rem;color:var(--sun);
+  pointer-events:none;z-index:9998;
+  text-shadow:0 0 20px rgba(255,200,0,.8);
+  animation:combo-show .8s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes combo-show{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}40%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-120%) scale(.8)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .game-selector{grid-template-columns:repeat(2,1fr);}
+  .g1-grid{grid-template-columns:repeat(2,1fr);}
+  .match-layout{grid-template-columns:1fr;gap:.5rem;}
+  .match-arrow{display:none;}
+  .result-stats{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ANIMATED BACKGROUND -->
+<div class="bg-deco" id="bgDeco"></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="logo" href="kidsenglish-landing.html"><span class="logo-sun">☀️</span> SunnyWords</a>
+  <div class="topbar-center">
+    <div class="module-badge">👂 Luyện Nghe</div>
+  </div>
+  <div class="score-chip">
+    <span class="s-star">⭐</span>
+    <span id="scoreDisplay">0</span> điểm
+  </div>
+</div>
+
+<!-- GAME SELECTOR -->
+<div class="game-selector" id="gameSelector">
+  <div class="game-card gc1 active" id="gc0" onclick="selectGame(0)">
+    <span class="gc-badge">Dễ</span>
+    <span class="gc-icon">🖼️</span>
+    <div class="gc-name">Nghe & Chọn</div>
+    <div class="gc-desc">Nghe từ → chọn hình đúng</div>
+  </div>
+  <div class="game-card gc2" id="gc1" onclick="selectGame(1)">
+    <span class="gc-badge">TB</span>
+    <span class="gc-icon">🔤</span>
+    <div class="gc-name">Xếp Câu</div>
+    <div class="gc-desc">Nghe câu → sắp xếp từ</div>
+  </div>
+  <div class="game-card gc3" id="gc2" onclick="selectGame(2)">
+    <span class="gc-badge">TB</span>
+    <span class="gc-icon">📝</span>
+    <div class="gc-name">Điền Chỗ Trống</div>
+    <div class="gc-desc">Nghe câu → điền từ còn thiếu</div>
+  </div>
+  <div class="game-card gc4" id="gc3" onclick="selectGame(3)">
+    <span class="gc-badge">Khó</span>
+    <span class="gc-icon">🔗</span>
+    <div class="gc-name">Nối Cặp</div>
+    <div class="gc-desc">Nối âm thanh với hình ảnh</div>
+  </div>
+</div>
+
+<!-- GAME ARENA -->
+<div class="game-arena">
+
+  <!-- PROGRESS -->
+  <div class="prog-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-txt" id="progTxt">0 / 10</div>
+    <div class="lives" id="livesRow">
+      <span class="heart" id="h0">❤️</span>
+      <span class="heart" id="h1">❤️</span>
+      <span class="heart" id="h2">❤️</span>
+    </div>
+  </div>
+
+  <!-- LISTEN BUTTON -->
+  <div class="listen-zone" id="listenZone">
+    <button class="listen-btn" id="listenBtn" onclick="playAudio()">
+      <div class="ripple"></div>
+      🔊
+    </button>
+    <div class="listen-label" id="listenLabel">Bấm để nghe! 👆</div>
+    <div class="listen-speed">
+      <button class="speed-btn active" id="sp1" onclick="setSpeed(1,this)">🐢 Chậm</button>
+      <button class="speed-btn" id="sp2" onclick="setSpeed(.85,this)">🐇 Bình thường</button>
+    </div>
+  </div>
+
+  <!-- GAME PANELS -->
+  <div id="gamePanel" class="game-panel"></div>
+
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-box">
+    <div class="result-trophy" id="rTrophy">🏆</div>
+    <div class="result-title" id="rTitle">Amazing!</div>
+    <div class="result-stars" id="rStars">⭐⭐⭐</div>
+    <div class="result-stats">
+      <div class="rs-item"><div class="rs-n" id="rScore">0</div><div class="rs-l">Điểm</div></div>
+      <div class="rs-item"><div class="rs-n" id="rCorrect">0</div><div class="rs-l">Đúng</div></div>
+      <div class="rs-item"><div class="rs-n" id="rCombo">0</div><div class="rs-l">Combo max</div></div>
+    </div>
+    <div class="result-btns">
+      <button class="rb rb-retry" onclick="restartGame()">🔄 Chơi lại</button>
+      <button class="rb rb-games" onclick="closeResult()">🎮 Đổi game</button>
+      <button class="rb rb-next" onclick="nextGameAuto()">▶ Tiếp →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA — 40 câu hỏi theo 4 nhóm
+═══════════════════════════════════════════ */
+const VOCAB = [
+  {en:'Dog',    vn:'Con chó',    emoji:'🐶', sentence:'I have a dog at home.', blank:'I have a ___ at home.', blankWord:'dog'},
+  {en:'Cat',    vn:'Con mèo',    emoji:'🐱', sentence:'The cat is sleeping.',  blank:'The ___ is sleeping.',  blankWord:'cat'},
+  {en:'Fish',   vn:'Con cá',     emoji:'🐟', sentence:'I see a fish in the water.', blank:'I see a ___ in the water.', blankWord:'fish'},
+  {en:'Bird',   vn:'Con chim',   emoji:'🐦', sentence:'The bird can fly high.', blank:'The ___ can fly high.', blankWord:'bird'},
+  {en:'Rabbit', vn:'Con thỏ',    emoji:'🐰', sentence:'The rabbit has long ears.', blank:'The ___ has long ears.', blankWord:'rabbit'},
+  {en:'Apple',  vn:'Quả táo',    emoji:'🍎', sentence:'I eat an apple every day.', blank:'I eat an ___ every day.', blankWord:'apple'},
+  {en:'Banana', vn:'Quả chuối',  emoji:'🍌', sentence:'Monkeys love bananas.', blank:'Monkeys love ___.', blankWord:'bananas'},
+  {en:'Milk',   vn:'Sữa',        emoji:'🥛', sentence:'I drink milk every morning.', blank:'I drink ___ every morning.', blankWord:'milk'},
+  {en:'Red',    vn:'Màu đỏ',     emoji:'🔴', sentence:'I have a red apple.', blank:'I have a ___ apple.', blankWord:'red'},
+  {en:'Blue',   vn:'Màu xanh',   emoji:'🔵', sentence:'The sky is blue.', blank:'The sky is ___.', blankWord:'blue'},
+  {en:'Sun',    vn:'Mặt trời',   emoji:'☀️', sentence:'The sun is bright today.', blank:'The ___ is bright today.', blankWord:'sun'},
+  {en:'Rain',   vn:'Mưa',        emoji:'🌧️', sentence:'I love to hear the rain.', blank:'I love to hear the ___.', blankWord:'rain'},
+  {en:'Book',   vn:'Sách',       emoji:'📚', sentence:'I read a book every night.', blank:'I read a ___ every night.', blankWord:'book'},
+  {en:'Pen',    vn:'Bút',        emoji:'🖊️', sentence:'I write with a pen.', blank:'I write with a ___.', blankWord:'pen'},
+  {en:'Mother', vn:'Mẹ',         emoji:'👩', sentence:'My mother is very kind.', blank:'My ___ is very kind.', blankWord:'mother'},
+  {en:'Father', vn:'Bố',         emoji:'👨', sentence:'My father goes to work.', blank:'My ___ goes to work.', blankWord:'father'},
+  {en:'Hand',   vn:'Tay',        emoji:'🤚', sentence:'I wave my hand to say hello.', blank:'I wave my ___ to say hello.', blankWord:'hand'},
+  {en:'Eye',    vn:'Mắt',        emoji:'👁️', sentence:'I have two eyes.',  blank:'I have two ___.', blankWord:'eyes'},
+  {en:'Tree',   vn:'Cây cối',    emoji:'🌳', sentence:'Birds live in the tree.', blank:'Birds live in the ___.', blankWord:'tree'},
+  {en:'Flower', vn:'Hoa',        emoji:'🌸', sentence:'The flower smells sweet.', blank:'The ___ smells sweet.', blankWord:'flower'},
+];
+
+const SENTENCES = [
+  {words:['I','have','a','dog'], full:'I have a dog.'},
+  {words:['The','cat','is','sleeping'], full:'The cat is sleeping.'},
+  {words:['I','see','a','fish'], full:'I see a fish.'},
+  {words:['The','bird','can','fly'], full:'The bird can fly.'},
+  {words:['I','drink','milk'], full:'I drink milk.'},
+  {words:['The','sun','is','bright'], full:'The sun is bright.'},
+  {words:['I','read','a','book'], full:'I read a book.'},
+  {words:['My','mother','is','kind'], full:'My mother is kind.'},
+  {words:['I','love','the','rain'], full:'I love the rain.'},
+  {words:['The','flower','smells','sweet'], full:'The flower smells sweet.'},
+];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let currentGame = 0;   // 0-3
+let score = 0;
+let lives = 3;
+let combo = 0;
+let maxCombo = 0;
+let round = 0;
+let totalRounds = 10;
+let correctCount = 0;
+let speechRate = 1.0;
+let currentQuestion = null;
+let matchSelected = {left:null, right:null};
+let matchPairs = [];
+let answered = false;
+let gameQuestions = [];
+
+/* ═══════════════════════════════════════════
+   BG DECORATION
+═══════════════════════════════════════════ */
+(function(){
+  const emojis=['🎵','🎶','⭐','✨','🌟','🎉','💫','🔊','🎤','🎧'];
+  const bg = document.getElementById('bgDeco');
+  for(let i=0;i<20;i++){
+    const el=document.createElement('span');
+    el.textContent=emojis[i%emojis.length];
+    el.style.cssText=`left:${Math.random()*100}%;bottom:-50px;animation-duration:${8+Math.random()*12}s;animation-delay:${Math.random()*8}s;font-size:${1.5+Math.random()*1.5}rem;opacity:.06;`;
+    bg.appendChild(el);
+  }
+})();
+
+/* ═══════════════════════════════════════════
+   GAME SELECTION
+═══════════════════════════════════════════ */
+function selectGame(idx){
+  currentGame = idx;
+  document.querySelectorAll('.game-card').forEach((c,i)=>c.classList.toggle('active',i===idx));
+  score=0; lives=3; combo=0; maxCombo=0; round=0; correctCount=0; answered=false;
+  document.getElementById('scoreDisplay').textContent=0;
+  updateLives();
+  buildQuestions();
+  renderRound();
+}
+
+function buildQuestions(){
+  const shuffled = shuffle([...VOCAB]);
+  gameQuestions = shuffled.slice(0, totalRounds);
+}
+
+/* ═══════════════════════════════════════════
+   PROGRESS
+═══════════════════════════════════════════ */
+function updateProgress(){
+  const pct = Math.round(round/totalRounds*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progTxt').textContent=`${round} / ${totalRounds}`;
+}
+function updateLives(){
+  for(let i=0;i<3;i++){
+    document.getElementById('h'+i).classList.toggle('lost', i>=lives);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   SPEECH
+═══════════════════════════════════════════ */
+function speak(text, onEnd){
+  if(!('speechSynthesis' in window)){ showToast('Thử dùng Chrome nhé! 🌐','info'); return; }
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang='en-US'; utt.rate=speechRate; utt.pitch=1.05;
+  const voices = window.speechSynthesis.getVoices();
+  const v = voices.find(v=>v.lang.startsWith('en')&&v.name.toLowerCase().includes('female'))
+          || voices.find(v=>v.lang.startsWith('en'));
+  if(v) utt.voice=v;
+  const btn = document.getElementById('listenBtn');
+  btn.classList.add('playing');
+  utt.onend=()=>{ btn.classList.remove('playing'); if(onEnd) onEnd(); };
+  window.speechSynthesis.speak(utt);
+}
+
+function playAudio(){
+  if(!currentQuestion) return;
+  const g = currentGame;
+  if(g===0) speak(currentQuestion.en);
+  else if(g===1) speak(currentQuestion.full);
+  else if(g===2) speak(currentQuestion.sentence);
+  else if(g===3) speak(currentQuestion.speakText||currentQuestion.en);
+}
+
+function setSpeed(rate, btn){
+  speechRate = rate;
+  document.querySelectorAll('.speed-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ═══════════════════════════════════════════
+   RENDER ROUND
+═══════════════════════════════════════════ */
+function renderRound(){
+  updateProgress();
+  answered = false;
+  const panel = document.getElementById('gamePanel');
+  panel.innerHTML='';
+  panel.className='game-panel';
+
+  if(round >= totalRounds){ showResult(); return; }
+  if(lives <= 0){ showResult(); return; }
+
+  const q = gameQuestions[round];
+  currentQuestion = q;
+
+  // Update listen zone text
+  const labels=['Nghe từ → chọn hình đúng! 👆','Nghe câu → xếp đúng thứ tự! 🔤','Nghe câu → điền chỗ trống! 📝','Nghe âm → nối cặp đúng! 🔗'];
+  document.getElementById('listenLabel').textContent=labels[currentGame];
+
+  if(currentGame===0) renderGame0(q);
+  else if(currentGame===1) renderGame1();
+  else if(currentGame===2) renderGame2(q);
+  else if(currentGame===3) renderGame3();
+
+  // Auto-play after short delay
+  setTimeout(()=>playAudio(), 600);
+}
+
+/* ═══════════════════════════════════════════
+   GAME 0 — LISTEN & PICK
+═══════════════════════════════════════════ */
+function renderGame0(q){
+  const panel = document.getElementById('gamePanel');
+  // 4 choices: correct + 3 random others
+  const others = shuffle(VOCAB.filter(v=>v.en!==q.en)).slice(0,3);
+  const choices = shuffle([q,...others]);
+
+  panel.innerHTML=`
+    <div class="g1-question">Nghe và chọn hình đúng! 🖼️</div>
+    <div class="g1-grid" id="g1grid"></div>
+  `;
+  const grid=document.getElementById('g1grid');
+  choices.forEach(ch=>{
+    const card=document.createElement('div');
+    card.className='pick-card';
+    card.innerHTML=`
+      <span class="pick-result">${ch.en===q.en?'✅':'❌'}</span>
+      <span class="pick-emoji">${ch.emoji}</span>
+      <div class="pick-label">${ch.en}</div>
+    `;
+    card.onclick=()=>{ if(answered) return; answered=true; handlePick0(card, ch.en===q.en, q); };
+    grid.appendChild(card);
+  });
+}
+
+function handlePick0(card, isCorrect, q){
+  const allCards=document.querySelectorAll('.pick-card');
+  allCards.forEach(c=>c.classList.add('disabled'));
+  if(isCorrect){
+    card.classList.add('correct');
+    onCorrect();
+    burst(card,'⭐✨🎉');
+  } else {
+    card.classList.add('wrong');
+    // Show correct
+    allCards.forEach(c=>{ if(c.querySelector('.pick-emoji').textContent===q.emoji) c.classList.add('correct'); });
+    onWrong();
+  }
+  setTimeout(()=>{ round++; renderRound(); }, 1400);
+}
+
+/* ═══════════════════════════════════════════
+   GAME 1 — LISTEN & ORDER
+═══════════════════════════════════════════ */
+let slotWords=[], bankWords=[];
+function renderGame1(){
+  const q = SENTENCES[round % SENTENCES.length];
+  currentQuestion = q;
+  slotWords=[]; bankWords=[...shuffle(q.words)];
+  const panel=document.getElementById('gamePanel');
+  panel.innerHTML=`
+    <div class="g2-sentence">Nghe và xếp câu đúng thứ tự: <em>"${q.full}"</em></div>
+    <div class="answer-slots" id="answerSlots"></div>
+    <div class="word-bank" id="wordBank"></div>
+    <div class="feedback-bar" id="fbBar"></div>
+    <div class="g2-check">
+      <button class="g2-check btn-clear" onclick="clearOrder()">⌫ Xóa hết</button>
+      <button class="g2-check btn-check" onclick="checkOrder()">✓ Kiểm tra</button>
+    </div>
+  `;
+  renderBank();
+}
+
+function renderBank(){
+  const bank=document.getElementById('wordBank');
+  bank.innerHTML='';
+  bankWords.forEach((w,i)=>{
+    const tile=createTile(w,i,'bank');
+    bank.appendChild(tile);
+  });
+  const slots=document.getElementById('answerSlots');
+  slots.innerHTML='';
+  slotWords.forEach((w,i)=>{
+    const tile=createTile(w,i,'slot');
+    slots.appendChild(tile);
+  });
+  if(slotWords.length===0){
+    slots.innerHTML='<div style="color:#ccc;font-family:Fredoka One,cursive;font-size:1rem;margin:auto;">Kéo từ vào đây...</div>';
+  }
+}
+
+function createTile(word, idx, src){
+  const colors=['wt0','wt1','wt2','wt3','wt4','wt5'];
+  const tile=document.createElement('div');
+  tile.className=`word-tile ${colors[word.length%6]} ${src==='slot'?'in-slot':''}`;
+  tile.textContent=word;
+  if(src==='bank'){
+    tile.onclick=()=>{ bankWords.splice(bankWords.indexOf(word),1); slotWords.push(word); renderBank(); };
+  } else {
+    tile.onclick=()=>{ slotWords.splice(slotWords.indexOf(word),1); bankWords.push(word); renderBank(); };
+  }
+  return tile;
+}
+
+function clearOrder(){ slotWords=[]; bankWords=[...shuffle(currentQuestion.words)]; renderBank(); document.getElementById('fbBar').style.display='none'; }
+
+function checkOrder(){
+  if(answered) return;
+  if(slotWords.length<currentQuestion.words.length){ showToast('Xếp hết các từ đã nhé! 💡','info'); return; }
+  const correct=slotWords.join(' ')===currentQuestion.words.join(' ');
+  const fb=document.getElementById('fbBar');
+  fb.style.display='block';
+  if(correct){
+    fb.className='feedback-bar fb-correct';
+    fb.textContent='🎉 Xuất sắc! Câu đúng rồi!';
+    answered=true; onCorrect();
+    burst(document.getElementById('answerSlots'),'⭐🎊✨');
+    setTimeout(()=>{ round++; renderRound(); }, 1500);
+  } else {
+    fb.className='feedback-bar fb-wrong';
+    fb.textContent=`❌ Thứ tự chưa đúng! Câu đúng: "${currentQuestion.full}"`;
+    onWrong();
+    setTimeout(()=>{ round++; renderRound(); }, 2200);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   GAME 2 — FILL THE BLANK
+═══════════════════════════════════════════ */
+function renderGame2(q){
+  const panel=document.getElementById('gamePanel');
+  // Build blank sentence display
+  const displaySentence=q.sentence.replace(q.blankWord, `<span class="blank" id="blankSpan">___</span>`);
+  // 4 options
+  const others=shuffle(VOCAB.filter(v=>v.en.toLowerCase()!==q.blankWord.toLowerCase())).slice(0,3);
+  const opts=shuffle([{en:q.blankWord,emoji:q.emoji},...others.map(o=>({en:o.en,emoji:o.emoji}))]);
+
+  panel.innerHTML=`
+    <div class="g3-sentence">${displaySentence}</div>
+    <div class="g3-options" id="g3opts"></div>
+  `;
+  const container=document.getElementById('g3opts');
+  opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className=`g3-opt go${i}`;
+    btn.innerHTML=`${opt.emoji} ${opt.en}`;
+    btn.onclick=()=>{ if(answered) return; handleBlank(btn, opt.en.toLowerCase()===q.blankWord.toLowerCase(), opt.en, q); };
+    container.appendChild(btn);
+  });
+}
+
+function handleBlank(btn, isCorrect, chosen, q){
+  answered=true;
+  document.querySelectorAll('.g3-opt').forEach(b=>b.classList.add('disabled'));
+  document.querySelectorAll('.g3-opt').forEach(b=>b.style.pointerEvents='none');
+  if(isCorrect){
+    btn.classList.add('correct');
+    const blank=document.getElementById('blankSpan');
+    if(blank){ blank.textContent=chosen; blank.classList.add('filled'); }
+    onCorrect(); burst(btn,'⭐✨🎊');
+    setTimeout(()=>{ round++; renderRound(); },1400);
+  } else {
+    btn.classList.add('wrong');
+    // highlight correct
+    document.querySelectorAll('.g3-opt').forEach(b=>{
+      if(b.textContent.toLowerCase().includes(q.blankWord.toLowerCase())) b.classList.add('correct');
+    });
+    onWrong();
+    setTimeout(()=>{ round++; renderRound(); },2000);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   GAME 3 — SOUND MATCH
+═══════════════════════════════════════════ */
+let matchLeftSelected=null, matchRightSelected=null, matchedPairs=0;
+function renderGame3(){
+  // Pick 5 items for matching
+  const pool=shuffle([...VOCAB]).slice(0,5);
+  const leftItems=pool;
+  const rightItems=shuffle([...pool]);
+  matchedPairs=0;
+  answered=false;
+  matchLeftSelected=null; matchRightSelected=null;
+
+  const panel=document.getElementById('gamePanel');
+  panel.innerHTML=`
+    <div class="g4-instruction">👂 Nghe âm thanh của cột trái, nối với hình ảnh đúng ở cột phải!</div>
+    <div class="match-layout">
+      <div class="match-col">
+        <div class="match-col-title">🔊 Nghe từ</div>
+        <div id="leftCol"></div>
+      </div>
+      <div class="match-arrow">↔️</div>
+      <div class="match-col">
+        <div class="match-col-title">🖼️ Chọn hình</div>
+        <div id="rightCol"></div>
+      </div>
+    </div>
+  `;
+
+  const left=document.getElementById('leftCol');
+  leftItems.forEach((item,i)=>{
+    const el=document.createElement('div');
+    el.className='match-item';
+    el.dataset.id=item.en;
+    el.dataset.side='left';
+    el.innerHTML=`<div class="matched-indicator">✓</div><div class="match-sound-icon">🔊</div><div class="match-line">${item.en}</div>`;
+    el.onclick=()=>handleMatchLeft(el,item);
+    left.appendChild(el);
+  });
+
+  const right=document.getElementById('rightCol');
+  rightItems.forEach((item,i)=>{
+    const el=document.createElement('div');
+    el.className='match-item';
+    el.dataset.id=item.en;
+    el.dataset.side='right';
+    el.innerHTML=`<div class="matched-indicator">✓</div><span class="match-emoji">${item.emoji}</span><div class="match-line">${item.vn}</div>`;
+    el.onclick=()=>handleMatchRight(el,item);
+    right.appendChild(el);
+  });
+
+  // Set listen context
+  currentQuestion={speakText:leftItems[0].en, _pool:leftItems};
+}
+
+function handleMatchLeft(el, item){
+  if(el.classList.contains('matched')) return;
+  // Play the word
+  speak(item.en);
+  if(matchLeftSelected) matchLeftSelected.classList.remove('selected');
+  matchLeftSelected=el;
+  el.classList.add('selected');
+  tryMatch(item.en);
+}
+function handleMatchRight(el, item){
+  if(el.classList.contains('matched')) return;
+  if(matchRightSelected) matchRightSelected.classList.remove('selected');
+  matchRightSelected=el;
+  el.classList.add('selected');
+  tryMatch(item.en);
+}
+function tryMatch(clickedId){
+  if(!matchLeftSelected||!matchRightSelected) return;
+  const lId=matchLeftSelected.dataset.id;
+  const rId=matchRightSelected.dataset.id;
+  if(lId===rId){
+    // Match!
+    matchLeftSelected.classList.add('matched');
+    matchRightSelected.classList.add('matched');
+    matchLeftSelected.classList.remove('selected');
+    matchRightSelected.classList.remove('selected');
+    burst(matchLeftSelected,'⭐✨🎉');
+    matchedPairs++;
+    addScore(15);
+    combo++;
+    if(combo>maxCombo) maxCombo=combo;
+    if(combo>=2) showCombo(combo);
+    if(matchedPairs===5){
+      correctCount++;
+      setTimeout(()=>{ round++; renderRound(); },1200);
+    }
+  } else {
+    // Wrong
+    matchLeftSelected.classList.add('wrong-flash');
+    matchRightSelected.classList.add('wrong-flash');
+    const l=matchLeftSelected, r=matchRightSelected;
+    setTimeout(()=>{ l.classList.remove('wrong-flash','selected'); r.classList.remove('wrong-flash','selected'); },600);
+    combo=0;
+    lives=Math.max(0,lives-1);
+    updateLives();
+    if(lives<=0){ setTimeout(()=>{ round++; renderRound(); },1000); }
+  }
+  matchLeftSelected=null; matchRightSelected=null;
+}
+
+/* ═══════════════════════════════════════════
+   SCORING
+═══════════════════════════════════════════ */
+function onCorrect(){
+  correctCount++;
+  combo++;
+  if(combo>maxCombo) maxCombo=combo;
+  const pts = combo>=3?25:combo===2?20:15;
+  addScore(pts);
+  if(combo>=2) showCombo(combo);
+  showToast(combo>=3?`🔥 ${combo}x Combo! +${pts} pts`:combo===2?`⚡ Double! +${pts} pts`:`✅ Correct! +${pts} pts`, 'good');
+}
+function onWrong(){
+  combo=0;
+  lives=Math.max(0,lives-1);
+  updateLives();
+  showToast('💪 Thử lại lần sau!','bad');
+  if(lives<=0) setTimeout(showResult,800);
+}
+function addScore(pts){
+  score+=pts;
+  const el=document.getElementById('scoreDisplay');
+  el.textContent=score;
+  el.style.animation='none';
+  requestAnimationFrame(()=>{ el.style.animation='pulse .3s ease'; });
+}
+
+/* ═══════════════════════════════════════════
+   COMBO DISPLAY
+═══════════════════════════════════════════ */
+function showCombo(n){
+  const labels={2:'Double! 🔥',3:'Triple! ⚡',4:'QUAD! 💥',5:'UNSTOPPABLE! 🌟'};
+  const el=document.createElement('div');
+  el.className='combo-display';
+  el.textContent=labels[Math.min(n,5)]||`${n}x Combo! 🔥`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),900);
+}
+
+/* ═══════════════════════════════════════════
+   RESULT
+═══════════════════════════════════════════ */
+function showResult(){
+  const pct=correctCount/totalRounds;
+  const stars=pct>=.8?3:pct>=.5?2:1;
+  const trophies=['🌱','🥈','🥇','🏆'];
+  document.getElementById('rTrophy').textContent=trophies[stars];
+  document.getElementById('rTitle').textContent=pct>=.8?'Amazing! 🎉':pct>=.5?'Good job! 👍':'Keep going! 💪';
+  document.getElementById('rStars').textContent='⭐'.repeat(stars)+'🌑'.repeat(3-stars);
+  document.getElementById('rScore').textContent=score;
+  document.getElementById('rCorrect').textContent=`${correctCount}/${totalRounds}`;
+  document.getElementById('rCombo').textContent=maxCombo;
+  document.getElementById('resultOverlay').classList.add('show');
+  if(stars===3) bigBurst();
+}
+
+function restartGame(){ document.getElementById('resultOverlay').classList.remove('show'); selectGame(currentGame); }
+function closeResult(){ document.getElementById('resultOverlay').classList.remove('show'); }
+function nextGameAuto(){ document.getElementById('resultOverlay').classList.remove('show'); selectGame((currentGame+1)%4); }
+
+/* ═══════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════ */
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-.5); }
+
+function showToast(msg, type='info'){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(()=>t.remove(),400); },2200);
+}
+
+function burst(el, emojiStr){
+  const emojis=emojiStr.split('');
+  const rect=(el.getBoundingClientRect?el.getBoundingClientRect():{left:window.innerWidth/2,top:window.innerHeight/2,width:0,height:0});
+  const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+  for(let i=0;i<8;i++){
+    const p=document.createElement('div');
+    p.className='burst';
+    p.textContent=emojis[i%emojis.length];
+    p.style.cssText=`left:${cx}px;top:${cy}px;`;
+    document.body.appendChild(p);
+    const angle=Math.random()*360;
+    const dist=70+Math.random()*90;
+    const dx=Math.cos(angle*Math.PI/180)*dist;
+    const dy=Math.sin(angle*Math.PI/180)*dist-40;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      p.style.transform=`translate(${dx}px,${dy}px) rotate(${angle}deg) scale(0)`;
+      p.style.opacity='0';
+    }));
+    setTimeout(()=>p.remove(),1000);
+  }
+}
+
+function bigBurst(){
+  const emojis=['🎉','⭐','🏆','✨','🌟','🎊','💫'];
+  for(let i=0;i<20;i++){
+    setTimeout(()=>{
+      const p=document.createElement('div');
+      p.className='burst';
+      p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      p.style.cssText=`left:${Math.random()*window.innerWidth}px;top:${window.innerHeight+20}px;font-size:${1.5+Math.random()*1.5}rem;`;
+      document.body.appendChild(p);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        p.style.transform=`translateY(-${window.innerHeight+100}px) rotate(${Math.random()*720}deg)`;
+        p.style.opacity='0';
+        p.style.transition=`all ${2+Math.random()}s ease`;
+      }));
+      setTimeout(()=>p.remove(),3000);
+    },i*80);
+  }
+}
+
+/* ── KEYBOARD SHORTCUTS ── */
+document.addEventListener('keydown',e=>{
+  if(e.key===' '||e.key==='Enter'){ e.preventDefault(); playAudio(); }
+});
+
+/* ── VOICES PRELOAD ── */
+if(window.speechSynthesis){ window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged=()=>{}; }
+
+/* ── KICK OFF ── */
+selectGame(0);
+</script>
+</body>
+</html>
