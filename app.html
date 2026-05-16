@@ -574,7 +574,7 @@ body{background:var(--navy);color:var(--white);display:flex;flex-direction:colum
     <div class="ah-right">
       <div class="ah-xp"><span class="xp-star-anim">⭐</span><span id="headerXP">0</span></div>
       <button class="music-btn" id="musicBtn" onclick="toggleMusic()" title="Nhạc nền">
-        🎵
+        <span id="musicIcon">🎵</span>
         <div class="music-viz">
           <div class="mv-bar"></div><div class="mv-bar"></div><div class="mv-bar"></div>
           <div class="mv-bar"></div><div class="mv-bar"></div>
@@ -611,10 +611,10 @@ body{background:var(--navy);color:var(--white);display:flex;flex-direction:colum
             </div>
           </div>
           <div class="ring-info">
-            <div class="ri-title">📅 Ngày 9 — Tuần 2: Colors</div>
-            <div class="ri-sub">1/4 hoạt động xong · Còn 15 phút</div>
-            <div class="ri-activities">
-              <span class="ri-act done">📖 Từ vựng ✓</span>
+            <div class="ri-title" id="riTitle">📅 Ngày 1 — Tuần 1: Animals</div>
+            <div class="ri-sub" id="riSub">0/4 hoạt động xong · Còn ~20 phút</div>
+            <div class="ri-activities" id="riActs">
+              <span class="ri-act">📖 Từ vựng</span>
               <span class="ri-act">👂 Nghe</span>
               <span class="ri-act">🎤 Nói</span>
               <span class="ri-act">🎮 Game</span>
@@ -624,19 +624,19 @@ body{background:var(--navy);color:var(--white);display:flex;flex-direction:colum
 
         <!-- Stats -->
         <div class="hero-stats-row">
-          <div class="hsr-item"><div class="hsr-n">🔥3</div><div class="hsr-l">Ngày streak</div></div>
-          <div class="hsr-item"><div class="hsr-n">235</div><div class="hsr-l">XP tổng</div></div>
-          <div class="hsr-item"><div class="hsr-n">8/60</div><div class="hsr-l">Ngày học</div></div>
-          <div class="hsr-item"><div class="hsr-n">5🏅</div><div class="hsr-l">Huy hiệu</div></div>
+          <div class="hsr-item"><div class="hsr-n" id="statStreak">🔥0</div><div class="hsr-l">Ngày streak</div></div>
+          <div class="hsr-item"><div class="hsr-n" id="statXP">0</div><div class="hsr-l">XP tổng</div></div>
+          <div class="hsr-item"><div class="hsr-n" id="statDays">1/60</div><div class="hsr-l">Ngày học</div></div>
+          <div class="hsr-item"><div class="hsr-n" id="statBadges">0🏅</div><div class="hsr-l">Huy hiệu</div></div>
         </div>
       </div>
 
       <!-- Continue CTA -->
-      <button class="continue-cta" onclick="navigateTo('listen')">
-        <span class="cta-icon">👂</span>
+      <button class="continue-cta" id="continueCta" onclick="startNextActivity()">
+        <span class="cta-icon" id="ctaIcon">📖</span>
         <div class="cta-text">
-          <div class="cta-title">Tiếp tục hôm nay! — Luyện Nghe 🎯</div>
-          <div class="cta-sub">Ngày 9 · Tuần 2: Colors & Shapes · +15 XP</div>
+          <div class="cta-title" id="ctaTitle">Bắt đầu ngày học đầu tiên! 🎯</div>
+          <div class="cta-sub" id="ctaSub">Ngày 1 · Tuần 1: Animals · +15 XP</div>
         </div>
         <span class="cta-arrow">›</span>
       </button>
@@ -756,12 +756,35 @@ body{background:var(--navy);color:var(--white);display:flex;flex-direction:colum
 ═══════════════════════════════════════════════ */
 let playerName = 'bé';
 let playerAvatar = '🦉';
-let xp = 235;
+let xp = 0;
+let currentDay = 1;
+let streak = 0;
+let doneActs = {};
 let obSlide = 0;
 let musicPlaying = false;
 let audioCtx = null;
 let musicNodes = {};
 let currentTab = 'home';
+
+const WEEK_DATA = [
+  { w:1, start:1,  end:8,  topic:'Animals',        icon:'🐶' },
+  { w:2, start:9,  end:15, topic:'Colors & Shapes', icon:'🌈' },
+  { w:3, start:16, end:22, topic:'Food & Drinks',   icon:'🍎' },
+  { w:4, start:23, end:29, topic:'Family',          icon:'👨‍👩‍👧' },
+  { w:5, start:30, end:36, topic:'My Body',         icon:'💪' },
+  { w:6, start:37, end:43, topic:'School',          icon:'📚' },
+  { w:7, start:44, end:50, topic:'Numbers & Time',  icon:'🔢' },
+  { w:8, start:51, end:60, topic:'Nature',          icon:'🌍' },
+];
+const DAILY_ACTS = [
+  { key:'vocab',  icon:'📖', label:'Từ vựng', url:'vocab.html',     xp:15 },
+  { key:'listen', icon:'👂', label:'Nghe',    url:'listening.html', xp:20 },
+  { key:'speak',  icon:'🎤', label:'Nói',     url:'speaking.html',  xp:25 },
+  { key:'game',   icon:'🎮', label:'Game',    url:'games.html',     xp:30 },
+];
+function getWeekInfo(day) {
+  return WEEK_DATA.find(w => day >= w.start && day <= w.end) || WEEK_DATA[7];
+}
 
 /* ═══════════════════════════════════════════════
    LOADING SPLASH
@@ -784,9 +807,11 @@ function checkOnboarding() {
     playerName = saved;
     playerAvatar = localStorage.getItem('sw_avatar') || '🦉';
     xp = parseInt(localStorage.getItem('sw_xp') || '0');
+    currentDay = Math.min(parseInt(localStorage.getItem('sw_day') || '1'), 60);
+    streak = parseInt(localStorage.getItem('sw_streak') || '0');
+    doneActs = JSON.parse(localStorage.getItem('sw_done') || '{}');
     finishOnboard(true);
   }
-  // Always show onboarding for fresh run
 }
 
 function buildObStars() {
@@ -831,6 +856,9 @@ function finishOnboard(silent = false) {
   localStorage.setItem('sw_name', playerName);
   localStorage.setItem('sw_avatar', playerAvatar);
   localStorage.setItem('sw_xp', xp);
+  if (!localStorage.getItem('sw_day')) { localStorage.setItem('sw_day', '1'); currentDay = 1; }
+  if (!localStorage.getItem('sw_done')) { localStorage.setItem('sw_done', '{}'); doneActs = {}; }
+  if (!localStorage.getItem('sw_badges')) localStorage.setItem('sw_badges', '[]');
 
   const ob = document.getElementById('onboarding');
   ob.style.transition = 'opacity .6s ease, transform .6s ease';
@@ -845,7 +873,10 @@ function finishOnboard(silent = false) {
   initParticles();
   buildModulesGrid();
   setHeroDate();
-  animateDailyRing();
+  updateStreak();
+  updateDailyProgress();
+  updateHeroStats();
+  updateContinueCTA();
 
   if (!silent) {
     setTimeout(() => {
@@ -874,14 +905,79 @@ function setHeroDate() {
     `${days[now.getDay()]}, ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
 }
 
-function animateDailyRing() {
-  const pct = 25;
+function updateDailyProgress() {
+  const dayDone = doneActs[currentDay] || [];
+  const doneCount = DAILY_ACTS.filter(a => dayDone.includes(a.key)).length;
+  const pct = Math.round((doneCount / DAILY_ACTS.length) * 100);
   const circ = 188.5;
-  const offset = circ - (pct / 100 * circ);
   setTimeout(() => {
-    document.getElementById('dailyRing').style.strokeDashoffset = offset;
+    document.getElementById('dailyRing').style.strokeDashoffset = circ - (pct / 100 * circ);
     document.getElementById('ringPct').textContent = pct + '%';
   }, 500);
+  const wk = getWeekInfo(currentDay);
+  document.getElementById('riTitle').textContent = `📅 Ngày ${currentDay} — Tuần ${wk.w}: ${wk.topic}`;
+  const minsLeft = (DAILY_ACTS.length - doneCount) * 5;
+  document.getElementById('riSub').textContent = doneCount === DAILY_ACTS.length
+    ? '✅ Hoàn thành ngày hôm nay!'
+    : `${doneCount}/${DAILY_ACTS.length} hoạt động xong · Còn ~${minsLeft} phút`;
+  document.getElementById('riActs').innerHTML = DAILY_ACTS.map(a =>
+    `<span class="ri-act${dayDone.includes(a.key) ? ' done' : ''}">${a.icon} ${a.label}${dayDone.includes(a.key) ? ' ✓' : ''}</span>`
+  ).join('');
+}
+
+function updateHeroStats() {
+  const badges = JSON.parse(localStorage.getItem('sw_badges') || '[]');
+  document.getElementById('statStreak').textContent = `🔥${streak}`;
+  document.getElementById('statXP').textContent = xp;
+  document.getElementById('statDays').textContent = `${currentDay}/60`;
+  document.getElementById('statBadges').textContent = `${badges.length}🏅`;
+}
+
+function updateContinueCTA() {
+  const dayDone = doneActs[currentDay] || [];
+  const next = DAILY_ACTS.find(a => !dayDone.includes(a.key));
+  const wk = getWeekInfo(currentDay);
+  const ctaEl = document.getElementById('continueCta');
+  if (currentDay >= 60 && doneActs[60] && DAILY_ACTS.every(a => (doneActs[60]||[]).includes(a.key))) {
+    document.getElementById('ctaIcon').textContent = '🎓';
+    document.getElementById('ctaTitle').textContent = 'Chúc mừng! Bé đã hoàn thành 60 ngày hè! 🎊';
+    document.getElementById('ctaSub').textContent = 'Hành trình tuyệt vời — xem lộ trình để nhận chứng chỉ!';
+    ctaEl.style.background = 'linear-gradient(135deg,#FFD93D,#FF9F43)';
+    ctaEl.onclick = () => openModule('roadmap.html');
+    return;
+  }
+  if (!next) {
+    document.getElementById('ctaIcon').textContent = '🌟';
+    document.getElementById('ctaTitle').textContent = 'Tuyệt vời! Đã hoàn thành ngày hôm nay! 🎉';
+    document.getElementById('ctaSub').textContent = `Ngày ${currentDay} hoàn tất · ${wk.topic} · Quay lại ngày mai!`;
+    ctaEl.style.background = 'linear-gradient(135deg,#6BCB77,#4ECDC4)';
+    ctaEl.style.boxShadow = '0 6px 0 rgba(42,122,85,.4)';
+    ctaEl.onclick = () => openModule('roadmap.html');
+  } else {
+    document.getElementById('ctaIcon').textContent = next.icon;
+    document.getElementById('ctaTitle').textContent = `Tiếp tục hôm nay! — Luyện ${next.label} 🎯`;
+    document.getElementById('ctaSub').textContent = `Ngày ${currentDay} · Tuần ${wk.w}: ${wk.topic} · +${next.xp} XP`;
+    ctaEl.style.background = '';
+    ctaEl.style.boxShadow = '';
+    ctaEl.onclick = () => openModule(next.url);
+  }
+}
+
+function startNextActivity() {
+  const dayDone = doneActs[currentDay] || [];
+  const next = DAILY_ACTS.find(a => !dayDone.includes(a.key));
+  openModule(next ? next.url : 'roadmap.html');
+}
+
+function updateStreak() {
+  const today = new Date().toISOString().slice(0, 10);
+  const lastDate = localStorage.getItem('sw_last_date') || '';
+  if (lastDate === today) return;
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  streak = (!lastDate || lastDate === yesterday.toISOString().slice(0, 10)) ? streak + 1 : 1;
+  localStorage.setItem('sw_streak', streak.toString());
+  localStorage.setItem('sw_last_date', today);
 }
 
 /* ═══════════════════════════════════════════════
@@ -949,8 +1045,7 @@ function navigateTo(tabId) { switchTab(tabId); }
 
 function openModule(url) {
   playSfx('whoosh');
-  window.open(url, '_blank');
-  showToast('🚀 Mở module trong tab mới!', 't-info');
+  window.location.href = url;
 }
 
 /* ═══════════════════════════════════════════════
@@ -1045,12 +1140,12 @@ function toggleMusic() {
   if (musicPlaying) {
     startMusic();
     btn.classList.add('playing');
-    btn.textContent = '🎵';
+    document.getElementById('musicIcon').textContent = '🎵';
     showToast('🎵 Nhạc nền bật! Học vui hơn nào!', 't-music');
   } else {
     stopMusic();
     btn.classList.remove('playing');
-    btn.textContent = '🔇';
+    document.getElementById('musicIcon').textContent = '🔇';
     showToast('🔇 Đã tắt nhạc nền', 't-info');
   }
 }
@@ -1191,18 +1286,11 @@ document.addEventListener('click', function initOnce() {
 function addXP(amount) {
   xp += amount;
   document.getElementById('headerXP').textContent = xp;
-  localStorage.setItem('sw_xp', xp);
+  localStorage.setItem('sw_xp', xp.toString());
+  updateHeroStats();
   playSfx('star');
   showToast(`⭐ +${amount} XP!`, 't-xp', 2000);
 }
-
-// Simulate daily XP gain after 3s
-setTimeout(() => {
-  const shell = document.getElementById('appShell');
-  if (shell.classList.contains('visible')) {
-    showToast('🌟 Phần thưởng đăng nhập: +10 XP!', 't-xp');
-  }
-}, 4000);
 
 // PWA-style: handle back button on mobile
 window.addEventListener('popstate', () => {

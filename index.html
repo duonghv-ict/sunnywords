@@ -815,13 +815,22 @@
     const name = document.getElementById('nameInput').value.trim();
     const av = document.querySelector('.av-opt.active')?.textContent || '🦉';
     if(!name){ document.getElementById('nameInput').focus(); return; }
-    document.getElementById('welcomeModal').style.display='none';
-    // Show welcome toast
-    const toast = document.createElement('div');
-    toast.style.cssText='position:fixed;bottom:2rem;right:2rem;z-index:999;background:#2D2D44;color:white;padding:1rem 1.5rem;border-radius:16px;font-family:Fredoka One,cursive;font-size:1.1rem;box-shadow:0 10px 30px rgba(0,0,0,0.3);animation:slideInRight 0.4s both;';
-    toast.innerHTML = `${av} Welcome, ${name}! Let's learn! 🚀`;
-    document.body.appendChild(toast);
-    setTimeout(()=>toast.remove(), 3500);
+    const savedName = localStorage.getItem('sw_name');
+    if(savedName && savedName !== name){
+      if(!confirm(`Đang có dữ liệu học của bé "${savedName}".\nBắt đầu lại với tên "${name}"?`)) return;
+      ['sw_name','sw_avatar','sw_xp','sw_day','sw_streak','sw_last_date','sw_done','sw_badges'].forEach(k=>localStorage.removeItem(k));
+    }
+    if(!savedName || savedName !== name){
+      localStorage.setItem('sw_name', name);
+      localStorage.setItem('sw_avatar', av);
+      localStorage.setItem('sw_xp', '0');
+      localStorage.setItem('sw_day', '1');
+      localStorage.setItem('sw_streak', '0');
+      localStorage.setItem('sw_last_date', '');
+      localStorage.setItem('sw_done', '{}');
+      localStorage.setItem('sw_badges', '[]');
+    }
+    window.location.href = 'app.html';
   }
   document.getElementById('nameInput').addEventListener('keyup',e=>{ if(e.key==='Enter') startApp(); });
 

@@ -398,7 +398,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--navy);over
 
 <!-- ══ TOPBAR ══ -->
 <div class="topbar">
-  <a class="logo" href="landing.html"><span class="logo-sun">☀️</span> SunnyWords</a>
+  <a class="logo" href="app.html"><span class="logo-sun">☀️</span> SunnyWords</a>
   <div class="top-center">
     <div class="module-chip">🗓️ Hành Trình 60 Ngày</div>
   </div>
@@ -441,11 +441,11 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--navy);over
         <div class="ob-track"><div class="ob-fill" id="overallFill" style="width:13%"></div></div>
       </div>
       <div class="jh-stats">
-        <div class="jhs-item"><div class="jhs-n" id="st-done">8</div><div class="jhs-l">Ngày hoàn thành</div></div>
-        <div class="jhs-item"><div class="jhs-n">235</div><div class="jhs-l">XP tích lũy</div></div>
-        <div class="jhs-item"><div class="jhs-n">47</div><div class="jhs-l">Từ đã học</div></div>
-        <div class="jhs-item"><div class="jhs-n">🔥3</div><div class="jhs-l">Streak ngày</div></div>
-        <div class="jhs-item"><div class="jhs-n">5</div><div class="jhs-l">Huy hiệu</div></div>
+        <div class="jhs-item"><div class="jhs-n" id="st-done">0</div><div class="jhs-l">Ngày hoàn thành</div></div>
+        <div class="jhs-item"><div class="jhs-n" id="st-xp">0</div><div class="jhs-l">XP tích lũy</div></div>
+        <div class="jhs-item"><div class="jhs-n" id="st-words">0</div><div class="jhs-l">Từ đã học</div></div>
+        <div class="jhs-item"><div class="jhs-n" id="st-streak">🔥0</div><div class="jhs-l">Streak ngày</div></div>
+        <div class="jhs-item"><div class="jhs-n" id="st-badges">0</div><div class="jhs-l">Huy hiệu</div></div>
       </div>
     </div>
 
@@ -706,8 +706,8 @@ const WEEKS = [
   },
 ];
 
-const TODAY_DAY = 9; // Simulate: currently on day 9
-const COMPLETED_DAYS = [1,2,3,4,5,6,7,8]; // days already done
+const TODAY_DAY = Math.min(parseInt(localStorage.getItem('sw_day') || '1'), 60);
+const COMPLETED_DAYS = Array.from({length: TODAY_DAY - 1}, (_, i) => i + 1);
 
 /* Activity templates by type */
 const ACTIVITY_TEMPLATES = {
@@ -749,7 +749,7 @@ const ACTIVITY_TEMPLATES = {
     {name:'Kiểm tra phát âm', desc:'Phát âm 10 từ & 3 câu — AI chấm điểm', icon:'🎤', bg:'#FFE8F5', xp:'+30 XP', mins:'7 phút', link:'speaking.html'},
   ],
   intro:[
-    {name:'Xem giới thiệu', desc:'Sunny chào đón và giải thích chương trình hè', icon:'🦉', bg:'#FFF8E8', xp:'+10 XP', mins:'3 phút', link:'landing.html'},
+    {name:'Xem giới thiệu', desc:'Sunny chào đón và giải thích chương trình hè', icon:'🦉', bg:'#FFF8E8', xp:'+10 XP', mins:'3 phút', link:'index.html'},
     {name:'Học từ vựng đầu tiên', desc:'5 từ đơn giản để bắt đầu hành trình!', icon:'📖', bg:'#E8F4FF', xp:'+15 XP', mins:'8 phút', link:'vocab.html'},
     {name:'Chơi game đầu tiên', desc:'Thử Mini-game đơn giản nhất', icon:'🎮', bg:'#F0FFE8', xp:'+10 XP', mins:'5 phút', link:'games.html'},
     {name:'Chat với Sunny', desc:'Nói chuyện lần đầu với trợ lý AI!', icon:'🤖', bg:'#F0E8FF', xp:'+10 XP', mins:'4 phút', link:'chat.html'},
@@ -767,12 +767,29 @@ const ACTIVITY_TEMPLATES = {
 let currentWeekFilter = 0; // 0 = all
 
 function init(){
+  initStats();
   buildClouds();
   buildWeekTabs();
   buildWeeks();
   buildCalendar();
   buildParentCharts();
 }
+
+function initStats(){
+  const xp = parseInt(localStorage.getItem('sw_xp')||'0');
+  const streak = parseInt(localStorage.getItem('sw_streak')||'0');
+  const badges = JSON.parse(localStorage.getItem('sw_badges')||'[]');
+  const doneDays = TODAY_DAY - 1;
+  const pct = Math.round((doneDays / 60) * 100);
+  const el = id => document.getElementById(id);
+  if(el('st-done')) el('st-done').textContent = doneDays;
+  if(el('st-xp'))   el('st-xp').textContent = xp;
+  if(el('st-words')) el('st-words').textContent = doneDays * 8;
+  if(el('st-streak')) el('st-streak').textContent = '🔥' + streak;
+  if(el('st-badges')) el('st-badges').textContent = badges.length;
+  if(el('overallFill')) el('overallFill').style.width = pct + '%';
+}
+function id(s){ return document.getElementById(s); }
 
 function buildClouds(){
   const bg=document.getElementById('skyBg');
